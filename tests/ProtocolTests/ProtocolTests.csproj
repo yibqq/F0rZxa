@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/MajestyMonitor/Core/CoolerProtocol.cs" Link="CoolerProtocol.cs" />
+    <Compile Include="../../src/MajestyMonitor/Core/Metrics.cs" Link="Metrics.cs" />
+  </ItemGroup>
+</Project>
