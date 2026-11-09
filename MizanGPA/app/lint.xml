@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Integers are deliberately formatted with %s so they keep Western digits in Arabic,
+         matching every other number in the app (String.format with %d would use Arabic-Indic digits). -->
+    <issue id="StringFormatMatches" severity="ignore" />
+    <!-- Dependency versions are pinned on purpose; upgrades are a separate decision. -->
+    <issue id="GradleDependency" severity="ignore" />
+    <issue id="NewerVersionAvailable" severity="ignore" />
+    <!-- Adaptive icons must stay in mipmap-anydpi-v26 for the resource linker. -->
+    <issue id="ObsoleteSdkInt" severity="ignore" />
+</lint>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="8dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/d_letter_layout"
+        style="@style/Mizan.Field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/grade_letter">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/d_letter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/d_points_layout"
+            style="@style/Mizan.Field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/grade_points">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/d_points"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="1dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/d_min_layout"
+            style="@style/Mizan.Field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/min_percent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/d_min"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+</ScrollView>

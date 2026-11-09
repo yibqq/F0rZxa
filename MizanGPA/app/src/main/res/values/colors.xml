@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_primary">#0B7A74</color>
+    <color name="ic_launcher_bg">#0B6E69</color>
+
+    <color name="md_primary">#006A65</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#A6F1E9</color>
+    <color name="md_on_primary_container">#00201E</color>
+    <color name="md_secondary">#4A6360</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#CCE8E4</color>
+    <color name="md_on_secondary_container">#051F1D</color>
+    <color name="md_tertiary">#465D91</color>
+    <color name="md_on_tertiary">#FFFFFF</color>
+    <color name="md_tertiary_container">#D9E2FF</color>
+    <color name="md_on_tertiary_container">#001944</color>
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+    <color name="md_error_container">#FFDAD6</color>
+    <color name="md_on_error_container">#410002</color>
+    <color name="md_surface">#F4FBF9</color>
+    <color name="md_on_surface">#161D1C</color>
+    <color name="md_surface_variant">#DAE5E2</color>
+    <color name="md_on_surface_variant">#3F4947</color>
+    <color name="md_outline">#6F7977</color>
+    <color name="md_outline_variant">#BEC9C6</color>
+    <color name="md_surface_lowest">#FFFFFF</color>
+    <color name="md_surface_low">#EEF5F3</color>
+    <color name="md_surface_container">#E8F0EE</color>
+    <color name="md_surface_high">#E2EAE8</color>
+    <color name="md_surface_highest">#DDE4E2</color>
+    <color name="md_inverse_surface">#2B3231</color>
+    <color name="md_inverse_on_surface">#ECF2F0</color>
+    <color name="md_inverse_primary">#82D5CE</color>
+
+    <color name="status_excellent">#1B9A5E</color>
+    <color name="status_good">#2A73C9</color>
+    <color name="status_warning">#C77A00</color>
+    <color name="status_danger">#D2342F</color>
+    <color name="chart_bar">#7FD1C9</color>
+    <color name="chart_line">#465D91</color>
+</resources>

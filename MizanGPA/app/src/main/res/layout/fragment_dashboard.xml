@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="8dp"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="24dp">
+
+        <!-- First run -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/welcome"
+            style="@style/Widget.Mizan.Card.Hero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_launcher_tile"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_launcher_foreground" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/welcome_title"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/welcome_text"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/welcome_add"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/add_first_semester"
+                    app:icon="@drawable/ic_add" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/welcome_sample"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/load_sample"
+                    app:icon="@drawable/ic_lightbulb" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/dash_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <!-- Hero: cumulative GPA -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/hero"
+                style="@style/Widget.Mizan.Card.Hero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="20dp">
+
+                    <com.mizan.gpa.ui.views.GpaRingView
+                        android:id="@+id/ring"
+                        android:layout_width="@dimen/ring_size"
+                        android:layout_height="@dimen/ring_size" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cumulative_gpa"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorOnPrimaryContainer" />
+
+                        <TextView
+                            android:id="@+id/hero_semester_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:alpha="0.75"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnPrimaryContainer" />
+
+                        <include
+                            android:id="@+id/hero_row_semester"
+                            layout="@layout/view_kv_row" />
+
+                        <include
+                            android:id="@+id/hero_row_expected"
+                            layout="@layout/view_kv_row" />
+
+                        <include
+                            android:id="@+id/hero_row_credits"
+                            layout="@layout/view_kv_row" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_gap"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/tile_courses"
+                    layout="@layout/view_stat_tile" />
+
+                <Space
+                    android:layout_width="@dimen/card_gap"
+                    android:layout_height="1dp" />
+
+                <include
+                    android:id="@+id/tile_attendance"
+                    layout="@layout/view_stat_tile" />
+
+                <Space
+                    android:layout_width="@dimen/card_gap"
+                    android:layout_height="1dp" />
+
+                <include
+                    android:id="@+id/tile_target"
+                    layout="@layout/view_stat_tile" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/alerts_title"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alerts" />
+
+            <LinearLayout
+                android:id="@+id/alerts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical" />
+
+            <TextView
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/academic_progress" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/legend_bar"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp" />
+
+                        <TextView
+                            style="@style/Mizan.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/semester_gpa" />
+
+                        <View
+                            android:id="@+id/legend_line"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp" />
+
+                        <TextView
+                            style="@style/Mizan.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/cumulative_gpa" />
+                    </LinearLayout>
+
+                    <com.mizan.gpa.ui.views.TrendChartView
+                        android:id="@+id/trend"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/chart_height"
+                        android:layout_marginTop="8dp" />
+
+                    <TextView
+                        android:id="@+id/trend_empty"
+                        style="@style/Mizan.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:text="@string/trend_empty"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/trend_note"
+                        style="@style/Mizan.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/trend_projected_note" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/current_title"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/this_semester" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/current_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/current_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp" />
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -72,3 +72,9 @@ src/MajestyMonitor/UI     custom-painted dashboard, settings dialog, main window
 installer/make_wxs.py     generates the WiX source that wixl turns into the MSI
 tests/ProtocolTests       byte-level checks of the cooler payload
 ```
+
+---
+
+## ميزان — تطبيق Android لإدارة المعدل والغياب
+
+يحتوي المجلد [`MizanGPA/`](MizanGPA/) على تطبيق Android مستقل (Java + XML) لحساب المعدل الفصلي والتراكمي، وإدارة الغياب والدرجات، وتوقع المعدل. التفاصيل وملف التثبيت في [`MizanGPA/README.md`](MizanGPA/README.md).

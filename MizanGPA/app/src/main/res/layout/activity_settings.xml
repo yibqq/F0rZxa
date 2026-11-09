@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/snack_anchor_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:liftOnScroll="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:title="@string/settings" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingEnd="@dimen/screen_padding"
+            android:paddingBottom="32dp">
+
+            <TextView
+                android:id="@+id/set_section_profile"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_profile"
+                layout="@layout/view_setting_row" />
+
+            <TextView
+                android:id="@+id/set_section_appearance"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_theme"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_language"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_dynamic"
+                layout="@layout/view_setting_row" />
+
+            <TextView
+                android:id="@+id/set_section_grading"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_scale"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_round"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_prior"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_weeks"
+                layout="@layout/view_setting_row" />
+
+            <TextView
+                android:id="@+id/set_section_attendance"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_abs_limit"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_abs_rule"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_abs_warn"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_abs_excused"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_abs_late"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_abs_alerts"
+                layout="@layout/view_setting_row" />
+
+            <TextView
+                android:id="@+id/set_section_reminders"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_rem_enabled"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_rem_minutes"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_rem_exact"
+                layout="@layout/view_setting_row" />
+
+            <TextView
+                android:id="@+id/set_section_data"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_export_pdf"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_backup"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_restore"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_sample"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_clear"
+                layout="@layout/view_setting_row" />
+
+            <TextView
+                android:id="@+id/set_section_about"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_about"
+                layout="@layout/view_setting_row" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tab_home" android:icon="@drawable/ic_dashboard" android:title="@string/tab_home" />
+    <item android:id="@+id/tab_semesters" android:icon="@drawable/ic_school" android:title="@string/tab_semesters" />
+    <item android:id="@+id/tab_attendance" android:icon="@drawable/ic_event_available" android:title="@string/tab_attendance" />
+    <item android:id="@+id/tab_forecast" android:icon="@drawable/ic_trending_up" android:title="@string/tab_forecast" />
+    <item android:id="@+id/tab_schedule" android:icon="@drawable/ic_calendar" android:title="@string/tab_schedule" />
+</menu>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">40dp</dimen>
+    <dimen name="card_gap">16dp</dimen>
+    <dimen name="ring_size">168dp</dimen>
+    <dimen name="chart_height">260dp</dimen>
+</resources>
