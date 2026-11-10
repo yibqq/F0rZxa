@@ -240,7 +240,7 @@ public class ScreenshotTest {
             Canvas c = new Canvas(layer);
             android.graphics.Path clip = new android.graphics.Path();
             if (i == 0) clip.addCircle(size / 2f, size / 2f, size / 2f, android.graphics.Path.Direction.CW);
-            else clip.addRoundRect(0, 0, size, size, size * 0.24f, size * 0.24f, android.graphics.Path.Direction.CW);
+            else com.mizan.gpa.util.SquircleDrawable.path(clip, 0, 0, size, size, com.mizan.gpa.util.SquircleDrawable.DEFAULT_EXPONENT);
             c.clipPath(clip);
             // Adaptive icons show the middle 72 of 108 units.
             int full = size * 108 / 72, off = (full - size) / 2;

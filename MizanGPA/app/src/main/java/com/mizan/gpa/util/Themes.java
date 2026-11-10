@@ -84,7 +84,7 @@ public final class Themes {
      * Paints the app logo on a tile: the icon's gauge and bars in white over a gradient of the
      * current palette, so the logo matches whichever color theme is chosen.
      */
-    public static void brandTile(android.view.View tile, android.widget.ImageView icon, float radiusDp) {
+    public static void brandTile(android.view.View tile, android.widget.ImageView icon) {
         Context c = tile.getContext();
         int primary = com.mizan.gpa.util.Ui.attr(c, androidx.appcompat.R.attr.colorPrimary);
         int tertiary = com.mizan.gpa.util.Ui.attr(c, com.google.android.material.R.attr.colorTertiary);
@@ -94,11 +94,8 @@ public final class Themes {
             primary = com.mizan.gpa.util.Ui.attr(c, com.google.android.material.R.attr.colorPrimaryContainer);
             tertiary = com.mizan.gpa.util.Ui.attr(c, com.google.android.material.R.attr.colorTertiaryContainer);
         }
-        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
-                new int[]{primary, com.mizan.gpa.util.Ui.blend(primary, tertiary, 0.55f)});
-        g.setCornerRadius(com.mizan.gpa.util.Ui.dp(c, radiusDp));
-        tile.setBackground(g);
+        // Squircle tile, matching the launcher icon's shape.
+        tile.setBackground(new SquircleDrawable(primary, com.mizan.gpa.util.Ui.blend(primary, tertiary, 0.55f)));
         tile.setClipToOutline(true);
         icon.setImageResource(R.drawable.ic_launcher_monochrome);
         icon.setImageTintList(android.content.res.ColorStateList.valueOf(com.mizan.gpa.util.Ui.attr(c,
@@ -106,7 +103,7 @@ public final class Themes {
         icon.setPadding(0, 0, 0, 0);
         icon.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
         // The adaptive-icon artwork sits in the middle two thirds; enlarge it to fill the tile.
-        icon.setScaleX(1.35f);
-        icon.setScaleY(1.35f);
+        icon.setScaleX(1.3f);
+        icon.setScaleY(1.3f);
     }
 }

@@ -182,9 +182,10 @@ public class MainActivity extends BaseActivity {
         ImageView logoIcon = findViewById(R.id.header_logo_icon);
         logo.setClipToOutline(true);
         if (icon == 0) {
-            com.mizan.gpa.util.Themes.brandTile(logo, logoIcon, 15);
+            com.mizan.gpa.util.Themes.brandTile(logo, logoIcon);
         } else {
-            Ui.roundedFill(logo, Ui.attr(this, com.google.android.material.R.attr.colorSecondaryContainer), 15);
+            int tone = Ui.attr(this, com.google.android.material.R.attr.colorSecondaryContainer);
+            logo.setBackground(new com.mizan.gpa.util.SquircleDrawable(tone, tone));
             logoIcon.setImageResource(icon);
             logoIcon.setImageTintList(Ui.csl(Ui.attr(this, com.google.android.material.R.attr.colorOnSecondaryContainer)));
             int pad = Ui.dp(this, 11);
