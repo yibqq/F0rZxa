@@ -146,4 +146,33 @@ public final class Insights {
         }
         return n;
     }
+
+    /** The current-semester course with the worst attendance status, or null when all are safe. */
+    public static Course mostAtRisk(AppData d) {
+        Semester cur = d.currentSemester();
+        if (cur == null) return null;
+        Course worst = null;
+        int worstSeverity = 0;
+        int worstRemaining = Integer.MAX_VALUE;
+        for (Course c : cur.courses) {
+            if (c.isCompleted()) continue;
+            AttendanceCalculator.Stats s = AttendanceCalculator.compute(c, cur, d.settings);
+            int sev = AttendanceCalculator.severity(s.status);
+            if (sev > worstSeverity || (sev > 0 && sev == worstSeverity && s.remaining < worstRemaining)) {
+                worst = c;
+                worstSeverity = sev;
+                worstRemaining = s.remaining;
+            }
+        }
+        return worst;
+    }
+
+    public static boolean hasDeprivation(AppData d) {
+        Semester cur = d.currentSemester();
+        if (cur == null) return false;
+        for (Course c : cur.courses) {
+            if (!c.isCompleted() && AttendanceCalculator.compute(c, cur, d.settings).status == AttendanceCalculator.Status.DEPRIVED) return true;
+        }
+        return false;
+    }
 }

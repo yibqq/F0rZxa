@@ -74,6 +74,21 @@ public final class Fmt {
         return String.format(Locale.US, "%d:%02d %s", h12, m, ampm);
     }
 
+    /** Compact 12-hour clock time without the AM/PM marker, e.g. "9:15". */
+    public static String clock(int minutes) {
+        int h = (minutes / 60) % 24;
+        int h12 = h % 12 == 0 ? 12 : h % 12;
+        return String.format(Locale.US, "%d:%02d", h12, minutes % 60);
+    }
+
+    /** Compact hour label for the timetable axis: "14:00" or "2 PM". */
+    public static String hourLabel(Context ctx, int hour) {
+        if (android.text.format.DateFormat.is24HourFormat(ctx)) return String.format(Locale.US, "%02d:00", hour % 24);
+        int h12 = hour % 12 == 0 ? 12 : hour % 12;
+        String ampm = hour % 24 < 12 ? ctx.getString(com.mizan.gpa.R.string.am) : ctx.getString(com.mizan.gpa.R.string.pm);
+        return h12 + " " + ampm;
+    }
+
     public static String timeRange(Context ctx, int start, int end) {
         return time(ctx, start) + " – " + time(ctx, end);
     }
@@ -109,6 +124,11 @@ public final class Fmt {
         } catch (Exception e) {
             return iso;
         }
+    }
+
+    /** "10 Nov" style date without the year. */
+    public static String dateShort(Context ctx, LocalDate d) {
+        return DateTimeFormatter.ofPattern("d MMMM", locale(ctx)).withDecimalStyle(java.time.format.DecimalStyle.STANDARD).format(d);
     }
 
     public static String dateLong(Context ctx, LocalDate d) {

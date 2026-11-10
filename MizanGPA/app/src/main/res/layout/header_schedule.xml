@@ -62,7 +62,35 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/view_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mode_grid"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/schedule_mode_grid"
+            app:icon="@drawable/ic_dashboard" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mode_list"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/schedule_mode_list"
+            app:icon="@drawable/ic_assignment" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
     <HorizontalScrollView
+        android:id="@+id/days_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

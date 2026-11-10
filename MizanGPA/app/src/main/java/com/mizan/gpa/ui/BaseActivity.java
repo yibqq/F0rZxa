@@ -1,6 +1,9 @@
 package com.mizan.gpa.ui;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -10,14 +13,49 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.mizan.gpa.R;
 import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Repository;
+import com.mizan.gpa.data.Settings;
+import com.mizan.gpa.util.Fonts;
+import com.mizan.gpa.util.Themes;
 import com.mizan.gpa.util.Ui;
 
 /** Edge-to-edge activity that re-renders whenever the stored data changes. */
 public abstract class BaseActivity extends AppCompatActivity implements Repository.Listener {
+    private String styleKey;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        // Text size preference, on top of the system font size.
+        float scale = Repository.get(base).settings().fontScale;
+        if (Math.abs(scale - 1f) > 0.001f) {
+            Configuration c = new Configuration(base.getResources().getConfiguration());
+            c.fontScale = c.fontScale * scale;
+            base = base.createConfigurationContext(c);
+        }
+        super.attachBaseContext(base);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
+        Settings st = Repository.get(this).settings();
+        Themes.apply(this, st);
+        styleKey = Themes.styleKey(st);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        View decor = getWindow().getDecorView();
+        // New views (lists, snackbars, toolbar titles) get the app font as soon as they are laid out.
+        decor.getViewTreeObserver().addOnGlobalLayoutListener(() -> Fonts.applyTree(decor));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Font, palette or text size changed in Settings while this screen was in the back stack.
+        if (!Themes.styleKey(repo().settings()).equals(styleKey)) recreate();
     }
 
     protected Repository repo() {

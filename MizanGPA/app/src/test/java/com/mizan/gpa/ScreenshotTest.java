@@ -82,6 +82,100 @@ public class ScreenshotTest {
         }
     }
 
+    /** A different palette, font and pure black dark mode. */
+    @Test
+    @Config(qualifiers = "ar-w411dp-h891dp-night-xxhdpi")
+    public void violetCairoPureBlack() {
+        load();
+        Context ctx = ApplicationProvider.getApplicationContext();
+        Settings st = Repository.get(ctx).settings();
+        st.colorTheme = "violet";
+        st.fontId = "cairo";
+        st.pureBlack = true;
+        Repository.get(ctx).save();
+        try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
+            sc.onActivity(a -> {
+                settle();
+                save(a.getWindow().getDecorView(), "theme-violet-cairo-home");
+                a.selectTab(R.id.tab_schedule);
+                settle();
+                saveScrollContent(a, "theme-violet-cairo-schedule");
+            });
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    public void oceanPlexLight() {
+        load();
+        Context ctx = ApplicationProvider.getApplicationContext();
+        Settings st = Repository.get(ctx).settings();
+        st.colorTheme = "ocean";
+        st.fontId = "plex";
+        Repository.get(ctx).save();
+        try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
+            sc.onActivity(a -> {
+                settle();
+                save(a.getWindow().getDecorView(), "theme-ocean-plex-home");
+            });
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "ar-w411dp-h891dp-xxhdpi")
+    public void widgetsArabic() {
+        widgets("ar");
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    public void widgetsEnglishDark() {
+        widgets("en-dark");
+    }
+
+    /** Applies the widget RemoteViews and fills their lists from the real list factories. */
+    private void widgets(String prefix) {
+        load();
+        Context ctx = ApplicationProvider.getApplicationContext();
+        android.widget.FrameLayout host = new android.widget.FrameLayout(ctx);
+        renderWidget(ctx, host, com.mizan.gpa.widget.AttendanceWidget.build(ctx, 1),
+                new com.mizan.gpa.widget.AttendanceWidgetService.Factory(ctx), prefix + "-widget-attendance", 380);
+        renderWidget(ctx, host, com.mizan.gpa.widget.ScheduleWidget.build(ctx, 2),
+                new com.mizan.gpa.widget.ScheduleWidgetService.Factory(ctx), prefix + "-widget-schedule", 560);
+        // Previews shown in the launcher's widget picker.
+        for (int layout : new int[]{R.layout.widget_attendance_preview, R.layout.widget_schedule_preview}) {
+            View v = android.view.LayoutInflater.from(ctx).inflate(layout, host, false);
+            measureAndSave(v, 360, layout == R.layout.widget_attendance_preview ? 300 : 340,
+                    prefix + (layout == R.layout.widget_attendance_preview ? "-preview-attendance" : "-preview-schedule"));
+        }
+    }
+
+    private void renderWidget(Context ctx, ViewGroup host, android.widget.RemoteViews rv,
+                              android.widget.RemoteViewsService.RemoteViewsFactory factory, String name, int heightDp) {
+        View root = rv.apply(ctx, host);
+        android.widget.ListView listView = root.findViewById(R.id.w_list);
+        ViewGroup frame = (ViewGroup) listView.getParent();
+        frame.removeAllViews();
+        android.widget.LinearLayout rows = new android.widget.LinearLayout(ctx);
+        rows.setOrientation(android.widget.LinearLayout.VERTICAL);
+        rows.setPadding(listView.getPaddingLeft(), 0, listView.getPaddingRight(), 0);
+        factory.onCreate();
+        factory.onDataSetChanged();
+        for (int i = 0; i < factory.getCount(); i++) rows.addView(factory.getViewAt(i).apply(ctx, rows));
+        frame.addView(rows);
+        measureAndSave(root, 360, heightDp, name);
+    }
+
+    private static void measureAndSave(View v, int widthDp, int heightDp, String name) {
+        float d = v.getResources().getDisplayMetrics().density;
+        int w = (int) (widthDp * d), h = (int) (heightDp * d);
+        v.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
+        v.layout(0, 0, w, h);
+        Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        v.draw(new Canvas(b));
+        write(b, name);
+    }
+
     @Test
     public void emptyState() throws Exception {
         Context ctx = ApplicationProvider.getApplicationContext();

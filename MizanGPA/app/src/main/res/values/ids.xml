@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="font_generation" type="id" />
+    <item name="font_weight" type="id" />
+    <item name="font_face" type="id" />
+    <item name="font_fixed" type="id" />
+</resources>

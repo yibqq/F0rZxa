@@ -91,6 +91,7 @@ public final class Repository {
             if (out != null) file.failWrite(out);
         }
         ReminderScheduler.scheduleNext(app);
+        com.mizan.gpa.widget.Widgets.updateAll(app);
         main.post(() -> {
             for (Listener l : listeners) l.onDataChanged();
         });

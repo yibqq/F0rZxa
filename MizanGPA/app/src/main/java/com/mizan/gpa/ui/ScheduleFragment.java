@@ -23,6 +23,7 @@ import com.mizan.gpa.data.Course;
 import com.mizan.gpa.data.LectureSlot;
 import com.mizan.gpa.data.Semester;
 import com.mizan.gpa.notify.ReminderScheduler;
+import com.mizan.gpa.ui.views.TimetableView;
 import com.mizan.gpa.util.Fmt;
 import com.mizan.gpa.util.Ui;
 
@@ -52,6 +53,16 @@ public class ScheduleFragment extends BaseFragment {
         header = inflater.inflate(R.layout.header_schedule, h, false);
         h.addView(header);
         buildDayChips();
+        com.google.android.material.button.MaterialButtonToggleGroup mode = header.findViewById(R.id.view_mode);
+        mode.check("list".equals(data().settings.scheduleView) ? R.id.mode_list : R.id.mode_grid);
+        mode.addOnButtonCheckedListener((g, id, checked) -> {
+            if (!checked) return;
+            String value = id == R.id.mode_list ? "list" : "grid";
+            if (!value.equals(data().settings.scheduleView)) {
+                data().settings.scheduleView = value;
+                repo().save();
+            }
+        });
         return root;
     }
 
@@ -137,6 +148,13 @@ public class ScheduleFragment extends BaseFragment {
             banner.setVisibility(View.GONE);
         }
 
+        boolean grid = !"list".equals(d.settings.scheduleView);
+        header.findViewById(R.id.days_scroll).setVisibility(grid ? View.GONE : View.VISIBLE);
+        if (grid) {
+            renderGrid(list, cur);
+            return;
+        }
+
         List<Item> items = new ArrayList<>();
         for (int i = 0; i < cur.courses.size(); i++) {
             Course c = cur.courses.get(i);
@@ -173,6 +191,57 @@ public class ScheduleFragment extends BaseFragment {
             }
             list.addView(slotCard(list, it, it.slot.day == today && nowMin >= it.slot.start && nowMin < it.slot.end));
         }
+    }
+
+    private void renderGrid(LinearLayout list, Semester cur) {
+        List<TimetableView.Block> blocks = new ArrayList<>();
+        for (int i = 0; i < cur.courses.size(); i++) {
+            Course c = cur.courses.get(i);
+            for (LectureSlot s : c.lectures) {
+                // The card height already shows the duration, so narrow columns only need the start time.
+                String sub = Fmt.ltr(Fmt.clock(s.start))
+                        + (s.room == null || s.room.trim().isEmpty() ? "" : "\n" + s.room.trim());
+                TimetableView.Block b = new TimetableView.Block(s.day, s.start, s.end, Ui.courseColor(c.color, i),
+                        c.displayName(), sub, new Object[]{c, s});
+                b.shortTitle = c.code == null ? null : c.code.trim();
+                blocks.add(b);
+            }
+        }
+        if (blocks.isEmpty()) {
+            Rows.empty(root, R.drawable.ic_calendar, R.string.empty_schedule_title, R.string.empty_schedule_text,
+                    R.string.add_lecture, v -> addLecture());
+            return;
+        }
+        Rows.hideEmpty(root);
+        com.google.android.material.card.MaterialCardView card = new com.google.android.material.card.MaterialCardView(requireContext());
+        card.setCardBackgroundColor(Ui.attr(requireContext(), com.google.android.material.R.attr.colorSurface));
+        card.setStrokeWidth(0);
+        card.setCardElevation(0);
+        TimetableView tv = new TimetableView(requireContext());
+        tv.setData(blocks, Dialogs.orderedDays(), Fmt.toCalendarDay(LocalDate.now().getDayOfWeek()));
+        tv.setOnBlockClickListener(b -> {
+            Object[] pair = (Object[]) b.tag;
+            Course c = (Course) pair[0];
+            LectureSlot s = (LectureSlot) pair[1];
+            CharSequence[] actions = {getString(R.string.open_course), getString(R.string.mark_present_today),
+                    getString(R.string.mark_absent_today), getString(R.string.edit_lecture)};
+            Dialogs.show(new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(c.displayName())
+                    .setItems(actions, (d, which) -> {
+                        if (which == 0) {
+                            startActivity(CourseActivity.intent(requireContext(), c.id, CourseActivity.TAB_ATTENDANCE));
+                        } else if (which == 1 || which == 2) {
+                            String st = which == 1 ? AttendanceRecord.PRESENT : AttendanceRecord.ABSENT;
+                            Dialogs.quickRecord(requireContext(), c, st);
+                            Ui.snack(requireActivity(), getString(which == 1 ? R.string.recorded_present : R.string.recorded_absent, c.displayName()));
+                        } else {
+                            Dialogs.editLecture((AppCompatActivity) requireActivity(), cur, null, s, s.day);
+                        }
+                    }));
+        });
+        tv.setContentDescription(getString(R.string.schedule_mode_grid));
+        card.addView(tv);
+        list.addView(card);
     }
 
     private static int indexOf(int[] arr, int v) {

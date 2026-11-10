@@ -69,6 +69,22 @@
                 android:id="@+id/set_dynamic"
                 layout="@layout/view_setting_row" />
 
+            <include
+                android:id="@+id/set_palette"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_pure_black"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_font"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_font_size"
+                layout="@layout/view_setting_row" />
+
             <TextView
                 android:id="@+id/set_section_grading"
                 style="@style/Mizan.SectionTitle"

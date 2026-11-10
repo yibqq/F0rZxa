@@ -38,6 +38,7 @@ import com.mizan.gpa.data.Semester;
 import com.mizan.gpa.data.Settings;
 import com.mizan.gpa.notify.Notifier;
 import com.mizan.gpa.util.Fmt;
+import com.mizan.gpa.util.Fonts;
 import com.mizan.gpa.util.Ui;
 
 import java.time.Instant;
@@ -67,7 +68,7 @@ public final class Dialogs {
                 .setPositiveButton(positive, null)
                 .setNegativeButton(R.string.cancel, null);
         if (onDelete != null) b.setNeutralButton(R.string.delete, null);
-        AlertDialog d = b.show();
+        AlertDialog d = show(b);
         d.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (ok.apply()) d.dismiss();
         });
@@ -82,24 +83,33 @@ public final class Dialogs {
         return d;
     }
 
+    /** Shows a dialog and keeps its text in the app font. */
+    public static AlertDialog show(MaterialAlertDialogBuilder b) {
+        AlertDialog d = b.show();
+        if (d.getWindow() != null) {
+            View decor = d.getWindow().getDecorView();
+            Fonts.applyTree(decor);
+            decor.getViewTreeObserver().addOnGlobalLayoutListener(() -> Fonts.applyTree(decor));
+        }
+        return d;
+    }
+
     public static void confirm(Context ctx, CharSequence title, CharSequence message, @StringRes int positive, Runnable onYes) {
-        new MaterialAlertDialogBuilder(ctx)
+        show(new MaterialAlertDialogBuilder(ctx)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive, (d, w) -> onYes.run())
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                .setNegativeButton(R.string.cancel, null));
     }
 
     public static void choose(Context ctx, CharSequence title, CharSequence[] items, int checked, Consumer<Integer> onPick) {
-        new MaterialAlertDialogBuilder(ctx)
+        show(new MaterialAlertDialogBuilder(ctx)
                 .setTitle(title)
                 .setSingleChoiceItems(items, checked, (d, which) -> {
                     d.dismiss();
                     onPick.accept(which);
                 })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                .setNegativeButton(R.string.cancel, null));
     }
 
     static String text(TextInputEditText e) {

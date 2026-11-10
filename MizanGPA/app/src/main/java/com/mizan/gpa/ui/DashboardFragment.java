@@ -45,8 +45,8 @@ public class DashboardFragment extends BaseFragment {
             Repository.get(requireContext()).replace(SampleData.create(requireContext(), data().settings));
             Ui.snack(requireActivity(), getString(R.string.sample_loaded));
         });
-        Ui.dot(root.findViewById(R.id.legend_bar), ContextCompat.getColor(requireContext(), R.color.chart_bar));
-        Ui.dot(root.findViewById(R.id.legend_line), ContextCompat.getColor(requireContext(), R.color.chart_line));
+        Ui.dot(root.findViewById(R.id.legend_bar), TrendChartView.barColor(root));
+        Ui.dot(root.findViewById(R.id.legend_line), TrendChartView.lineColor(root));
         root.findViewById(R.id.hero).setOnClickListener(v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_semesters));
         return root;
     }
@@ -64,35 +64,65 @@ public class DashboardFragment extends BaseFragment {
         double max = st.scale.maxPoints();
         GpaCalculator.Totals cum = GpaCalculator.cumulative(d, GradeResolver.Mode.OFFICIAL);
         GpaCalculator.Totals cumExp = GpaCalculator.cumulative(d, GradeResolver.Mode.EXPECTED);
+        styleHero();
         GpaRingView ring = root.findViewById(R.id.ring);
         ring.setValue(cum.gpa(), max, getString(R.string.out_of_fmt, Fmt.gpa(max)));
-        ((TextView) root.findViewById(R.id.hero_semester_name)).setText(cur != null
-                ? getString(R.string.current_semester_fmt, cur.name) : "");
+        TextView semName = root.findViewById(R.id.hero_semester_name);
+        semName.setText(cur != null ? cur.name : "");
+        semName.setVisibility(cur != null ? View.VISIBLE : View.GONE);
+
+        // Change of the cumulative GPA since the previous completed semester.
+        TextView trendText = root.findViewById(R.id.hero_trend);
+        List<GpaCalculator.TrendPoint> official = new ArrayList<>();
+        for (GpaCalculator.TrendPoint p : GpaCalculator.trend(d)) if (!p.projected) official.add(p);
+        if (official.size() >= 2) {
+            double delta = official.get(official.size() - 1).cumulativeGpa - official.get(official.size() - 2).cumulativeGpa;
+            String arrow = delta > 0.0049 ? "▲" : delta < -0.0049 ? "▼" : "●";
+            trendText.setText(getString(R.string.hero_trend, arrow, Fmt.ltr(Fmt.gpa(Math.abs(delta)))));
+            trendText.setVisibility(View.VISIBLE);
+        } else {
+            trendText.setVisibility(View.GONE);
+        }
 
         String semText = Fmt.DASH;
         if (cur != null) {
             GpaCalculator.Totals off = GpaCalculator.semester(cur, st, GradeResolver.Mode.OFFICIAL);
             GpaCalculator.Totals exp = GpaCalculator.semester(cur, st, GradeResolver.Mode.EXPECTED);
-            if (exp.credits > off.credits + 1e-9 && !Double.isNaN(exp.gpa())) semText = "≈ " + Fmt.gpa(exp.gpa());
+            if (exp.credits > off.credits + 1e-9 && !Double.isNaN(exp.gpa())) semText = "≈" + Fmt.gpa(exp.gpa());
             else semText = Fmt.gpa(off.gpa());
         }
-        Rows.kv(root.findViewById(R.id.hero_row_semester), getString(R.string.semester_gpa), semText);
-        Rows.kv(root.findViewById(R.id.hero_row_expected), getString(R.string.expected_cumulative), Fmt.gpa(cumExp.gpa()));
-        Rows.kv(root.findViewById(R.id.hero_row_credits), getString(R.string.completed_credits), Fmt.num(cum.credits));
+        pill(R.id.pill_semester, semText, getString(R.string.semester_gpa));
+        pill(R.id.pill_expected, Fmt.gpa(cumExp.gpa()), getString(R.string.pill_expected));
+        pill(R.id.pill_credits, Fmt.num(cum.credits), getString(R.string.pill_credits));
 
         // Tiles
+        int primary = Ui.attr(requireContext(), androidx.appcompat.R.attr.colorPrimary);
+        int tertiary = Ui.attr(requireContext(), com.google.android.material.R.attr.colorTertiary);
         int courses = cur == null ? 0 : cur.courses.size();
-        tile(R.id.tile_courses, R.drawable.ic_school, String.valueOf(courses),
-                getString(R.string.tile_courses, cur == null ? 0 : (int) Math.round(cur.totalCredits())), null);
+        tile(R.id.tile_courses, R.drawable.ic_school, primary, String.valueOf(courses), getString(R.string.tile_courses_label),
+                Labels.credits(requireContext(), cur == null ? 0 : cur.totalCredits()), null);
+
+        Course risky = Insights.mostAtRisk(d);
         int risks = Insights.countAttendanceRisks(d);
-        tile(R.id.tile_attendance, risks > 0 ? R.drawable.ic_warning : R.drawable.ic_event_available, String.valueOf(risks),
-                getString(R.string.tile_attendance), v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_attendance));
-        tile(R.id.tile_target, R.drawable.ic_flag, st.targetGpa > 0 ? Fmt.gpa(st.targetGpa) : Fmt.DASH,
-                getString(st.targetGpa > 0 ? R.string.tile_target : R.string.tile_set_target),
+        int riskColor = ContextCompat.getColor(requireContext(), risks == 0 ? R.color.status_excellent
+                : Insights.hasDeprivation(d) ? R.color.status_danger : R.color.status_warning);
+        tile(R.id.tile_attendance, risks > 0 ? R.drawable.ic_warning : R.drawable.ic_check_circle, riskColor, String.valueOf(risks),
+                getString(R.string.tile_attendance), risky != null ? risky.displayName() : getString(R.string.tile_attendance_ok),
+                v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_attendance));
+
+        String targetCaption;
+        if (st.targetGpa <= 0) {
+            targetCaption = getString(R.string.tile_target_tap);
+        } else {
+            double req = GpaCalculator.requiredGpa(cum, st.targetGpa, GpaCalculator.inProgressCredits(cur));
+            if (Double.isNaN(req)) targetCaption = cum.gpa() >= st.targetGpa ? getString(R.string.tile_target_reached) : Fmt.DASH;
+            else if (req > max + 1e-9) targetCaption = getString(R.string.tile_target_far);
+            else if (req <= st.scale.minPoints() + 1e-9) targetCaption = getString(R.string.tile_target_reached);
+            else targetCaption = getString(R.string.tile_target_needs, Fmt.gpa(req));
+        }
+        tile(R.id.tile_target, R.drawable.ic_flag, tertiary, st.targetGpa > 0 ? Fmt.gpa(st.targetGpa) : Fmt.DASH,
+                getString(R.string.tile_target), targetCaption,
                 v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_forecast));
-        ImageView attIcon = root.findViewById(R.id.tile_attendance).findViewById(R.id.tile_icon);
-        attIcon.setImageTintList(Ui.csl(risks > 0 ? ContextCompat.getColor(requireContext(), R.color.status_warning)
-                : Ui.attr(requireContext(), androidx.appcompat.R.attr.colorPrimary)));
 
         // Alerts
         LinearLayout alerts = root.findViewById(R.id.alerts);
@@ -163,13 +193,57 @@ public class DashboardFragment extends BaseFragment {
         return v;
     }
 
-    private void tile(int id, int icon, String value, String label, View.OnClickListener click) {
+    private void tile(int id, int icon, int color, String value, String label, String caption, View.OnClickListener click) {
         View t = root.findViewById(id);
-        ((ImageView) t.findViewById(R.id.tile_icon)).setImageResource(icon);
-        ((TextView) t.findViewById(R.id.tile_value)).setText(value);
+        ((com.google.android.material.card.MaterialCardView) t).setCardBackgroundColor(
+                Ui.blend(Ui.attr(requireContext(), com.google.android.material.R.attr.colorSurfaceContainerLow), color, 0.09f));
+        ImageView iv = t.findViewById(R.id.tile_icon);
+        iv.setImageResource(icon);
+        iv.setImageTintList(Ui.csl(color));
+        Ui.dot(t.findViewById(R.id.tile_icon_bg), Ui.withAlpha(color, 0.16f));
+        TextView v = t.findViewById(R.id.tile_value);
+        v.setText(value);
+        v.setTextColor(color);
         ((TextView) t.findViewById(R.id.tile_label)).setText(label);
+        ((TextView) t.findViewById(R.id.tile_caption)).setText(caption);
         t.setOnClickListener(click);
         t.setClickable(click != null);
+    }
+
+    /** Gradient background and readable text colors for the hero card in the current palette. */
+    private void styleHero() {
+        android.content.Context c = requireContext();
+        boolean night = com.mizan.gpa.util.Themes.isNight(c);
+        int from = Ui.attr(c, night ? com.google.android.material.R.attr.colorPrimaryContainer : androidx.appcompat.R.attr.colorPrimary);
+        int to = Ui.blend(from, Ui.attr(c, night ? com.google.android.material.R.attr.colorTertiaryContainer
+                : com.google.android.material.R.attr.colorTertiary), 0.55f);
+        int text = Ui.attr(c, night ? com.google.android.material.R.attr.colorOnPrimaryContainer
+                : com.google.android.material.R.attr.colorOnPrimary);
+        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
+                Ui.isRtl(c) ? android.graphics.drawable.GradientDrawable.Orientation.TR_BL
+                        : android.graphics.drawable.GradientDrawable.Orientation.TL_BR, new int[]{from, to});
+        g.setCornerRadius(Ui.dp(c, 28));
+        root.findViewById(R.id.hero_bg).setBackground(g);
+        ((TextView) root.findViewById(R.id.hero_label)).setTextColor(text);
+        TextView chip = root.findViewById(R.id.hero_semester_name);
+        chip.setTextColor(text);
+        Ui.roundedFill(chip, Ui.withAlpha(text, 0.16f), 100);
+        ((TextView) root.findViewById(R.id.hero_trend)).setTextColor(Ui.withAlpha(text, 0.85f));
+        ((GpaRingView) root.findViewById(R.id.ring)).setColors(text, text);
+        heroText = text;
+    }
+
+    private int heroText;
+
+    private void pill(int id, String value, String label) {
+        View p = root.findViewById(id);
+        Ui.roundedFill(p, Ui.withAlpha(heroText, 0.14f), 18);
+        TextView v = p.findViewById(R.id.pill_value);
+        v.setText(value);
+        v.setTextColor(heroText);
+        TextView l = p.findViewById(R.id.pill_label);
+        l.setText(label);
+        l.setTextColor(Ui.withAlpha(heroText, 0.8f));
     }
 
     private void openAlert(Insights.Alert a) {

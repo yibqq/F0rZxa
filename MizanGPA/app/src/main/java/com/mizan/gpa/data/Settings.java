@@ -41,6 +41,17 @@ public class Settings {
     public boolean onboarded = false;
     public boolean notificationsAsked = false;
 
+    /** Font id (see Fonts): a bundled font, "system", or "file:<family>" for an imported font. */
+    public String fontId = "tajawal";
+    /** Text size multiplier applied on top of the system font size. */
+    public float fontScale = 1f;
+    /** Color palette id (see Themes). */
+    public String colorTheme = "teal";
+    /** Pure black backgrounds in dark mode. */
+    public boolean pureBlack = false;
+    /** Schedule tab layout: "list" or "grid". */
+    public String scheduleView = "grid";
+
     public JSONObject toJson() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("scale", scale.toJson());
@@ -64,6 +75,11 @@ public class Settings {
         o.put("defaultWeeks", defaultWeeks);
         o.put("onboarded", onboarded);
         o.put("notificationsAsked", notificationsAsked);
+        o.put("fontId", fontId);
+        o.put("fontScale", (double) fontScale);
+        o.put("colorTheme", colorTheme);
+        o.put("pureBlack", pureBlack);
+        o.put("scheduleView", scheduleView);
         return o;
     }
 
@@ -91,6 +107,11 @@ public class Settings {
         s.defaultWeeks = Math.max(1, Json.integer(o, "defaultWeeks", 15));
         s.onboarded = Json.bool(o, "onboarded", false);
         s.notificationsAsked = Json.bool(o, "notificationsAsked", false);
+        s.fontId = Json.str(o, "fontId", "tajawal");
+        s.fontScale = (float) clamp(Json.num(o, "fontScale", 1), 0.8, 1.4);
+        s.colorTheme = Json.str(o, "colorTheme", "teal");
+        s.pureBlack = Json.bool(o, "pureBlack", false);
+        s.scheduleView = Json.str(o, "scheduleView", "grid");
         return s;
     }
 

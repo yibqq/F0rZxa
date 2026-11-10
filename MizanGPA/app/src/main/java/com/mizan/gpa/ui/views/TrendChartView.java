@@ -13,10 +13,8 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.color.MaterialColors;
-import com.mizan.gpa.R;
 import com.mizan.gpa.util.Fmt;
 import com.mizan.gpa.util.Ui;
 
@@ -68,12 +66,12 @@ public class TrendChartView extends View {
 
     public TrendChartView(Context c, @Nullable AttributeSet a) {
         super(c, a);
-        int bar = ContextCompat.getColor(c, R.color.chart_bar);
-        int line = ContextCompat.getColor(c, R.color.chart_line);
+        int bar = barColor(this);
+        int line = lineColor(this);
         int onVar = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant);
         int surface = MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceContainerLow);
         barPaint.setColor(bar);
-        barProjected.setColor(Ui.withAlpha(bar, 0.45f));
+        barProjected.setColor(Ui.withAlpha(bar, 0.22f));
         linePaint.setColor(line);
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeWidth(Ui.dp(c, 2.5f));
@@ -90,7 +88,18 @@ public class TrendChartView extends View {
         valueText.setColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface));
         valueText.setTextSize(Ui.dp(c, 11));
         valueText.setTextAlign(Paint.Align.CENTER);
-        valueText.setFakeBoldText(true);
+        com.mizan.gpa.util.Fonts.apply(axisText, c, 400);
+        com.mizan.gpa.util.Fonts.apply(valueText, c, 700);
+    }
+
+    /** Bar color: the theme's primary color, softened. */
+    public static int barColor(View v) {
+        return Ui.withAlpha(MaterialColors.getColor(v, androidx.appcompat.R.attr.colorPrimary), 0.55f);
+    }
+
+    /** Line color: the theme's tertiary color. */
+    public static int lineColor(View v) {
+        return MaterialColors.getColor(v, com.google.android.material.R.attr.colorTertiary);
     }
 
     public void setData(List<Point> data, double maxPoints) {

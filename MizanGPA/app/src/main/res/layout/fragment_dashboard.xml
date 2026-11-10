@@ -78,59 +78,97 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
-            <!-- Hero: cumulative GPA -->
+            <!-- Hero: cumulative GPA on a gradient, with three stat pills -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/hero"
                 style="@style/Widget.Mizan.Card.Hero"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true">
 
                 <LinearLayout
+                    android:id="@+id/hero_bg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="20dp">
 
-                    <com.mizan.gpa.ui.views.GpaRingView
-                        android:id="@+id/ring"
-                        android:layout_width="@dimen/ring_size"
-                        android:layout_height="@dimen/ring_size" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/hero_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cumulative_gpa"
+                                android:textAppearance="?attr/textAppearanceTitleLarge"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/hero_semester_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:drawablePadding="6dp"
+                                android:gravity="center_vertical"
+                                android:paddingStart="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="4dp"
+                                android:textAppearance="?attr/textAppearanceLabelLarge" />
+
+                            <TextView
+                                android:id="@+id/hero_trend"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:textAppearance="?attr/textAppearanceBodySmall" />
+                        </LinearLayout>
+
+                        <com.mizan.gpa.ui.views.GpaRingView
+                            android:id="@+id/ring"
+                            android:layout_width="@dimen/ring_size"
+                            android:layout_height="@dimen/ring_size"
+                            android:layout_marginStart="12dp" />
+                    </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/cumulative_gpa"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"
-                            android:textColor="?attr/colorOnPrimaryContainer" />
-
-                        <TextView
-                            android:id="@+id/hero_semester_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:alpha="0.75"
-                            android:textAppearance="?attr/textAppearanceBodySmall"
-                            android:textColor="?attr/colorOnPrimaryContainer" />
+                        android:layout_marginTop="18dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <include
-                            android:id="@+id/hero_row_semester"
-                            layout="@layout/view_kv_row" />
+                            android:id="@+id/pill_semester"
+                            layout="@layout/view_hero_pill" />
+
+                        <Space
+                            android:layout_width="10dp"
+                            android:layout_height="1dp" />
 
                         <include
-                            android:id="@+id/hero_row_expected"
-                            layout="@layout/view_kv_row" />
+                            android:id="@+id/pill_expected"
+                            layout="@layout/view_hero_pill" />
+
+                        <Space
+                            android:layout_width="10dp"
+                            android:layout_height="1dp" />
 
                         <include
-                            android:id="@+id/hero_row_credits"
-                            layout="@layout/view_kv_row" />
+                            android:id="@+id/pill_credits"
+                            layout="@layout/view_hero_pill" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

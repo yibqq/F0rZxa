@@ -122,6 +122,16 @@ public final class Ui {
         return Color.argb(Math.round(alpha * 255), Color.red(color), Color.green(color), Color.blue(color));
     }
 
+    /** Mixes {@code b} into {@code a}; ratio 0 = a, 1 = b. */
+    public static int blend(int a, int b, float ratio) {
+        float r = 1 - ratio;
+        return Color.argb(
+                Math.round(Color.alpha(a) * r + Color.alpha(b) * ratio),
+                Math.round(Color.red(a) * r + Color.red(b) * ratio),
+                Math.round(Color.green(a) * r + Color.green(b) * ratio),
+                Math.round(Color.blue(a) * r + Color.blue(b) * ratio));
+    }
+
     public static ColorStateList csl(int color) {
         return ColorStateList.valueOf(color);
     }

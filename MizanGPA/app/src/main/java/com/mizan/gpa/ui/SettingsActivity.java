@@ -28,10 +28,12 @@ import com.mizan.gpa.export.DataTransfer;
 import com.mizan.gpa.export.SampleData;
 import com.mizan.gpa.notify.Notifier;
 import com.mizan.gpa.notify.ReminderScheduler;
+import com.mizan.gpa.util.Fonts;
 import com.mizan.gpa.util.Fmt;
 
 public class SettingsActivity extends BaseActivity {
     private DataTransfer transfer;
+    private ActivityResultLauncher<String[]> fontPicker;
     private ActivityResultLauncher<String> notificationPermission;
 
     @Override
@@ -40,6 +42,22 @@ public class SettingsActivity extends BaseActivity {
         setContentView(R.layout.activity_settings);
         setupChrome(true);
         transfer = new DataTransfer(this);
+        fontPicker = registerForActivityResult(new ActivityResultContracts.OpenMultipleDocuments(), uris -> {
+            if (uris == null || uris.isEmpty()) return;
+            try {
+                String id = Fonts.importFonts(this, uris);
+                if (id == null) {
+                    com.mizan.gpa.util.Ui.snack(this, getString(R.string.font_import_failed));
+                    return;
+                }
+                st().fontId = id;
+                save();
+                Fonts.invalidate();
+                recreate();
+            } catch (java.io.IOException e) {
+                com.mizan.gpa.util.Ui.snack(this, getString(R.string.font_import_failed));
+            }
+        });
         notificationPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> render());
 
         section(R.id.set_section_profile, R.string.section_profile);
@@ -81,6 +99,25 @@ public class SettingsActivity extends BaseActivity {
             recreate();
         });
         findViewById(R.id.set_dynamic).setVisibility(DynamicColors.isDynamicColorAvailable() ? View.VISIBLE : View.GONE);
+        row(R.id.set_palette, R.drawable.ic_palette, R.string.set_palette, v -> choosePalette());
+        row(R.id.set_pure_black, R.drawable.ic_dark_mode, R.string.set_pure_black, v -> {
+            st().pureBlack = !st().pureBlack;
+            save();
+            if (com.mizan.gpa.util.Themes.isNight(this)) recreate();
+        });
+        row(R.id.set_font, R.drawable.ic_translate, R.string.set_font, v -> chooseFont());
+        row(R.id.set_font_size, R.drawable.ic_tune, R.string.set_font_size, v -> {
+            float[] values = {0.9f, 1f, 1.15f, 1.3f};
+            CharSequence[] items = {getString(R.string.size_small), getString(R.string.size_default),
+                    getString(R.string.size_large), getString(R.string.size_larger)};
+            int checked = 1;
+            for (int i = 0; i < values.length; i++) if (Math.abs(values[i] - st().fontScale) < 0.01f) checked = i;
+            Dialogs.choose(this, getString(R.string.set_font_size), items, checked, which -> {
+                st().fontScale = values[which];
+                save();
+                recreate();
+            });
+        });
 
         row(R.id.set_scale, R.drawable.ic_star, R.string.grade_scale, v -> startActivity(new Intent(this, GradeScaleActivity.class)));
         row(R.id.set_round, R.drawable.ic_tune, R.string.set_round, v -> {
@@ -201,6 +238,125 @@ public class SettingsActivity extends BaseActivity {
         row(R.id.set_about, R.drawable.ic_info, R.string.about_title, null);
     }
 
+    private void choosePalette() {
+        android.view.View content = getLayoutInflater().inflate(R.layout.dialog_palette, null);
+        com.google.android.material.chip.ChipGroup group = content.findViewById(R.id.palettes);
+        androidx.appcompat.app.AlertDialog[] dialog = new androidx.appcompat.app.AlertDialog[1];
+        for (com.mizan.gpa.util.Themes.Palette p : com.mizan.gpa.util.Themes.PALETTES) {
+            com.google.android.material.chip.Chip chip = new com.google.android.material.chip.Chip(this);
+            chip.setText(p.name);
+            chip.setCheckable(true);
+            chip.setChecked(p.id.equals(st().colorTheme) && !st().dynamicColor);
+            android.graphics.drawable.GradientDrawable dot = new android.graphics.drawable.GradientDrawable();
+            dot.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            dot.setColor(p.swatch);
+            dot.setSize(com.mizan.gpa.util.Ui.dp(this, 18), com.mizan.gpa.util.Ui.dp(this, 18));
+            chip.setChipIcon(dot);
+            chip.setChipIconVisible(true);
+            chip.setCheckedIconVisible(false);
+            chip.setChipMinHeight(com.mizan.gpa.util.Ui.dp(this, 44));
+            chip.setOnClickListener(x -> {
+                st().colorTheme = p.id;
+                st().dynamicColor = false;
+                save();
+                if (dialog[0] != null) dialog[0].dismiss();
+                recreate();
+            });
+            group.addView(chip);
+        }
+        dialog[0] = Dialogs.show(new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.set_palette)
+                .setView(content)
+                .setNegativeButton(R.string.cancel, null));
+    }
+
+    private void chooseFont() {
+        android.widget.LinearLayout list = new android.widget.LinearLayout(this);
+        list.setOrientation(android.widget.LinearLayout.VERTICAL);
+        list.setPadding(0, com.mizan.gpa.util.Ui.dp(this, 8), 0, com.mizan.gpa.util.Ui.dp(this, 8));
+        androidx.core.widget.NestedScrollView scroll = new androidx.core.widget.NestedScrollView(this);
+        scroll.addView(list);
+        androidx.appcompat.app.AlertDialog[] dialog = new androidx.appcompat.app.AlertDialog[1];
+        String current = st().fontId;
+        String sample = getString(R.string.font_sample);
+
+        java.util.List<Object> entries = new java.util.ArrayList<>();
+        entries.add(Fonts.SYSTEM);
+        entries.addAll(Fonts.families(this));
+        for (Object e : entries) {
+            android.view.View row = getLayoutInflater().inflate(R.layout.item_font, list, false);
+            TextView name = row.findViewById(R.id.f_name);
+            TextView preview = row.findViewById(R.id.f_preview);
+            name.setTag(R.id.font_fixed, true);
+            preview.setTag(R.id.font_fixed, true);
+            String id;
+            if (e instanceof Fonts.Family) {
+                Fonts.Family f = (Fonts.Family) e;
+                id = f.id;
+                name.setText(f.imported ? getString(R.string.font_imported_name, f.name) : f.name);
+                android.graphics.Typeface[] faces = Fonts.preview(this, f);
+                if (faces != null && faces[0] != null) {
+                    name.setTypeface(faces[1] != null ? faces[1] : faces[0]);
+                    preview.setTypeface(faces[0]);
+                }
+                if (f.imported) {
+                    android.view.View del = row.findViewById(R.id.f_delete);
+                    del.setVisibility(View.VISIBLE);
+                    del.setOnClickListener(x -> Dialogs.confirm(this, getString(R.string.font_delete_title, f.name),
+                            getString(R.string.font_delete_text), R.string.delete, () -> {
+                                Fonts.deleteFamily(this, f.id);
+                                if (f.id.equals(st().fontId)) {
+                                    st().fontId = Fonts.DEFAULT;
+                                    save();
+                                }
+                                if (dialog[0] != null) dialog[0].dismiss();
+                                Fonts.invalidate();
+                                recreate();
+                            }));
+                }
+            } else {
+                id = Fonts.SYSTEM;
+                name.setText(R.string.font_system);
+                name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+                preview.setTypeface(android.graphics.Typeface.DEFAULT);
+            }
+            preview.setText(sample);
+            row.findViewById(R.id.f_check).setVisibility(id.equals(current) ? View.VISIBLE : View.INVISIBLE);
+            row.setOnClickListener(x -> {
+                if (dialog[0] != null) dialog[0].dismiss();
+                if (id.equals(st().fontId)) return;
+                st().fontId = id;
+                save();
+                Fonts.invalidate();
+                recreate();
+            });
+            list.addView(row);
+        }
+        // Import a font file (any OTF/TTF), with a note about Thmanyah's font.
+        android.view.View add = getLayoutInflater().inflate(R.layout.item_font, list, false);
+        ((android.widget.ImageView) add.findViewById(R.id.f_check)).setImageResource(R.drawable.ic_add);
+        ((TextView) add.findViewById(R.id.f_name)).setText(R.string.font_add);
+        ((TextView) add.findViewById(R.id.f_preview)).setText(R.string.font_add_hint);
+        add.setOnClickListener(x -> {
+            if (dialog[0] != null) dialog[0].dismiss();
+            launchFontPicker();
+        });
+        list.addView(add);
+        dialog[0] = Dialogs.show(new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.set_font)
+                .setView(scroll)
+                .setNegativeButton(R.string.cancel, null));
+    }
+
+    private void launchFontPicker() {
+        try {
+            fontPicker.launch(new String[]{"font/ttf", "font/otf", "font/sfnt", "application/x-font-ttf",
+                    "application/x-font-otf", "application/vnd.ms-opentype", "application/font-sfnt", "application/octet-stream"});
+        } catch (android.content.ActivityNotFoundException e) {
+            com.mizan.gpa.util.Ui.snack(this, getString(R.string.no_file_picker));
+        }
+    }
+
     private Settings st() {
         return repo().settings();
     }
@@ -250,6 +406,13 @@ public class SettingsActivity extends BaseActivity {
         summary(R.id.set_language, lang.startsWith("ar") ? "العربية" : lang.startsWith("en") ? "English" : getString(R.string.language_system));
         summary(R.id.set_dynamic, getString(R.string.set_dynamic_summary));
         toggle(R.id.set_dynamic, st.dynamicColor);
+        summary(R.id.set_palette, st.dynamicColor ? getString(R.string.set_dynamic)
+                : getString(com.mizan.gpa.util.Themes.find(st.colorTheme).name));
+        summary(R.id.set_pure_black, getString(R.string.set_pure_black_summary));
+        toggle(R.id.set_pure_black, st.pureBlack);
+        summary(R.id.set_font, Fonts.displayName(this, st.fontId));
+        summary(R.id.set_font_size, getString(st.fontScale < 0.95f ? R.string.size_small : st.fontScale < 1.05f ? R.string.size_default
+                : st.fontScale < 1.2f ? R.string.size_large : R.string.size_larger));
 
         summary(R.id.set_scale, getString(R.string.scale_summary, Labels.presetName(this, st.scale.preset), Fmt.gpa(st.scale.maxPoints())));
         summary(R.id.set_round, getString(R.string.set_round_summary));

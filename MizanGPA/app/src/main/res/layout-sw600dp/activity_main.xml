@@ -28,13 +28,10 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:liftOnScroll="true"
+            app:liftOnScrollColor="?attr/colorSurfaceContainer"
             app:liftOnScrollTargetViewId="@id/scroll">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:titleTextAppearance="?attr/textAppearanceTitleLarge" />
+            <include layout="@layout/view_main_header" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout

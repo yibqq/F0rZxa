@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -48,13 +47,12 @@ public final class PdfReport {
     private float y;
     private int pageNo;
 
-    private final TextPaint title = paint(20, true, Color.WHITE);
-    private final TextPaint h2 = paint(13, true, TEXT);
-    private final TextPaint body = paint(9.5f, false, TEXT);
-    private final TextPaint bold = paint(9.5f, true, TEXT);
-    private final TextPaint muted = paint(8.5f, false, MUTED);
-    private final TextPaint headerCell = paint(8.5f, true, BRAND);
-    private final TextPaint big = paint(18, true, BRAND);
+    private final TextPaint title;
+    private final TextPaint h2;
+    private final TextPaint body;
+    private final TextPaint muted;
+    private final TextPaint headerCell;
+    private final TextPaint big;
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     /** Receives the report pages; production writes a PdfDocument, tests can draw to bitmaps. */
@@ -69,6 +67,12 @@ public final class PdfReport {
         this.data = data;
         this.rtl = Ui.isRtl(ctx);
         this.sink = sink;
+        title = paint(20, true, Color.WHITE);
+        h2 = paint(13, true, TEXT);
+        body = paint(9.5f, false, TEXT);
+        muted = paint(8.5f, false, MUTED);
+        headerCell = paint(8.5f, true, BRAND);
+        big = paint(18, true, BRAND);
     }
 
     public static void write(Context ctx, AppData data, OutputStream out) throws IOException {
@@ -99,11 +103,11 @@ public final class PdfReport {
         new PdfReport(ctx, data, sink).render();
     }
 
-    private static TextPaint paint(float size, boolean b, int color) {
+    private TextPaint paint(float size, boolean b, int color) {
         TextPaint p = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         p.setTextSize(size);
         p.setColor(color);
-        p.setTypeface(Typeface.create(Typeface.SANS_SERIF, b ? Typeface.BOLD : Typeface.NORMAL));
+        com.mizan.gpa.util.Fonts.apply(p, ctx, b ? 700 : 400);
         return p;
     }
 

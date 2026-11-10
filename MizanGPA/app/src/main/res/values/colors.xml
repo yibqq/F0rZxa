@@ -38,6 +38,4 @@
     <color name="status_good">#2A73C9</color>
     <color name="status_warning">#C77A00</color>
     <color name="status_danger">#D2342F</color>
-    <color name="chart_bar">#7FD1C9</color>
-    <color name="chart_line">#465D91</color>
 </resources>

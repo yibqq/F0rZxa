@@ -8,10 +8,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.color.MaterialColors;
-import com.mizan.gpa.R;
 import com.mizan.gpa.util.Ui;
 
 /** A horizontal scale from 0 to max with the worst..best range highlighted and a marker at the expected value. */
@@ -30,7 +28,7 @@ public class RangeBarView extends View {
     public RangeBarView(Context c, @Nullable AttributeSet a) {
         super(c, a);
         track.setColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceContainerHighest));
-        range.setColor(Ui.withAlpha(ContextCompat.getColor(c, R.color.status_good), 0.55f));
+        range.setColor(Ui.withAlpha(MaterialColors.getColor(this, com.google.android.material.R.attr.colorTertiary), 0.45f));
         marker.setColor(MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary));
         markerRing.setColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceContainerLow));
     }

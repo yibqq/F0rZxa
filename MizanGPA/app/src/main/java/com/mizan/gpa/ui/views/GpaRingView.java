@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -45,7 +44,8 @@ public class GpaRingView extends View {
         arc.setStyle(Paint.Style.STROKE);
         arc.setStrokeCap(Paint.Cap.ROUND);
         valuePaint.setTextAlign(Paint.Align.CENTER);
-        valuePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        com.mizan.gpa.util.Fonts.apply(valuePaint, c, 700);
+        com.mizan.gpa.util.Fonts.apply(subPaint, c, 400);
         subPaint.setTextAlign(Paint.Align.CENTER);
         int onSurface = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimaryContainer);
         valuePaint.setColor(onSurface);
