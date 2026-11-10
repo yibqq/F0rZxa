@@ -40,6 +40,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Reposito
         super.onCreate(savedInstanceState);
         Settings st = Repository.get(this).settings();
         Themes.apply(this, st);
+        // EdgeToEdge created the window before the palette overlay was applied, so its background still
+        // comes from the base theme. Repaint it from the themed background color.
+        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(
+                Ui.attr(this, android.R.attr.colorBackground)));
         styleKey = Themes.styleKey(st);
     }
 

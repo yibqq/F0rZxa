@@ -119,6 +119,23 @@ public class ScreenshotTest {
                 save(a.getWindow().getDecorView(), "theme-ocean-plex-home");
             });
         }
+        try (ActivityScenario<SettingsActivity> sc = ActivityScenario.launch(SettingsActivity.class)) {
+            sc.onActivity(a -> {
+                settle();
+                save(a.getWindow().getDecorView(), "theme-ocean-settings");
+            });
+        }
+        Semester cur = Repository.get(ctx).data().currentSemester();
+        for (int tab = 0; tab < 4; tab++) {
+            int t = tab;
+            try (ActivityScenario<CourseActivity> sc = ActivityScenario.launch(CourseActivity.intent(ctx, cur.courses.get(3).id, tab))) {
+                sc.onActivity(a -> {
+                    ((ViewPager2) a.findViewById(R.id.pager)).setCurrentItem(t, false);
+                    settle();
+                    save(a.getWindow().getDecorView(), "theme-ocean-course-tab" + t);
+                });
+            }
+        }
     }
 
     @Test
