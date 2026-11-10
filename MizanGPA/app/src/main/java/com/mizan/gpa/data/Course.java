@@ -30,6 +30,7 @@ public class Course {
     public final List<Assessment> assessments = new ArrayList<>();
     public final List<AttendanceRecord> attendance = new ArrayList<>();
     public final List<LectureSlot> lectures = new ArrayList<>();
+    public final List<Exam> exams = new ArrayList<>();
 
     public boolean isCompleted() {
         return finalGrade != null;
@@ -47,6 +48,11 @@ public class Course {
 
     public AttendanceRecord findRecord(String rid) {
         for (AttendanceRecord r : attendance) if (r.id.equals(rid)) return r;
+        return null;
+    }
+
+    public Exam findExam(String eid) {
+        for (Exam x : exams) if (x.id.equals(eid)) return x;
         return null;
     }
 
@@ -78,6 +84,9 @@ public class Course {
         JSONArray l = new JSONArray();
         for (LectureSlot x : lectures) l.put(x.toJson());
         o.put("lectures", l);
+        JSONArray e = new JSONArray();
+        for (Exam x : exams) e.put(x.toJson());
+        o.put("exams", e);
         return o;
     }
 
@@ -102,6 +111,8 @@ public class Course {
         for (int i = 0; i < r.length(); i++) if (r.optJSONObject(i) != null) c.attendance.add(AttendanceRecord.fromJson(r.optJSONObject(i)));
         JSONArray l = Json.arr(o, "lectures");
         for (int i = 0; i < l.length(); i++) if (l.optJSONObject(i) != null) c.lectures.add(LectureSlot.fromJson(l.optJSONObject(i)));
+        JSONArray e = Json.arr(o, "exams");
+        for (int i = 0; i < e.length(); i++) if (e.optJSONObject(i) != null) c.exams.add(Exam.fromJson(e.optJSONObject(i)));
         return c;
     }
 }

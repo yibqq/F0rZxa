@@ -278,6 +278,44 @@ public class CalculatorsTest {
         assertEquals(4.5, t.get(1).cumulativeGpa, D);
     }
 
+    @Test
+    public void examReminderTimes() {
+        Settings st = new Settings();
+        st.examDaysBefore.clear();
+        st.examDaysBefore.add(1);
+        st.examDaysBefore.add(2);
+        st.examMinutesBefore.clear();
+        st.examMinutesBefore.add(60);
+        st.examMinutesBefore.add(0);
+        st.examDayTime = 20 * 60;
+        com.mizan.gpa.data.Exam e = new com.mizan.gpa.data.Exam();
+        e.date = "2026-12-10";
+        e.start = 9 * 60 + 30;
+        List<com.mizan.gpa.calc.ExamReminders.Trigger> t = com.mizan.gpa.calc.ExamReminders.triggers(e, st);
+        assertEquals(4, t.size());
+        assertEquals("2026-12-08T20:00", t.get(0).at.toString());   // two days before, 8 PM
+        assertEquals("2026-12-09T20:00", t.get(1).at.toString());   // the evening before
+        assertEquals("2026-12-10T08:30", t.get(2).at.toString());   // one hour before
+        assertEquals("2026-12-10T09:30", t.get(3).at.toString());   // at the start
+        assertTrue(t.get(0).dayKind);
+        assertFalse(t.get(3).dayKind);
+
+        // An exam with its own reminders ignores the defaults.
+        e.customReminders = true;
+        e.minutesBefore.add(30);
+        t = com.mizan.gpa.calc.ExamReminders.triggers(e, st);
+        assertEquals(1, t.size());
+        assertEquals("2026-12-10T09:00", t.get(0).at.toString());
+
+        // Reminders crossing a month boundary.
+        e.customReminders = false;
+        e.date = "2027-01-01";
+        e.start = 30;
+        t = com.mizan.gpa.calc.ExamReminders.triggers(e, st);
+        assertEquals("2026-12-30T20:00", t.get(0).at.toString());
+        assertEquals("2026-12-31T23:30", t.get(2).at.toString());   // one hour before 00:30
+    }
+
     private static AttendanceRecord rec(String status, int sessions) {
         AttendanceRecord r = new AttendanceRecord();
         r.status = status;

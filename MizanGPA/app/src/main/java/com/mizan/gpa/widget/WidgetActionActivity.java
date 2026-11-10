@@ -25,6 +25,8 @@ public class WidgetActionActivity extends Activity {
     static final String ACTION_ABSENT = "absent";
     static final String ACTION_OPEN_SCHEDULE = "openSchedule";
     static final String ACTION_OPEN_ATTENDANCE = "openAttendance";
+    static final String ACTION_OPEN_EXAMS = "openExams";
+    static final String ACTION_OPEN_COURSE_EXAMS = "openCourseExams";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +42,15 @@ public class WidgetActionActivity extends Activity {
                 Toast.makeText(this, getString(present ? R.string.recorded_present : R.string.recorded_absent, c.displayName()),
                         Toast.LENGTH_SHORT).show();
             }
-        } else if (ACTION_OPEN_COURSE.equals(action) && c != null) {
-            startActivity(CourseActivity.intent(this, c.id, CourseActivity.TAB_ATTENDANCE)
+        } else if ((ACTION_OPEN_COURSE.equals(action) || ACTION_OPEN_COURSE_EXAMS.equals(action)) && c != null) {
+            startActivity(CourseActivity.intent(this, c.id,
+                    ACTION_OPEN_COURSE_EXAMS.equals(action) ? CourseActivity.TAB_EXAMS : CourseActivity.TAB_ATTENDANCE)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         } else {
-            int tab = ACTION_OPEN_SCHEDULE.equals(action) ? R.id.tab_schedule : R.id.tab_attendance;
+            boolean exams = ACTION_OPEN_EXAMS.equals(action);
+            int tab = ACTION_OPEN_SCHEDULE.equals(action) || exams ? R.id.tab_schedule : R.id.tab_attendance;
             startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.EXTRA_TAB, tab)
+                    .putExtra(MainActivity.EXTRA_EXAMS, exams)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
         finish();

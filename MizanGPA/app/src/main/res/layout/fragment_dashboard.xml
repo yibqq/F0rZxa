@@ -216,6 +216,27 @@
                 android:orientation="vertical" />
 
             <TextView
+                android:id="@+id/exams_title"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upcoming_exams" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/exams_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/exams_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
                 style="@style/Mizan.SectionTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

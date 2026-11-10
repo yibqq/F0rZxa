@@ -31,6 +31,15 @@ public class Settings {
     public boolean remindersEnabled = true;
     public int reminderMinutes = 15;
 
+    public boolean examReminders = true;
+    /** Default exam reminders: days before (sent at {@link #examDayTime}) and minutes before the start. */
+    public final java.util.List<Integer> examDaysBefore = new java.util.ArrayList<>(java.util.Arrays.asList(1));
+    public final java.util.List<Integer> examMinutesBefore = new java.util.ArrayList<>(java.util.Arrays.asList(60));
+    /** Time of day (minutes after midnight) for the "days before" exam reminders. */
+    public int examDayTime = 20 * 60;
+    /** When reminders were last delivered, so ones missed while the phone was off can be shown later. */
+    public long lastReminderCheck = 0;
+
     public int themeMode = THEME_SYSTEM;
     public boolean dynamicColor = false;
 
@@ -67,6 +76,11 @@ public class Settings {
         o.put("attendanceAlerts", attendanceAlerts);
         o.put("remindersEnabled", remindersEnabled);
         o.put("reminderMinutes", reminderMinutes);
+        o.put("examReminders", examReminders);
+        o.put("examDaysBefore", new org.json.JSONArray(examDaysBefore));
+        o.put("examMinutesBefore", new org.json.JSONArray(examMinutesBefore));
+        o.put("examDayTime", examDayTime);
+        o.put("lastReminderCheck", lastReminderCheck);
         o.put("themeMode", themeMode);
         o.put("dynamicColor", dynamicColor);
         o.put("studentName", studentName);
@@ -99,6 +113,17 @@ public class Settings {
         s.attendanceAlerts = Json.bool(o, "attendanceAlerts", true);
         s.remindersEnabled = Json.bool(o, "remindersEnabled", true);
         s.reminderMinutes = Math.max(0, Json.integer(o, "reminderMinutes", 15));
+        s.examReminders = Json.bool(o, "examReminders", true);
+        if (o.has("examDaysBefore")) {
+            s.examDaysBefore.clear();
+            Exam.readInts(Json.arr(o, "examDaysBefore"), s.examDaysBefore);
+        }
+        if (o.has("examMinutesBefore")) {
+            s.examMinutesBefore.clear();
+            Exam.readInts(Json.arr(o, "examMinutesBefore"), s.examMinutesBefore);
+        }
+        s.examDayTime = Math.max(0, Math.min(24 * 60 - 1, Json.integer(o, "examDayTime", 20 * 60)));
+        s.lastReminderCheck = (long) Json.num(o, "lastReminderCheck", 0);
         s.themeMode = Json.integer(o, "themeMode", THEME_SYSTEM);
         s.dynamicColor = Json.bool(o, "dynamicColor", false);
         s.studentName = Json.str(o, "studentName", "");

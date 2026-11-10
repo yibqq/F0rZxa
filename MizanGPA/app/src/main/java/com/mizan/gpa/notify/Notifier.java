@@ -25,6 +25,7 @@ import com.mizan.gpa.util.Fmt;
 public final class Notifier {
     public static final String CHANNEL_LECTURES = "lectures";
     public static final String CHANNEL_ATTENDANCE = "attendance";
+    public static final String CHANNEL_EXAMS = "exams";
 
     private Notifier() {}
 
@@ -37,6 +38,10 @@ public final class Notifier {
         NotificationChannel attendance = new NotificationChannel(CHANNEL_ATTENDANCE,
                 ctx.getString(R.string.channel_attendance), NotificationManager.IMPORTANCE_HIGH);
         attendance.setDescription(ctx.getString(R.string.channel_attendance_desc));
+        NotificationChannel exams = new NotificationChannel(CHANNEL_EXAMS,
+                ctx.getString(R.string.channel_exams), NotificationManager.IMPORTANCE_HIGH);
+        exams.setDescription(ctx.getString(R.string.channel_exams_desc));
+        nm.createNotificationChannel(exams);
         nm.createNotificationChannel(lectures);
         nm.createNotificationChannel(attendance);
     }
@@ -66,7 +71,8 @@ public final class Notifier {
 
     public static PendingIntent openCourse(Context ctx, String courseId, int tab) {
         Intent i = CourseActivity.intent(ctx, courseId, tab).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return PendingIntent.getActivity(ctx, courseId.hashCode(), i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        // One pending intent per course and tab: extras alone do not make intents distinct.
+        return PendingIntent.getActivity(ctx, (courseId + "#" + tab).hashCode(), i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     /**
@@ -104,5 +110,66 @@ public final class Notifier {
                 .setAutoCancel(true)
                 .setContentIntent(openCourse(ctx, c.id, CourseActivity.TAB_ATTENDANCE));
         post(ctx, ("att" + c.id).hashCode(), b);
+    }
+
+    static int lectureNotificationId(String courseId) {
+        return ("lec" + courseId).hashCode();
+    }
+
+    /** Reminder before a lecture, with buttons to record attendance. */
+    static void lectureReminder(Context ctx, Course c, com.mizan.gpa.data.LectureSlot slot, int minutesLeft) {
+        int id = lectureNotificationId(c.id);
+        String title = minutesLeft > 0
+                ? ctx.getResources().getQuantityString(R.plurals.reminder_title, minutesLeft, c.displayName(), minutesLeft)
+                : ctx.getString(R.string.reminder_title_now, c.displayName());
+        StringBuilder text = new StringBuilder(Fmt.timeRange(ctx, slot.start, slot.end));
+        if (slot.room != null && !slot.room.trim().isEmpty()) text.append(" · ").append(slot.room.trim());
+        NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CHANNEL_LECTURES)
+                .setSmallIcon(R.drawable.ic_stat_mizan)
+                .setColor(ContextCompat.getColor(ctx, R.color.brand_primary))
+                .setContentTitle(title)
+                .setContentText(text)
+                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(openCourse(ctx, c.id, CourseActivity.TAB_ATTENDANCE))
+                .addAction(R.drawable.ic_check, ctx.getString(R.string.action_mark_present),
+                        attendanceAction(ctx, c.id, com.mizan.gpa.data.AttendanceRecord.PRESENT, id))
+                .addAction(R.drawable.ic_event_busy, ctx.getString(R.string.action_mark_absent),
+                        attendanceAction(ctx, c.id, com.mizan.gpa.data.AttendanceRecord.ABSENT, id));
+        post(ctx, id, b);
+    }
+
+    private static PendingIntent attendanceAction(Context ctx, String courseId, String status, int notifId) {
+        Intent i = new Intent(ctx, AttendanceActionReceiver.class)
+                .putExtra(AttendanceActionReceiver.EXTRA_COURSE, courseId)
+                .putExtra(AttendanceActionReceiver.EXTRA_STATUS, status)
+                .putExtra(AttendanceActionReceiver.EXTRA_NOTIFICATION, notifId);
+        return PendingIntent.getBroadcast(ctx, (courseId + status).hashCode(), i,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    /**
+     * Exam reminder. The wording comes from the time actually left ("tomorrow", "in 1 hour", "now"),
+     * so a reminder delivered late is still correct. Later reminders replace earlier ones of the same exam.
+     */
+    static void examReminder(Context ctx, Course c, com.mizan.gpa.data.Exam exam) {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        String name = com.mizan.gpa.ui.Exams.title(ctx, exam);
+        String title = ctx.getString(R.string.exam_notif_title, c.displayName(), com.mizan.gpa.ui.Exams.countdown(ctx, exam, now, true));
+        String text = name + " · " + com.mizan.gpa.ui.Exams.when(ctx, exam);
+        if (exam.room != null && !exam.room.trim().isEmpty()) text += " · " + exam.room.trim();
+        String big = exam.note == null || exam.note.trim().isEmpty() ? text : text + "\n" + exam.note.trim();
+        NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CHANNEL_EXAMS)
+                .setSmallIcon(R.drawable.ic_stat_mizan)
+                .setColor(ContextCompat.getColor(ctx, R.color.brand_primary))
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(big))
+                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(openCourse(ctx, c.id, CourseActivity.TAB_EXAMS));
+        post(ctx, ("exam" + exam.id).hashCode(), b);
     }
 }

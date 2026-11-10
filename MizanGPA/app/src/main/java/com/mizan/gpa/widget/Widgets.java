@@ -13,7 +13,7 @@ import com.mizan.gpa.data.Repository;
 import com.mizan.gpa.data.Settings;
 import com.mizan.gpa.util.Themes;
 
-/** Refreshes both home-screen widgets after the data changes. */
+/** Refreshes every home-screen widget after the data changes. */
 public final class Widgets {
     private Widgets() {}
 
@@ -27,6 +27,11 @@ public final class Widgets {
             int[] sch = m.getAppWidgetIds(new ComponentName(ctx, ScheduleWidget.class));
             for (int id : sch) m.updateAppWidget(id, ScheduleWidget.build(ctx, id));
             if (sch.length > 0) m.notifyAppWidgetViewDataChanged(sch, R.id.w_list);
+            int[] ex = m.getAppWidgetIds(new ComponentName(ctx, ExamsWidget.class));
+            for (int id : ex) m.updateAppWidget(id, ExamsWidget.build(ctx, id));
+            if (ex.length > 0) m.notifyAppWidgetViewDataChanged(ex, R.id.w_list);
+            for (int id : m.getAppWidgetIds(new ComponentName(ctx, GpaWidget.class))) m.updateAppWidget(id, GpaWidget.build(ctx, id));
+            for (int id : m.getAppWidgetIds(new ComponentName(ctx, NextLectureWidget.class))) m.updateAppWidget(id, NextLectureWidget.build(ctx, id));
         } catch (RuntimeException ignored) {
             // No widget host (e.g. during tests).
         }

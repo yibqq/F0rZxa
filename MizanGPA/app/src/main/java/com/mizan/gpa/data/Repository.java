@@ -80,6 +80,20 @@ public final class Repository {
 
     /** Persists the current data and notifies listeners. Call after every change. */
     public synchronized void save() {
+        write();
+        ReminderScheduler.scheduleNext(app);
+        com.mizan.gpa.widget.Widgets.updateAll(app);
+        main.post(() -> {
+            for (Listener l : listeners) l.onDataChanged();
+        });
+    }
+
+    /** Persists without re-scheduling reminders or refreshing screens (for internal bookkeeping). */
+    public synchronized void saveQuietly() {
+        write();
+    }
+
+    private void write() {
         writeSafetyCopyOnce();
         FileOutputStream out = null;
         try {
@@ -90,11 +104,6 @@ public final class Repository {
             Log.e(TAG, "Saving failed", e);
             if (out != null) file.failWrite(out);
         }
-        ReminderScheduler.scheduleNext(app);
-        com.mizan.gpa.widget.Widgets.updateAll(app);
-        main.post(() -> {
-            for (Listener l : listeners) l.onDataChanged();
-        });
     }
 
     /** Replaces all data (restore from backup, sample data, clear). */

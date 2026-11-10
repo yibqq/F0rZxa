@@ -28,6 +28,7 @@ public class CourseActivity extends BaseActivity {
     public static final int TAB_MARKS = 0;
     public static final int TAB_ATTENDANCE = 1;
     public static final int TAB_LECTURES = 2;
+    public static final int TAB_EXAMS = 3;
     static final String EXTRA_ID = "course";
     private static final String EXTRA_TAB = "tab";
 
@@ -70,7 +71,8 @@ public class CourseActivity extends BaseActivity {
             @Override
             public Fragment createFragment(int position) {
                 Fragment f = position == TAB_ATTENDANCE ? new CourseAttendanceFragment()
-                        : position == TAB_LECTURES ? new CourseLecturesFragment() : new CourseMarksFragment();
+                        : position == TAB_LECTURES ? new CourseLecturesFragment()
+                        : position == TAB_EXAMS ? new CourseExamsFragment() : new CourseMarksFragment();
                 Bundle b = new Bundle();
                 b.putString(EXTRA_ID, courseId);
                 f.setArguments(b);
@@ -79,12 +81,12 @@ public class CourseActivity extends BaseActivity {
 
             @Override
             public int getItemCount() {
-                return 3;
+                return 4;
             }
         });
         TabLayout tabs = findViewById(R.id.tabs);
-        int[] titles = {R.string.tab_marks, R.string.tab_attendance, R.string.tab_lectures};
-        int[] icons = {R.drawable.ic_assignment, R.drawable.ic_event_available, R.drawable.ic_calendar};
+        int[] titles = {R.string.tab_marks, R.string.tab_attendance, R.string.tab_lectures, R.string.tab_exams};
+        int[] icons = {R.drawable.ic_assignment, R.drawable.ic_event_available, R.drawable.ic_calendar, R.drawable.ic_exam};
         new TabLayoutMediator(tabs, pager, (tab, pos) -> {
             tab.setText(titles[pos]);
             tab.setIcon(icons[pos]);
@@ -107,6 +109,9 @@ public class CourseActivity extends BaseActivity {
                 case TAB_LECTURES:
                     Dialogs.editLecture(this, s, c, null, Fmt.toCalendarDay(LocalDate.now().getDayOfWeek()));
                     break;
+                case TAB_EXAMS:
+                    Dialogs.editExam(this, s, c, null);
+                    break;
                 default:
                     Dialogs.editAssessment(this, c, null);
                     break;
@@ -116,7 +121,8 @@ public class CourseActivity extends BaseActivity {
 
     private void updateFab(int position) {
         int text = position == TAB_ATTENDANCE ? R.string.record_attendance
-                : position == TAB_LECTURES ? R.string.add_lecture : R.string.add_mark;
+                : position == TAB_LECTURES ? R.string.add_lecture
+                : position == TAB_EXAMS ? R.string.add_exam : R.string.add_mark;
         fab.setText(text);
         fab.extend();
     }

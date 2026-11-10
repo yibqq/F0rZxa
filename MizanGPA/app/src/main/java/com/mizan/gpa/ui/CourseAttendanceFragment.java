@@ -34,6 +34,8 @@ public class CourseAttendanceFragment extends CoursePageFragment {
         Course c = course();
         if (c == null) return;
         AttendanceRecord r = Dialogs.quickRecord(requireContext(), c, status);
+        root.performHapticFeedback(android.os.Build.VERSION.SDK_INT >= 30
+                ? android.view.HapticFeedbackConstants.CONFIRM : android.view.HapticFeedbackConstants.VIRTUAL_KEY);
         Snackbar.make(root, getString(R.string.recorded_status, Labels.status(requireContext(), status)), Snackbar.LENGTH_LONG)
                 .setAction(R.string.undo, v -> {
                     c.attendance.remove(r);

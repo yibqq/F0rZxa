@@ -165,6 +165,31 @@
                 layout="@layout/view_setting_row" />
 
             <TextView
+                android:id="@+id/set_section_exams"
+                style="@style/Mizan.SectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/screen_padding"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <include
+                android:id="@+id/set_exam_enabled"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_exam_days"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_exam_day_time"
+                layout="@layout/view_setting_row" />
+
+            <include
+                android:id="@+id/set_exam_minutes"
+                layout="@layout/view_setting_row" />
+
+            <TextView
                 android:id="@+id/set_section_data"
                 style="@style/Mizan.SectionTitle"
                 android:layout_width="wrap_content"

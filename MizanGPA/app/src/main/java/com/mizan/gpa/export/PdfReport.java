@@ -283,6 +283,22 @@ public final class PdfReport {
                         Ui.statusLabel(ctx, a.status)}, aw, body, ac, 0);
             }
         }
+        // Upcoming exams
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.util.List<com.mizan.gpa.ui.Exams.Entry> exams = com.mizan.gpa.ui.Exams.upcoming(data, now);
+        if (!exams.isEmpty()) {
+            y += 18;
+            ensure(80);
+            y += draw(ctx.getString(R.string.upcoming_exams), M, y, W - 2 * M, h2, Layout.Alignment.ALIGN_NORMAL) + 6;
+            float[] ew = {W - 2 * M - 110 - 150 - 80, 110, 150, 80};
+            boolean[] ec = {false, false, false, true};
+            tableRow(new String[]{ctx.getString(R.string.course), ctx.getString(R.string.pdf_exam), ctx.getString(R.string.pdf_exam_when),
+                    ctx.getString(R.string.room)}, ew, headerCell, ec, BRAND_LIGHT);
+            for (com.mizan.gpa.ui.Exams.Entry e : exams) {
+                tableRow(new String[]{e.course.displayName(), com.mizan.gpa.ui.Exams.title(ctx, e.exam),
+                        com.mizan.gpa.ui.Exams.when(ctx, e.exam), e.exam.room}, ew, body, ec, 0);
+            }
+        }
         finishPage();
     }
 }

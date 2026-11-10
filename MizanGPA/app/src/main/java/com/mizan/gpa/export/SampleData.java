@@ -6,6 +6,7 @@ import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Assessment;
 import com.mizan.gpa.data.AttendanceRecord;
 import com.mizan.gpa.data.Course;
+import com.mizan.gpa.data.Exam;
 import com.mizan.gpa.data.GradeScale;
 import com.mizan.gpa.data.Json;
 import com.mizan.gpa.data.LectureSlot;
@@ -82,6 +83,13 @@ public final class SampleData {
         attendance(net, 6, 2, 10);
         attendance(stat, 2, 0, 12);
 
+        LocalDate today = LocalDate.now();
+        exam(net, ar ? "الفصلي الثاني" : "Midterm 2", Exam.MIDTERM, today.plusDays(1), 10 * 60, 11 * 60 + 30, "A-210");
+        exam(la, "", Exam.QUIZ, today.plusDays(3), 11 * 60, 0, "C-012");
+        exam(algo, "", Exam.FINAL, today.plusDays(12), 8 * 60, 10 * 60, ar ? "القاعة الكبرى" : "Main hall");
+        exam(db, "", Exam.FINAL, today.plusDays(15), 13 * 60, 15 * 60, "B-204");
+        exam(stat, ar ? "الفصلي الأول" : "Midterm 1", Exam.MIDTERM, today.minusDays(20), 9 * 60, 10 * 60, "D-105");
+
         d.semesters.add(s1);
         d.semesters.add(s2);
         d.semesters.add(s3);
@@ -123,6 +131,17 @@ public final class SampleData {
         x.outOf = outOf;
         x.weight = weight;
         return x;
+    }
+
+    private static void exam(Course c, String title, String type, LocalDate date, int start, int end, String room) {
+        Exam e = new Exam();
+        e.title = title;
+        e.type = type;
+        e.date = date.toString();
+        e.start = start;
+        e.end = end;
+        e.room = room;
+        c.exams.add(e);
     }
 
     private static LectureSlot slot(Course c, int day, int start, int end, String room) {

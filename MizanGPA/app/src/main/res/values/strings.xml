@@ -412,7 +412,7 @@
     <string name="theme_forest">Forest</string>
     <string name="theme_gold">Gold</string>
     <string name="theme_graphite">Graphite</string>
-    <string name="schedule_mode_grid">Week grid</string>
+    <string name="schedule_mode_grid">Week</string>
     <string name="schedule_mode_list">List</string>
     <string name="open_course">Open course</string>
     <string name="widget_attendance_title">Absence tracker</string>
@@ -446,6 +446,68 @@
     <string name="font_import_failed">This file is not a font Android can use</string>
     <string name="font_delete_title">Remove %s?</string>
     <string name="font_delete_text">The font files will be deleted from the app.</string>
+    <string name="tab_exams">Exams</string>
+    <string name="add_exam">Add exam</string>
+    <string name="edit_exam">Edit exam</string>
+    <string name="exam_title">Title (optional)</string>
+    <string name="exam_title_helper">For example: Midterm 1, chapters 1–4</string>
+    <string name="exam_room">Room (optional)</string>
+    <string name="end_time_optional">Ends (optional)</string>
+    <string name="exam_type_midterm">Midterm</string>
+    <string name="exam_type_final">Final exam</string>
+    <string name="exam_type_quiz">Quiz</string>
+    <string name="exam_type_practical">Practical</string>
+    <string name="exam_type_other">Exam</string>
+    <string name="exam_custom_reminders">Custom reminders for this exam</string>
+    <string name="exam_default_reminders">Using your default reminders: %s</string>
+    <string name="exam_days_before_title">Days before</string>
+    <string name="exam_days_before_title_time">Days before (sent at %s)</string>
+    <string name="exam_same_day_title">On the exam day</string>
+    <string name="exam_now">Now</string>
+    <string name="exam_done">Done</string>
+    <string name="exam_record_mark">Record the mark</string>
+    <string name="exams_upcoming">Upcoming</string>
+    <string name="exams_past">Finished</string>
+    <string name="upcoming_exams">Upcoming exams</string>
+    <string name="empty_exams_title">No exams yet</string>
+    <string name="empty_exams_text">Add your exam dates and Mizan will remind you days before and again on the day.</string>
+    <string name="schedule_mode_exams">Exams</string>
+    <string name="alert_exam_title">Exam in %1$s: %2$s</string>
+    <string name="exam_notif_title">%1$s exam: %2$s</string>
+    <string name="channel_exams">Exam reminders</string>
+    <string name="channel_exams_desc">Reminders before your exams</string>
+    <string name="section_exams">Exam reminders</string>
+    <string name="set_exam_enabled">Remind me of exams</string>
+    <string name="set_exam_enabled_summary">Notifications before each exam you add</string>
+    <string name="set_exam_days">Days before</string>
+    <string name="set_exam_day_time">Time of the earlier reminders</string>
+    <string name="set_exam_day_time_summary">Sent at %s</string>
+    <string name="set_exam_minutes">On the exam day</string>
+    <string name="at_exam_time">At the exam time</string>
+    <string name="half_hour_before">Half an hour before</string>
+    <string name="no_reminders">No reminders</string>
+    <string name="list_separator">,</string>
+    <string name="custom_value">Custom…</string>
+    <string name="custom_days_message">How many days before the exam? (1–60)</string>
+    <string name="custom_minutes_message">How many minutes before the exam? (0–1440)</string>
+    <string name="days_unit">Days</string>
+    <string name="minutes_unit">Minutes</string>
+    <string name="widget_exams_title">Upcoming exams</string>
+    <string name="widget_exams_desc">Your next exams with a countdown</string>
+    <string name="widget_exams_empty">No upcoming exams. Tap to add one.</string>
+    <string name="widget_gpa_title">GPA</string>
+    <string name="widget_gpa_desc">Your cumulative GPA at a glance</string>
+    <string name="widget_gpa_semester">Semester %s</string>
+    <string name="widget_next_title">Next lecture</string>
+    <string name="widget_next_desc">The next lecture with present/absent buttons</string>
+    <string name="widget_next_none">No upcoming lectures</string>
+    <string name="widget_next_running">Happening now</string>
+    <string name="shortcut_attendance">Attendance</string>
+    <string name="shortcut_schedule">Schedule</string>
+    <string name="shortcut_exams">Exams</string>
+    <string name="shortcut_forecast">Forecast</string>
+    <string name="pdf_exam">Exam</string>
+    <string name="pdf_exam_when">Date and time</string>
     <plurals name="credit_hours">
         <item quantity="one">%s hour</item>
         <item quantity="other">%s hours</item>
@@ -505,5 +567,29 @@
     <plurals name="widget_lectures_week">
         <item quantity="one">%s lecture a week</item>
         <item quantity="other">%s lectures a week</item>
+    </plurals>
+    <plurals name="in_days">
+        <item quantity="one">In %s day</item>
+        <item quantity="other">In %s days</item>
+    </plurals>
+    <plurals name="in_hours">
+        <item quantity="one">In %s hour</item>
+        <item quantity="other">In %s hours</item>
+    </plurals>
+    <plurals name="in_minutes">
+        <item quantity="one">In %s minute</item>
+        <item quantity="other">In %s minutes</item>
+    </plurals>
+    <plurals name="days_before">
+        <item quantity="one">%s day before</item>
+        <item quantity="other">%s days before</item>
+    </plurals>
+    <plurals name="hours_before">
+        <item quantity="one">%s hour before</item>
+        <item quantity="other">%s hours before</item>
+    </plurals>
+    <plurals name="exams_count">
+        <item quantity="one">%s exam</item>
+        <item quantity="other">%s exams</item>
     </plurals>
 </resources>

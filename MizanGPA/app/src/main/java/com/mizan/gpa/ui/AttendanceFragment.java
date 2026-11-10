@@ -119,6 +119,8 @@ public class AttendanceFragment extends BaseFragment {
 
     private void quick(Course c, String status) {
         AttendanceRecord r = Dialogs.quickRecord(requireContext(), c, status);
+        root.performHapticFeedback(android.os.Build.VERSION.SDK_INT >= 30
+                ? android.view.HapticFeedbackConstants.CONFIRM : android.view.HapticFeedbackConstants.VIRTUAL_KEY);
         String msg = getString(AttendanceRecord.PRESENT.equals(status) ? R.string.recorded_present : R.string.recorded_absent, c.displayName());
         Snackbar.make(root, msg, Snackbar.LENGTH_LONG)
                 .setAnchorView(requireActivity().findViewById(R.id.nav) instanceof com.google.android.material.bottomnavigation.BottomNavigationView

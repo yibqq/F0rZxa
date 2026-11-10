@@ -76,7 +76,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/schedule_mode_grid"
+            app:iconPadding="4dp"
             app:icon="@drawable/ic_dashboard" />
 
         <com.google.android.material.button.MaterialButton
@@ -85,8 +88,23 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/schedule_mode_list"
+            app:iconPadding="4dp"
             app:icon="@drawable/ic_assignment" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mode_exams"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/schedule_mode_exams"
+            app:iconPadding="4dp"
+            app:icon="@drawable/ic_exam" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <HorizontalScrollView

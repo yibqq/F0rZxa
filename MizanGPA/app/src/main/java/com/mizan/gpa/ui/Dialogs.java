@@ -30,6 +30,7 @@ import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Assessment;
 import com.mizan.gpa.data.AttendanceRecord;
 import com.mizan.gpa.data.Course;
+import com.mizan.gpa.data.Exam;
 import com.mizan.gpa.data.GradeDef;
 import com.mizan.gpa.data.GradeScale;
 import com.mizan.gpa.data.LectureSlot;
@@ -345,6 +346,11 @@ public final class Dialogs {
     // ------------------------------------------------------------------ assessment
 
     public static void editAssessment(AppCompatActivity a, Course course, Assessment existing) {
+        editAssessment(a, course, existing, null, null);
+    }
+
+    /** @param presetName name and type to start a new assessment with (e.g. from a finished exam) */
+    public static void editAssessment(AppCompatActivity a, Course course, Assessment existing, String presetName, String presetType) {
         Repository repo = Repository.get(a);
         View v = LayoutInflater.from(a).inflate(R.layout.dialog_assessment, null);
         TextInputLayout nameL = v.findViewById(R.id.d_name_layout);
@@ -391,7 +397,10 @@ public final class Dialogs {
             } else {
                 outOf.setText(typeIdx[0] == 1 ? "30" : "10");
             }
-            autoName[0] = autoName(a, course, Assessment.TYPES[typeIdx[0]]);
+            if (presetType != null) {
+                for (int i = 0; i < Assessment.TYPES.length; i++) if (Assessment.TYPES[i].equals(presetType)) typeIdx[0] = i;
+            }
+            autoName[0] = presetName != null ? presetName : autoName(a, course, Assessment.TYPES[typeIdx[0]]);
             name.setText(autoName[0]);
         }
         type.setText(types[typeIdx[0]], false);
@@ -619,6 +628,180 @@ public final class Dialogs {
             repo.save();
             return true;
         }, delete);
+    }
+
+    // ------------------------------------------------------------------ exam
+
+    public static void editExam(AppCompatActivity a, Semester sem, Course fixedCourse, Exam existing) {
+        Repository repo = Repository.get(a);
+        Settings st = repo.settings();
+        View v = LayoutInflater.from(a).inflate(R.layout.dialog_exam, null);
+        TextInputLayout courseL = v.findViewById(R.id.d_course_layout);
+        MaterialAutoCompleteTextView courseDd = v.findViewById(R.id.d_course);
+        TextInputEditText title = v.findViewById(R.id.d_title);
+        MaterialAutoCompleteTextView type = v.findViewById(R.id.d_type);
+        TextInputEditText date = v.findViewById(R.id.d_date);
+        TextInputEditText start = v.findViewById(R.id.d_start);
+        TextInputLayout endL = v.findViewById(R.id.d_end_layout);
+        TextInputEditText end = v.findViewById(R.id.d_end);
+        TextInputEditText room = v.findViewById(R.id.d_room);
+        TextInputEditText note = v.findViewById(R.id.d_note);
+        MaterialSwitch custom = v.findViewById(R.id.d_custom);
+        TextView defaults = v.findViewById(R.id.d_default_summary);
+        View customBox = v.findViewById(R.id.d_custom_box);
+        com.google.android.material.chip.ChipGroup daysGroup = v.findViewById(R.id.d_days);
+        com.google.android.material.chip.ChipGroup minutesGroup = v.findViewById(R.id.d_minutes);
+
+        List<Course> courses = sem.courses;
+        Course owner = null;
+        if (existing != null) for (Course c : courses) if (c.exams.contains(existing)) owner = c;
+        if (owner == null) owner = fixedCourse;
+        final int[] courseIdx = {owner != null ? courses.indexOf(owner) : (courses.isEmpty() ? -1 : 0)};
+        if (fixedCourse != null) {
+            courseL.setVisibility(View.GONE);
+        } else {
+            String[] names = new String[courses.size()];
+            for (int i = 0; i < names.length; i++) names[i] = courses.get(i).displayName();
+            courseDd.setSimpleItems(names);
+            if (courseIdx[0] >= 0) courseDd.setText(names[courseIdx[0]], false);
+            courseDd.setOnItemClickListener((p, view, pos, id) -> {
+                courseIdx[0] = pos;
+                courseL.setError(null);
+            });
+        }
+
+        String[] types = new String[Exam.TYPES.length];
+        for (int i = 0; i < types.length; i++) types[i] = Exams.typeLabel(a, Exam.TYPES[i]);
+        type.setSimpleItems(types);
+        final int[] typeIdx = {0};
+        if (existing != null) for (int i = 0; i < types.length; i++) if (Exam.TYPES[i].equals(existing.type)) typeIdx[0] = i;
+        type.setText(types[typeIdx[0]], false);
+        type.setOnItemClickListener((p, view, pos, id) -> typeIdx[0] = pos);
+
+        final String[] iso = {existing != null ? existing.date : LocalDate.now().plusDays(7).toString()};
+        // times[1] <= times[0] means "no end time".
+        final int[] times = {existing != null ? existing.start : 9 * 60, existing != null && existing.hasEnd() ? existing.end : 0};
+        Runnable showTimes = () -> {
+            date.setText(Fmt.date(a, iso[0]));
+            start.setText(Fmt.time(a, times[0]));
+            end.setText(times[1] > times[0] ? Fmt.time(a, times[1]) : "");
+        };
+        showTimes.run();
+        if (existing != null) {
+            title.setText(existing.title);
+            room.setText(existing.room);
+            note.setText(existing.note);
+        }
+        date.setOnClickListener(x -> {
+            long sel;
+            try {
+                sel = LocalDate.parse(iso[0]).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
+            } catch (Exception e) {
+                sel = MaterialDatePicker.todayInUtcMilliseconds();
+            }
+            MaterialDatePicker<Long> p = MaterialDatePicker.Builder.datePicker().setTitleText(R.string.date).setSelection(sel).build();
+            p.addOnPositiveButtonClickListener(ms -> {
+                iso[0] = Instant.ofEpochMilli(ms).atZone(ZoneOffset.UTC).toLocalDate().toString();
+                showTimes.run();
+            });
+            p.show(a.getSupportFragmentManager(), "exam-date");
+        });
+        View.OnClickListener pick = x -> {
+            boolean isStart = x == start;
+            int cur = isStart ? times[0] : (times[1] > times[0] ? times[1] : Math.min(24 * 60 - 1, times[0] + 120));
+            MaterialTimePicker p = new MaterialTimePicker.Builder()
+                    .setTimeFormat(android.text.format.DateFormat.is24HourFormat(a) ? TimeFormat.CLOCK_24H : TimeFormat.CLOCK_12H)
+                    .setHour(cur / 60).setMinute(cur % 60)
+                    .setTitleText(isStart ? R.string.start_time : R.string.end_time)
+                    .build();
+            p.addOnPositiveButtonClickListener(b -> {
+                int m = p.getHour() * 60 + p.getMinute();
+                if (isStart) {
+                    int dur = times[1] > times[0] ? times[1] - times[0] : 0;
+                    times[0] = m;
+                    times[1] = dur > 0 ? Math.min(24 * 60 - 1, m + dur) : 0;
+                } else {
+                    times[1] = m;
+                }
+                showTimes.run();
+                endL.setError(null);
+            });
+            p.show(a.getSupportFragmentManager(), "exam-time");
+        };
+        start.setOnClickListener(pick);
+        end.setOnClickListener(pick);
+        endL.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
+        endL.setEndIconOnClickListener(x -> {
+            times[1] = 0;
+            showTimes.run();
+        });
+
+        // Reminders: the defaults from Settings, or a custom set for this exam.
+        defaults.setText(a.getString(R.string.exam_default_reminders, Exams.summary(a, st.examDaysBefore, st.examMinutesBefore)));
+        ((TextView) v.findViewById(R.id.d_days_title)).setText(a.getString(R.string.exam_days_before_title_time, Fmt.time(a, st.examDayTime)));
+        List<Integer> selDays = new ArrayList<>(existing != null && existing.customReminders ? existing.daysBefore : st.examDaysBefore);
+        List<Integer> selMinutes = new ArrayList<>(existing != null && existing.customReminders ? existing.minutesBefore : st.examMinutesBefore);
+        offsetChips(daysGroup, Exams.DAY_OPTIONS, selDays, true);
+        offsetChips(minutesGroup, Exams.MINUTE_OPTIONS, selMinutes, false);
+        custom.setChecked(existing != null && existing.customReminders);
+        Runnable toggle = () -> {
+            customBox.setVisibility(custom.isChecked() ? View.VISIBLE : View.GONE);
+            defaults.setVisibility(custom.isChecked() ? View.GONE : View.VISIBLE);
+        };
+        toggle.run();
+        custom.setOnCheckedChangeListener((b, on) -> toggle.run());
+
+        Runnable delete = existing == null ? null : () -> {
+            for (Course c : sem.courses) c.exams.remove(existing);
+            repo.save();
+        };
+        form(a, a.getString(existing == null ? R.string.add_exam : R.string.edit_exam), v, R.string.save, () -> {
+            if (courseIdx[0] < 0) {
+                error(courseL, R.string.err_choose_course);
+                return false;
+            }
+            Course target = courses.get(courseIdx[0]);
+            Exam e = existing != null ? existing : new Exam();
+            e.title = text(title);
+            e.type = Exam.TYPES[typeIdx[0]];
+            e.date = iso[0];
+            e.start = times[0];
+            e.end = times[1] > times[0] ? times[1] : 0;
+            e.room = text(room);
+            e.note = text(note);
+            e.customReminders = custom.isChecked();
+            e.daysBefore.clear();
+            e.minutesBefore.clear();
+            if (e.customReminders) {
+                e.daysBefore.addAll(selDays);
+                e.minutesBefore.addAll(selMinutes);
+            }
+            for (Course c : sem.courses) if (c != target) c.exams.remove(e);
+            if (!target.exams.contains(e)) target.exams.add(e);
+            repo.save();
+            return true;
+        }, delete);
+    }
+
+    /** Fills a chip group with reminder offsets; {@code selected} is kept in sync with the checked chips. */
+    static void offsetChips(com.google.android.material.chip.ChipGroup group, int[] options, List<Integer> selected, boolean days) {
+        Context c = group.getContext();
+        group.removeAllViews();
+        List<Integer> all = new ArrayList<>();
+        for (int o : options) all.add(o);
+        for (int s : selected) if (!all.contains(s)) all.add(s);
+        all.sort((x, y) -> days ? x - y : y - x);
+        for (int value : all) {
+            com.google.android.material.chip.Chip chip = new com.google.android.material.chip.Chip(c);
+            chip.setText(days ? Exams.dayLabel(c, value) : Exams.minuteLabel(c, value));
+            chip.setCheckable(true);
+            chip.setChecked(selected.contains(value));
+            chip.setOnCheckedChangeListener((b, on) -> {
+                selected.remove(Integer.valueOf(value));
+                if (on) selected.add(value);
+            });
+            group.addView(chip);
+        }
     }
 
     // ------------------------------------------------------------------ grade definitions

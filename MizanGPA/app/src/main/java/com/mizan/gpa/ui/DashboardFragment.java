@@ -135,6 +135,28 @@ public class DashboardFragment extends BaseFragment {
             alerts.addView(Rows.alert(alerts, ok, null));
         }
 
+        // Upcoming exams (next three)
+        LinearLayout el = root.findViewById(R.id.exams_list);
+        el.removeAllViews();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        List<Exams.Entry> exams = Exams.upcoming(d, now);
+        root.findViewById(R.id.exams_title).setVisibility(exams.isEmpty() ? View.GONE : View.VISIBLE);
+        root.findViewById(R.id.exams_card).setVisibility(exams.isEmpty() ? View.GONE : View.VISIBLE);
+        for (int i = 0; i < Math.min(3, exams.size()); i++) {
+            Exams.Entry e = exams.get(i);
+            View row = Rows.simple(el, R.drawable.ic_exam, e.color(), e.course.displayName(),
+                    Exams.title(requireContext(), e.exam) + " · " + Exams.when(requireContext(), e.exam), null);
+            TextView badge = row.findViewById(R.id.s_value);
+            badge.setVisibility(View.VISIBLE);
+            int pad = Ui.dp(requireContext(), 10);
+            badge.setPadding(pad, pad / 3, pad, pad / 3);
+            Ui.badge(badge, Exams.countdown(requireContext(), e.exam, now, false),
+                    Exams.urgencyColor(requireContext(), e.exam, now, Ui.attr(requireContext(), androidx.appcompat.R.attr.colorPrimary)));
+            ((android.view.ViewGroup.MarginLayoutParams) badge.getLayoutParams()).setMarginEnd(Ui.dp(requireContext(), 12));
+            row.setOnClickListener(v -> ((MainActivity) requireActivity()).openExams());
+            el.addView(row);
+        }
+
         // Trend
         List<GpaCalculator.TrendPoint> trend = GpaCalculator.trend(d);
         TrendChartView chart = root.findViewById(R.id.trend);

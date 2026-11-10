@@ -49,6 +49,16 @@ public class JsonRoundTripTest {
         l.start = 600;
         l.end = 690;
         c.lectures.add(l);
+        com.mizan.gpa.data.Exam ex = new com.mizan.gpa.data.Exam();
+        ex.title = "Midterm 1";
+        ex.date = "2026-12-01";
+        ex.start = 615;
+        ex.customReminders = true;
+        ex.daysBefore.add(3);
+        ex.minutesBefore.add(0);
+        c.exams.add(ex);
+        d.settings.examDaysBefore.clear();
+        d.settings.examDaysBefore.add(2);
         s.courses.add(c);
         d.semesters.add(s);
         d.settings.currentSemesterId = s.id;
@@ -70,6 +80,14 @@ public class JsonRoundTripTest {
         assertTrue(Double.isNaN(bc.assessments.get(1).score));
         assertEquals(AttendanceRecord.LATE, bc.attendance.get(0).status);
         assertEquals(600, bc.lectures.get(0).start);
+        com.mizan.gpa.data.Exam be = bc.exams.get(0);
+        assertEquals("Midterm 1", be.title);
+        assertEquals(615, be.start);
+        assertTrue(be.customReminders);
+        assertEquals(Integer.valueOf(3), be.daysBefore.get(0));
+        assertEquals(Integer.valueOf(0), be.minutesBefore.get(0));
+        assertEquals(1, back.settings.examDaysBefore.size());
+        assertEquals(Integer.valueOf(2), back.settings.examDaysBefore.get(0));
     }
 
     @Test(expected = JSONException.class)

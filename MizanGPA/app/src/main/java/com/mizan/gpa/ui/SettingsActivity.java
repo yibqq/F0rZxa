@@ -65,6 +65,7 @@ public class SettingsActivity extends BaseActivity {
         section(R.id.set_section_grading, R.string.section_grading);
         section(R.id.set_section_attendance, R.string.section_attendance);
         section(R.id.set_section_reminders, R.string.section_reminders);
+        section(R.id.set_section_exams, R.string.section_exams);
         section(R.id.set_section_data, R.string.section_data);
         section(R.id.set_section_about, R.string.section_about);
 
@@ -215,6 +216,28 @@ public class SettingsActivity extends BaseActivity {
             }
         });
 
+        row(R.id.set_exam_enabled, R.drawable.ic_exam, R.string.set_exam_enabled, v -> {
+            st().examReminders = !st().examReminders;
+            save();
+            if (st().examReminders) askNotifications();
+        });
+        row(R.id.set_exam_days, R.drawable.ic_calendar, R.string.set_exam_days, v -> chooseOffsets(true));
+        row(R.id.set_exam_day_time, R.drawable.ic_clock, R.string.set_exam_day_time, v -> {
+            com.google.android.material.timepicker.MaterialTimePicker p = new com.google.android.material.timepicker.MaterialTimePicker.Builder()
+                    .setTimeFormat(android.text.format.DateFormat.is24HourFormat(this)
+                            ? com.google.android.material.timepicker.TimeFormat.CLOCK_24H
+                            : com.google.android.material.timepicker.TimeFormat.CLOCK_12H)
+                    .setHour(st().examDayTime / 60).setMinute(st().examDayTime % 60)
+                    .setTitleText(R.string.set_exam_day_time)
+                    .build();
+            p.addOnPositiveButtonClickListener(b -> {
+                st().examDayTime = p.getHour() * 60 + p.getMinute();
+                save();
+            });
+            p.show(getSupportFragmentManager(), "exam-day-time");
+        });
+        row(R.id.set_exam_minutes, R.drawable.ic_schedule_alarm, R.string.set_exam_minutes, v -> chooseOffsets(false));
+
         row(R.id.set_export_pdf, R.drawable.ic_description, R.string.export_pdf, v -> transfer.exportPdf());
         row(R.id.set_backup, R.drawable.ic_save, R.string.backup, v -> transfer.backup());
         row(R.id.set_restore, R.drawable.ic_restore, R.string.restore, v -> transfer.restore());
@@ -236,6 +259,44 @@ public class SettingsActivity extends BaseActivity {
                     com.mizan.gpa.util.Ui.snack(this, getString(R.string.data_cleared));
                 }));
         row(R.id.set_about, R.drawable.ic_info, R.string.about_title, null);
+    }
+
+    /** Multi-choice list of exam reminder offsets, with a button to add a custom value. */
+    private void chooseOffsets(boolean days) {
+        java.util.List<Integer> selected = new java.util.ArrayList<>(days ? st().examDaysBefore : st().examMinutesBefore);
+        java.util.List<Integer> all = new java.util.ArrayList<>();
+        for (int o : days ? Exams.DAY_OPTIONS : Exams.MINUTE_OPTIONS) all.add(o);
+        for (int x : selected) if (!all.contains(x)) all.add(x);
+        all.sort((a, b) -> a - b);
+        CharSequence[] labels = new CharSequence[all.size()];
+        boolean[] checked = new boolean[all.size()];
+        for (int i = 0; i < all.size(); i++) {
+            labels[i] = days ? Exams.dayLabel(this, all.get(i)) : Exams.minuteLabel(this, all.get(i));
+            checked[i] = selected.contains(all.get(i));
+        }
+        Runnable commit = () -> {
+            java.util.List<Integer> target = days ? st().examDaysBefore : st().examMinutesBefore;
+            target.clear();
+            target.addAll(selected);
+            save();
+        };
+        Dialogs.show(new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(days ? R.string.set_exam_days : R.string.set_exam_minutes)
+                .setMultiChoiceItems(labels, checked, (d, which, on) -> {
+                    selected.remove(all.get(which));
+                    if (on) selected.add(all.get(which));
+                })
+                .setPositiveButton(R.string.save, (d, w) -> commit.run())
+                .setNegativeButton(R.string.cancel, null)
+                .setNeutralButton(R.string.custom_value, (d, w) -> Dialogs.numbers(this,
+                        getString(R.string.custom_value), getString(days ? R.string.custom_days_message : R.string.custom_minutes_message),
+                        days ? R.string.days_unit : R.string.minutes_unit, Double.NaN, 0, Double.NaN, false, (n, x) -> {
+                            if (Double.isNaN(n) || n < (days ? 1 : 0) || n > (days ? 60 : 24 * 60)) return false;
+                            int value = (int) Math.round(n);
+                            if (!selected.contains(value)) selected.add(value);
+                            commit.run();
+                            return true;
+                        })));
     }
 
     private void choosePalette() {
@@ -444,6 +505,16 @@ public class SettingsActivity extends BaseActivity {
         findViewById(R.id.set_rem_exact).setVisibility(Build.VERSION.SDK_INT >= 31 && !exact && st.remindersEnabled ? View.VISIBLE : View.GONE);
         summary(R.id.set_rem_exact, getString(R.string.set_rem_exact_summary));
 
+        summary(R.id.set_exam_enabled, canNotify ? getString(R.string.set_exam_enabled_summary) : getString(R.string.notifications_blocked));
+        toggle(R.id.set_exam_enabled, st.examReminders);
+        java.util.List<Integer> none = new java.util.ArrayList<>();
+        summary(R.id.set_exam_days, Exams.summary(this, st.examDaysBefore, none));
+        summary(R.id.set_exam_day_time, getString(R.string.set_exam_day_time_summary, Fmt.time(this, st.examDayTime)));
+        summary(R.id.set_exam_minutes, Exams.summary(this, none, st.examMinutesBefore));
+        for (int id : new int[]{R.id.set_exam_days, R.id.set_exam_day_time, R.id.set_exam_minutes}) {
+            findViewById(id).setEnabled(st.examReminders);
+            findViewById(id).setAlpha(st.examReminders ? 1f : 0.5f);
+        }
         summary(R.id.set_export_pdf, getString(R.string.export_pdf_summary));
         summary(R.id.set_backup, getString(R.string.backup_summary));
         summary(R.id.set_restore, getString(R.string.restore_summary));

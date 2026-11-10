@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_attendance"
+        android:shortcutId="attendance"
+        android:shortcutShortLabel="@string/shortcut_attendance">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.mizan.gpa.ui.MainActivity"
+            android:targetPackage="com.mizan.gpa">
+            <extra
+                android:name="shortcut"
+                android:value="attendance" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_schedule"
+        android:shortcutId="schedule"
+        android:shortcutShortLabel="@string/shortcut_schedule">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.mizan.gpa.ui.MainActivity"
+            android:targetPackage="com.mizan.gpa">
+            <extra
+                android:name="shortcut"
+                android:value="schedule" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_exams"
+        android:shortcutId="exams"
+        android:shortcutShortLabel="@string/shortcut_exams">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.mizan.gpa.ui.MainActivity"
+            android:targetPackage="com.mizan.gpa">
+            <extra
+                android:name="shortcut"
+                android:value="exams" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_forecast"
+        android:shortcutId="forecast"
+        android:shortcutShortLabel="@string/shortcut_forecast">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.mizan.gpa.ui.MainActivity"
+            android:targetPackage="com.mizan.gpa">
+            <extra
+                android:name="shortcut"
+                android:value="forecast" />
+        </intent>
+    </shortcut>
+</shortcuts>

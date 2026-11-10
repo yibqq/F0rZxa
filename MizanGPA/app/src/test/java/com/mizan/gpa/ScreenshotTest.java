@@ -142,6 +142,10 @@ public class ScreenshotTest {
                 new com.mizan.gpa.widget.AttendanceWidgetService.Factory(ctx), prefix + "-widget-attendance", 380);
         renderWidget(ctx, host, com.mizan.gpa.widget.ScheduleWidget.build(ctx, 2),
                 new com.mizan.gpa.widget.ScheduleWidgetService.Factory(ctx), prefix + "-widget-schedule", 560);
+        renderWidget(ctx, host, com.mizan.gpa.widget.ExamsWidget.build(ctx, 3),
+                new com.mizan.gpa.widget.ExamsWidgetService.Factory(ctx), prefix + "-widget-exams", 300);
+        measureAndSave(com.mizan.gpa.widget.GpaWidget.build(ctx, 4).apply(ctx, host), 170, 170, prefix + "-widget-gpa");
+        measureAndSave(com.mizan.gpa.widget.NextLectureWidget.build(ctx, 5).apply(ctx, host), 360, 76, prefix + "-widget-next");
         // Previews shown in the launcher's widget picker.
         for (int layout : new int[]{R.layout.widget_attendance_preview, R.layout.widget_schedule_preview}) {
             View v = android.view.LayoutInflater.from(ctx).inflate(layout, host, false);
@@ -174,6 +178,34 @@ public class ScreenshotTest {
         Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         v.draw(new Canvas(b));
         write(b, name);
+    }
+
+    /** The adaptive launcher icon as a circle and as a rounded square. */
+    @Test
+    public void launcherIcon() {
+        Context ctx = ApplicationProvider.getApplicationContext();
+        int size = 432;
+        android.graphics.drawable.Drawable bg = ctx.getDrawable(R.drawable.ic_launcher_background);
+        android.graphics.drawable.Drawable fg = ctx.getDrawable(R.drawable.ic_launcher_foreground);
+        Bitmap out = Bitmap.createBitmap(size * 2 + 60, size + 40, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(out);
+        canvas.drawColor(0xFFE9EEF0);
+        for (int i = 0; i < 2; i++) {
+            Bitmap layer = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(layer);
+            android.graphics.Path clip = new android.graphics.Path();
+            if (i == 0) clip.addCircle(size / 2f, size / 2f, size / 2f, android.graphics.Path.Direction.CW);
+            else clip.addRoundRect(0, 0, size, size, size * 0.24f, size * 0.24f, android.graphics.Path.Direction.CW);
+            c.clipPath(clip);
+            // Adaptive icons show the middle 72 of 108 units.
+            int full = size * 108 / 72, off = (full - size) / 2;
+            bg.setBounds(-off, -off, full - off, full - off);
+            bg.draw(c);
+            fg.setBounds(-off, -off, full - off, full - off);
+            fg.draw(c);
+            canvas.drawBitmap(layer, 20 + i * (size + 20), 20, null);
+        }
+        write(out, "icon");
     }
 
     @Test
@@ -246,6 +278,9 @@ public class ScreenshotTest {
                     save(a.getWindow().getDecorView(), prefix + "-" + TAB_NAMES[i]);
                     saveScrollContent(a, prefix + "-" + TAB_NAMES[i] + "-full");
                 }
+                a.openExams();
+                settle();
+                save(a.getWindow().getDecorView(), prefix + "-5b-exams");
             });
         }
         Semester cur = d.currentSemester();
@@ -259,10 +294,15 @@ public class ScreenshotTest {
                 Dialog dlg = ShadowDialog.getLatestDialog();
                 save(dlg.getWindow().getDecorView(), prefix + "-6b-course-dialog");
                 dlg.dismiss();
+                Dialogs.editExam(a, cur, null, cur.courses.get(3).exams.get(0));
+                settle();
+                Dialog examDlg = ShadowDialog.getLatestDialog();
+                save(examDlg.getWindow().getDecorView(), prefix + "-6c-exam-dialog");
+                examDlg.dismiss();
             });
         }
         String courseId = cur.courses.get(3).id; // the course close to deprivation
-        for (int tab = 0; tab < 3; tab++) {
+        for (int tab = 0; tab < 4; tab++) {
             int t = tab;
             try (ActivityScenario<CourseActivity> sc = ActivityScenario.launch(CourseActivity.intent(ctx, courseId, tab))) {
                 sc.onActivity(a -> {

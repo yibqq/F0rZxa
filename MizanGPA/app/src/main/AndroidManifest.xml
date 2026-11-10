@@ -27,6 +27,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <activity
             android:name=".ui.SemesterActivity"
@@ -89,6 +92,43 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_schedule_info" />
         </receiver>
+        <receiver
+            android:name=".widget.ExamsWidget"
+            android:exported="false"
+            android:label="@string/widget_exams_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_exams_info" />
+        </receiver>
+        <receiver
+            android:name=".widget.GpaWidget"
+            android:exported="false"
+            android:label="@string/widget_gpa_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_gpa_info" />
+        </receiver>
+        <receiver
+            android:name=".widget.NextLectureWidget"
+            android:exported="false"
+            android:label="@string/widget_next_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_next_info" />
+        </receiver>
+        <service
+            android:name=".widget.ExamsWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
             android:name=".widget.AttendanceWidgetService"
             android:exported="false"

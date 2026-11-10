@@ -47,17 +47,21 @@ public class ScheduleFragment extends BaseFragment {
         root = inflater.inflate(R.layout.fragment_list, container, false);
         selectedDay = state != null ? state.getInt(STATE_DAY) : Fmt.toCalendarDay(LocalDate.now().getDayOfWeek());
         ExtendedFloatingActionButton fab = root.findViewById(R.id.fab);
-        fab.setText(R.string.add_lecture);
-        fab.setOnClickListener(v -> addLecture());
+        fab.setText("exams".equals(data().settings.scheduleView) ? R.string.add_exam : R.string.add_lecture);
+        fab.setOnClickListener(v -> {
+            if ("exams".equals(data().settings.scheduleView)) addExam();
+            else addLecture();
+        });
         FrameLayout h = root.findViewById(R.id.header);
         header = inflater.inflate(R.layout.header_schedule, h, false);
         h.addView(header);
         buildDayChips();
         com.google.android.material.button.MaterialButtonToggleGroup mode = header.findViewById(R.id.view_mode);
-        mode.check("list".equals(data().settings.scheduleView) ? R.id.mode_list : R.id.mode_grid);
+        String current = data().settings.scheduleView;
+        mode.check("list".equals(current) ? R.id.mode_list : "exams".equals(current) ? R.id.mode_exams : R.id.mode_grid);
         mode.addOnButtonCheckedListener((g, id, checked) -> {
             if (!checked) return;
-            String value = id == R.id.mode_list ? "list" : "grid";
+            String value = id == R.id.mode_list ? "list" : id == R.id.mode_exams ? "exams" : "grid";
             if (!value.equals(data().settings.scheduleView)) {
                 data().settings.scheduleView = value;
                 repo().save();
@@ -97,6 +101,51 @@ public class ScheduleFragment extends BaseFragment {
             }
         });
         group.addView(c);
+    }
+
+    /** Shows the exams list; used when the tab is opened from a shortcut, widget or the dashboard. */
+    public void showExams() {
+        if (header == null) return;
+        ((com.google.android.material.button.MaterialButtonToggleGroup) header.findViewById(R.id.view_mode)).check(R.id.mode_exams);
+    }
+
+    private void addExam() {
+        Semester cur = data().currentSemester();
+        if (cur == null || cur.courses.isEmpty()) {
+            Ui.snack(requireActivity(), getString(R.string.add_courses_first));
+            return;
+        }
+        Dialogs.editExam((AppCompatActivity) requireActivity(), cur, null, null);
+    }
+
+    private void renderExams(LinearLayout list, Semester cur) {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        List<Exams.Entry> all = Exams.of(cur, now);
+        if (all.isEmpty()) {
+            Rows.empty(root, R.drawable.ic_exam, R.string.empty_exams_title, R.string.empty_exams_text,
+                    R.string.add_exam, v -> addExam());
+            return;
+        }
+        Rows.hideEmpty(root);
+        boolean pastHeader = false, upcomingHeader = false;
+        for (Exams.Entry e : all) {
+            boolean past = Exams.isPast(e.exam, now);
+            if (!past && !upcomingHeader) {
+                list.addView(sectionHeader(list, getString(R.string.exams_upcoming)));
+                upcomingHeader = true;
+            }
+            if (past && !pastHeader) {
+                list.addView(sectionHeader(list, getString(R.string.exams_past)));
+                pastHeader = true;
+            }
+            list.addView(Rows.examCard(list, (AppCompatActivity) requireActivity(), cur, e, true));
+        }
+    }
+
+    private View sectionHeader(ViewGroup parent, String text) {
+        TextView t = (TextView) LayoutInflater.from(requireContext()).inflate(R.layout.view_day_header, parent, false);
+        t.setText(text);
+        return t;
     }
 
     private void addLecture() {
@@ -148,8 +197,17 @@ public class ScheduleFragment extends BaseFragment {
             banner.setVisibility(View.GONE);
         }
 
-        boolean grid = !"list".equals(d.settings.scheduleView);
-        header.findViewById(R.id.days_scroll).setVisibility(grid ? View.GONE : View.VISIBLE);
+        boolean exams = "exams".equals(d.settings.scheduleView);
+        boolean grid = !exams && !"list".equals(d.settings.scheduleView);
+        ExtendedFloatingActionButton fab = root.findViewById(R.id.fab);
+        fab.setText(exams ? R.string.add_exam : R.string.add_lecture);
+        fab.extend();
+        header.findViewById(R.id.days_scroll).setVisibility(grid || exams ? View.GONE : View.VISIBLE);
+        if (exams) {
+            Rows.hideEmpty(root);
+            renderExams(list, cur);
+            return;
+        }
         if (grid) {
             renderGrid(list, cur);
             return;

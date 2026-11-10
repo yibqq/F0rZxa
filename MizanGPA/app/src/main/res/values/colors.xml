@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="brand_primary">#0B7A74</color>
-    <color name="ic_launcher_bg">#0B6E69</color>
+    <color name="ic_launcher_bg">#0B6E78</color>
 
     <color name="md_primary">#006A65</color>
     <color name="md_on_primary">#FFFFFF</color>

@@ -121,6 +121,20 @@ public final class Insights {
             }
         }
 
+        // Exams today or tomorrow.
+        java.time.LocalDateTime nowTime = java.time.LocalDateTime.now();
+        for (Exams.Entry e : Exams.upcoming(d, nowTime)) {
+            long days = java.time.temporal.ChronoUnit.DAYS.between(nowTime.toLocalDate(), e.start.toLocalDate());
+            if (days > 1) break;
+            Alert x = new Alert(days == 0 ? Level.DANGER : Level.WARNING, R.drawable.ic_exam,
+                    c.getString(R.string.alert_exam_title, e.course.displayName(), Exams.countdown(c, e.exam, nowTime, true)),
+                    Exams.title(c, e.exam) + " · " + Exams.when(c, e.exam)
+                            + (e.exam.room == null || e.exam.room.trim().isEmpty() ? "" : " · " + e.exam.room.trim()));
+            x.courseId = e.course.id;
+            x.courseTab = CourseActivity.TAB_EXAMS;
+            out.add(0, x);
+        }
+
         // Next lecture today.
         ReminderScheduler.Next next = ReminderScheduler.nextLecture(d, System.currentTimeMillis());
         if (next != null) {

@@ -28,6 +28,10 @@ public class MainActivity extends BaseActivity {
     private static final String STATE_TAB = "tab";
     /** Optional tab to open, e.g. from a widget. */
     public static final String EXTRA_TAB = "openTab";
+    /** With {@link #EXTRA_TAB} set to the schedule: open its exams list. */
+    public static final String EXTRA_EXAMS = "openExams";
+    /** Tab by name ("attendance", "schedule", "exams", "forecast"), used by launcher shortcuts. */
+    public static final String EXTRA_SHORTCUT = "shortcut";
     private static final int[] TABS = {R.id.tab_home, R.id.tab_semesters, R.id.tab_attendance, R.id.tab_forecast, R.id.tab_schedule};
 
     private NavigationBarView nav;
@@ -54,7 +58,7 @@ public class MainActivity extends BaseActivity {
         if (nav instanceof NavigationRailView) Ui.padForNavBar(container);
 
         if (savedInstanceState != null) currentTab = savedInstanceState.getInt(STATE_TAB, R.id.tab_home);
-        else currentTab = getIntent().getIntExtra(EXTRA_TAB, R.id.tab_home);
+        else currentTab = requestedTab(getIntent());
         nav.setSelectedItemId(currentTab);
         nav.setOnItemSelectedListener(item -> {
             showTab(item.getItemId(), true);
@@ -80,8 +84,45 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onNewIntent(android.content.Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
+        int tab = requestedTab(intent);
+        if (tab != R.id.tab_home || intent.hasExtra(EXTRA_TAB)) selectTab(tab);
+    }
+
+    /** The tab an intent (widget, shortcut) asks for; also switches the schedule to its exams list. */
+    private int requestedTab(android.content.Intent intent) {
         int tab = intent.getIntExtra(EXTRA_TAB, 0);
-        if (tab != 0) selectTab(tab);
+        boolean exams = intent.getBooleanExtra(EXTRA_EXAMS, false);
+        String shortcut = intent.getStringExtra(EXTRA_SHORTCUT);
+        if (shortcut != null) {
+            switch (shortcut) {
+                case "attendance": tab = R.id.tab_attendance; break;
+                case "forecast": tab = R.id.tab_forecast; break;
+                case "exams": tab = R.id.tab_schedule; exams = true; break;
+                case "schedule": tab = R.id.tab_schedule; break;
+                default: break;
+            }
+        }
+        if (exams && !"exams".equals(data().settings.scheduleView)) {
+            data().settings.scheduleView = "exams";
+            repo().save();
+        }
+        if (exams) {
+            Fragment f = getSupportFragmentManager().findFragmentByTag(tag(R.id.tab_schedule));
+            if (f instanceof ScheduleFragment) ((ScheduleFragment) f).showExams();
+        }
+        return tab == 0 ? R.id.tab_home : tab;
+    }
+
+    /** Opens the schedule tab on its exams list. */
+    public void openExams() {
+        if (!"exams".equals(data().settings.scheduleView)) {
+            data().settings.scheduleView = "exams";
+            repo().save();
+        }
+        selectTab(R.id.tab_schedule);
+        Fragment f = getSupportFragmentManager().findFragmentByTag(tag(R.id.tab_schedule));
+        if (f instanceof ScheduleFragment) ((ScheduleFragment) f).showExams();
     }
 
     public void selectTab(int tabId) {
@@ -141,16 +182,19 @@ public class MainActivity extends BaseActivity {
         ImageView logoIcon = findViewById(R.id.header_logo_icon);
         logo.setClipToOutline(true);
         if (icon == 0) {
-            int primary = Ui.attr(this, androidx.appcompat.R.attr.colorPrimary);
+            // The logo keeps the launcher icon's own colors in every palette.
             android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
                     android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
-                    new int[]{primary, Ui.blend(primary, Ui.attr(this, com.google.android.material.R.attr.colorTertiary), 0.6f)});
+                    new int[]{0xFF12A195, 0xFF0B3F66});
             g.setCornerRadius(Ui.dp(this, 15));
             logo.setBackground(g);
             logoIcon.setImageResource(R.drawable.ic_launcher_foreground);
             logoIcon.setImageTintList(null);
             logoIcon.setPadding(0, 0, 0, 0);
             logoIcon.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            // The adaptive-icon artwork sits in the middle two thirds; enlarge it to fill the tile.
+            logoIcon.setScaleX(1.35f);
+            logoIcon.setScaleY(1.35f);
         } else {
             Ui.roundedFill(logo, Ui.attr(this, com.google.android.material.R.attr.colorSecondaryContainer), 15);
             logoIcon.setImageResource(icon);
@@ -158,6 +202,8 @@ public class MainActivity extends BaseActivity {
             int pad = Ui.dp(this, 11);
             logoIcon.setPadding(pad, pad, pad, pad);
             logoIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            logoIcon.setScaleX(1f);
+            logoIcon.setScaleY(1f);
         }
 
         String subtitle;
