@@ -32,8 +32,9 @@ import java.time.LocalDate;
 /** Renders the academic report (transcript, GPA summary, attendance) to an A4 PDF with Android's PdfDocument. */
 public final class PdfReport {
     private static final int W = 595, H = 842, M = 40;
-    private static final int BRAND = 0xFF0B6E69;
-    private static final int BRAND_LIGHT = 0xFFE3F4F2;
+    /** The chosen palette's primary and a pale tint of it, so the report matches the app. */
+    private final int BRAND;
+    private final int BRAND_LIGHT;
     private static final int TEXT = 0xFF1B2120;
     private static final int MUTED = 0xFF5D6967;
     private static final int RULE = 0xFFD5DEDC;
@@ -67,6 +68,8 @@ public final class PdfReport {
         this.data = data;
         this.rtl = Ui.isRtl(ctx);
         this.sink = sink;
+        BRAND = com.mizan.gpa.util.Themes.lightColor(ctx, androidx.appcompat.R.attr.colorPrimary);
+        BRAND_LIGHT = Ui.blend(0xFFFFFFFF, BRAND, 0.10f);
         title = paint(20, true, Color.WHITE);
         h2 = paint(13, true, TEXT);
         body = paint(9.5f, false, TEXT);
@@ -197,7 +200,7 @@ public final class PdfReport {
         fill.setColor(BRAND);
         canvas.drawRoundRect(new RectF(M, y, W - M, y + 74), 12, 12, fill);
         draw(ctx.getString(R.string.pdf_title), M + 18, y + 14, W - 2 * M - 36, title, Layout.Alignment.ALIGN_NORMAL);
-        TextPaint sub = paint(9.5f, false, 0xFFCDEDEA);
+        TextPaint sub = paint(9.5f, false, Ui.blend(BRAND, 0xFFFFFFFF, 0.82f));
         StringBuilder who = new StringBuilder();
         if (!st.studentName.trim().isEmpty()) who.append(st.studentName.trim());
         if (!st.university.trim().isEmpty()) who.append(who.length() > 0 ? " · " : "").append(st.university.trim());

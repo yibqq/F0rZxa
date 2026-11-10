@@ -47,6 +47,7 @@ public class DashboardFragment extends BaseFragment {
         });
         Ui.dot(root.findViewById(R.id.legend_bar), TrendChartView.barColor(root));
         Ui.dot(root.findViewById(R.id.legend_line), TrendChartView.lineColor(root));
+        com.mizan.gpa.util.Themes.brandTile(root.findViewById(R.id.welcome_logo), root.findViewById(R.id.welcome_logo_icon), 16);
         root.findViewById(R.id.hero).setOnClickListener(v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_semesters));
         return root;
     }

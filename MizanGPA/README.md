@@ -4,7 +4,7 @@
 
 تطبيق Android أصلي (Java + XML) لإدارة **المعدل الجامعي والغياب والدرجات وتوقعات المعدل**. يعمل بالكامل دون إنترنت، بدون تسجيل دخول وبدون قاعدة بيانات: كل البيانات تُحفظ في ملف JSON داخل الجهاز.
 
-**التثبيت السريع:** حمّل `dist/Mizan-1.2.0.apk` على هاتف Android 8.0 أو أحدث وثبّته.
+**التثبيت السريع:** حمّل `dist/Mizan-1.2.1.apk` على هاتف Android 8.0 أو أحدث وثبّته.
 
 ![الأيقونة](docs/icon.png)
 
@@ -45,7 +45,11 @@
 
 ### 6. التصميم
 - Material 3 بهوية مستقلة، وضع ليلي ونهاري (أو حسب النظام)، و**أسود خالص** لشاشات OLED.
-- **ثيمات ألوان:** فيروزي، أزرق المحيط، بنفسجي، وردي، برتقالي الغروب، أخضر الغابة، ذهبي، رمادي، أو ألوان Material You من الخلفية.
+- **ثيمات ألوان:** فيروزي، أزرق المحيط، بنفسجي، وردي، برتقالي الغروب، أخضر الغابة، ذهبي، رمادي، أو ألوان Material You من الخلفية. كل الثيمات مبنية بقاعدة Material 3 واحدة (نفس درجات الحاويات والأسطح، ولون ثالثي مجاور للأساسي)، والشعار والتقرير والإشعارات تتبع الثيم المختار.
+
+| الثيمات (فاتح) | الثيمات (داكن) |
+|---|---|
+| ![](docs/themes-light.png) | ![](docs/themes-dark.png) |
 - **الخطوط:** تجوّل (الافتراضي)، القاهرة، IBM Plex Sans Arabic، المراعي، Readex Pro، Noto Kufi Arabic، أو خط النظام، مع **إضافة أي خط من ملف** (TTF/OTF) وتحكم في **حجم النص**.
 - عربي (من اليمين لليسار) وإنجليزي مع تبديل اللغة من داخل التطبيق، حركات انتقالية، وتخطيط للأجهزة اللوحية بشريط تنقل جانبي.
 
@@ -99,7 +103,7 @@ All of these are covered by unit tests in `app/src/test/java/com/mizan/gpa/Calcu
 
 - Native Android, **Java + XML only**, minSdk **26**, targetSdk/compileSdk **36**.
 - Libraries: AndroidX AppCompat, Core and Material Components. Charts, the GPA ring, the weekly timetable and the PDF report are drawn in plain Java (Canvas, `PdfDocument`); there is no chart, database or network library.
-- Fonts are in `app/src/main/assets/fonts/` with their SIL Open Font License files in `assets/fonts/licenses/`. Fonts the user imports are copied to private storage and grouped into families by file name (`Family-Bold.otf`). Color themes are Material 3 schemes generated from seed colors (`res/values*/colors_themes.xml`).
+- Fonts are in `app/src/main/assets/fonts/` with their SIL Open Font License files in `assets/fonts/licenses/`. Fonts the user imports are copied to private storage and grouped into families by file name (`Family-Bold.otf`). Color themes are generated with one Material 3 recipe from a seed color each: primary at a shared chroma, muted secondary in the same hue, tertiary in a neighbouring hue (+35°), and lightly tinted neutral surfaces, using the standard light/dark tones (`res/values*/colors_themes.xml`, `md_*` in `colors.xml` for the default teal).
 - **No INTERNET permission.** Data is one JSON document in the app's private storage (`mizan-data.json`), written atomically with `AtomicFile`; the first save of each run keeps the previous file as a safety copy. Cloud backup is disabled; backups are files the user saves through the system file picker.
 - Reminders use a single exact alarm that always points at the earliest upcoming lecture or exam reminder and re-arms itself after it fires, after reboot, and after time or time-zone changes.
 

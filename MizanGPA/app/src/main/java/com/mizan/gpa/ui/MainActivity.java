@@ -182,19 +182,7 @@ public class MainActivity extends BaseActivity {
         ImageView logoIcon = findViewById(R.id.header_logo_icon);
         logo.setClipToOutline(true);
         if (icon == 0) {
-            // The logo keeps the launcher icon's own colors in every palette.
-            android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
-                    android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
-                    new int[]{0xFF12A195, 0xFF0B3F66});
-            g.setCornerRadius(Ui.dp(this, 15));
-            logo.setBackground(g);
-            logoIcon.setImageResource(R.drawable.ic_launcher_foreground);
-            logoIcon.setImageTintList(null);
-            logoIcon.setPadding(0, 0, 0, 0);
-            logoIcon.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            // The adaptive-icon artwork sits in the middle two thirds; enlarge it to fill the tile.
-            logoIcon.setScaleX(1.35f);
-            logoIcon.setScaleY(1.35f);
+            com.mizan.gpa.util.Themes.brandTile(logo, logoIcon, 15);
         } else {
             Ui.roundedFill(logo, Ui.attr(this, com.google.android.material.R.attr.colorSecondaryContainer), 15);
             logoIcon.setImageResource(icon);

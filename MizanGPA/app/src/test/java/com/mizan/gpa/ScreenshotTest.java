@@ -180,6 +180,34 @@ public class ScreenshotTest {
         write(b, name);
     }
 
+    /** Home screen in every palette, to compare them side by side. */
+    @Test
+    @Config(qualifiers = "ar-w411dp-h891dp-xxhdpi")
+    public void paletteGalleryLight() {
+        paletteGallery("light");
+    }
+
+    @Test
+    @Config(qualifiers = "ar-w411dp-h891dp-night-xxhdpi")
+    public void paletteGalleryDark() {
+        paletteGallery("dark");
+    }
+
+    private void paletteGallery(String mode) {
+        load();
+        Context ctx = ApplicationProvider.getApplicationContext();
+        for (com.mizan.gpa.util.Themes.Palette p : com.mizan.gpa.util.Themes.PALETTES) {
+            Repository.get(ctx).settings().colorTheme = p.id;
+            Repository.get(ctx).save();
+            try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
+                sc.onActivity(a -> {
+                    settle();
+                    save(a.getWindow().getDecorView(), "palette-" + mode + "-" + p.id);
+                });
+            }
+        }
+    }
+
     /** The adaptive launcher icon as a circle and as a rounded square. */
     @Test
     public void launcherIcon() {

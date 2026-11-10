@@ -310,7 +310,7 @@ public class SettingsActivity extends BaseActivity {
             chip.setChecked(p.id.equals(st().colorTheme) && !st().dynamicColor);
             android.graphics.drawable.GradientDrawable dot = new android.graphics.drawable.GradientDrawable();
             dot.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-            dot.setColor(p.swatch);
+            dot.setColor(androidx.core.content.ContextCompat.getColor(this, p.swatch));
             dot.setSize(com.mizan.gpa.util.Ui.dp(this, 18), com.mizan.gpa.util.Ui.dp(this, 18));
             chip.setChipIcon(dot);
             chip.setChipIconVisible(true);

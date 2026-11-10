@@ -30,12 +30,17 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <ImageView
+                <FrameLayout
+                    android:id="@+id/welcome_logo"
                     android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/bg_launcher_tile"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_launcher_foreground" />
+                    android:layout_height="56dp">
+
+                    <ImageView
+                        android:id="@+id/welcome_logo_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
 
                 <TextView
                     android:layout_width="wrap_content"

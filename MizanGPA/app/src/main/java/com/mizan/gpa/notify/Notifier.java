@@ -126,7 +126,7 @@ public final class Notifier {
         if (slot.room != null && !slot.room.trim().isEmpty()) text.append(" · ").append(slot.room.trim());
         NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CHANNEL_LECTURES)
                 .setSmallIcon(R.drawable.ic_stat_mizan)
-                .setColor(ContextCompat.getColor(ctx, R.color.brand_primary))
+                .setColor(com.mizan.gpa.util.Themes.lightColor(ctx, androidx.appcompat.R.attr.colorPrimary))
                 .setContentTitle(title)
                 .setContentText(text)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
@@ -162,7 +162,7 @@ public final class Notifier {
         String big = exam.note == null || exam.note.trim().isEmpty() ? text : text + "\n" + exam.note.trim();
         NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CHANNEL_EXAMS)
                 .setSmallIcon(R.drawable.ic_stat_mizan)
-                .setColor(ContextCompat.getColor(ctx, R.color.brand_primary))
+                .setColor(com.mizan.gpa.util.Themes.lightColor(ctx, androidx.appcompat.R.attr.colorPrimary))
                 .setContentTitle(title)
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(big))
