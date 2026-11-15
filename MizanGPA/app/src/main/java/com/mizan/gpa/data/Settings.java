@@ -12,7 +12,11 @@ public class Settings {
     /** Round course percentages half-up to whole numbers before converting to letters. */
     public boolean roundPercent = false;
 
-    /** Cumulative GPA and credit hours from earlier studies that are not entered as semesters. */
+    /**
+     * Manual cumulative GPA baseline: the GPA and GPA-credit hours of earlier studies that are not
+     * entered as semesters. A baseline is used only with credit hours > 0; a GPA without hours is kept
+     * for reference but never weighted into the cumulative GPA.
+     */
     public double priorGpa = 0;
     public double priorCredits = 0;
     public double targetGpa = 0;
@@ -48,6 +52,14 @@ public class Settings {
     public String currentSemesterId;
     public int defaultWeeks = 15;
     public boolean onboarded = false;
+    public static final String MODE_STANDARD = "standard";
+    public static final String MODE_LITE = "lite";
+    /** Interface mode: the full app, or the minimal one (GPA calculator, reminders & tasks, settings). */
+    public String appMode = MODE_STANDARD;
+    /** Required number of digits for a CRN at the student's university; 0 = any format. */
+    public int crnDigits = 0;
+    /** Order of the reminders & tasks list: "date", "course" or "category". */
+    public String taskSort = "date";
     public boolean notificationsAsked = false;
 
     /** Font id (see Fonts): a bundled font, "system", or "file:<family>" for an imported font. */
@@ -55,7 +67,7 @@ public class Settings {
     /** Text size multiplier applied on top of the system font size. */
     public float fontScale = 1f;
     /** Color palette id (see Themes). */
-    public String colorTheme = "teal";
+    public String colorTheme = "burgundy";
     /** Pure black backgrounds in dark mode. */
     public boolean pureBlack = false;
     /** Schedule tab layout: "list" or "grid". */
@@ -88,6 +100,9 @@ public class Settings {
         Json.put(o, "currentSemesterId", currentSemesterId);
         o.put("defaultWeeks", defaultWeeks);
         o.put("onboarded", onboarded);
+        o.put("appMode", appMode);
+        o.put("crnDigits", crnDigits);
+        o.put("taskSort", taskSort);
         o.put("notificationsAsked", notificationsAsked);
         o.put("fontId", fontId);
         o.put("fontScale", (double) fontScale);
@@ -116,11 +131,11 @@ public class Settings {
         s.examReminders = Json.bool(o, "examReminders", true);
         if (o.has("examDaysBefore")) {
             s.examDaysBefore.clear();
-            Exam.readInts(Json.arr(o, "examDaysBefore"), s.examDaysBefore);
+            Task.readOffsets(Json.arr(o, "examDaysBefore"), s.examDaysBefore);
         }
         if (o.has("examMinutesBefore")) {
             s.examMinutesBefore.clear();
-            Exam.readInts(Json.arr(o, "examMinutesBefore"), s.examMinutesBefore);
+            Task.readOffsets(Json.arr(o, "examMinutesBefore"), s.examMinutesBefore);
         }
         s.examDayTime = Math.max(0, Math.min(24 * 60 - 1, Json.integer(o, "examDayTime", 20 * 60)));
         s.lastReminderCheck = (long) Json.num(o, "lastReminderCheck", 0);
@@ -131,9 +146,13 @@ public class Settings {
         s.currentSemesterId = Json.strOrNull(o, "currentSemesterId");
         s.defaultWeeks = Math.max(1, Json.integer(o, "defaultWeeks", 15));
         s.onboarded = Json.bool(o, "onboarded", false);
+        s.appMode = MODE_LITE.equals(Json.str(o, "appMode", MODE_STANDARD)) ? MODE_LITE : MODE_STANDARD;
+        s.crnDigits = Math.max(0, Math.min(20, Json.integer(o, "crnDigits", 0)));
+        s.taskSort = Json.str(o, "taskSort", "date");
         s.notificationsAsked = Json.bool(o, "notificationsAsked", false);
         s.fontId = Json.str(o, "fontId", "tajawal");
         s.fontScale = (float) clamp(Json.num(o, "fontScale", 1), 0.8, 1.4);
+        // Files written before themes existed used the teal look; keep it for them.
         s.colorTheme = Json.str(o, "colorTheme", "teal");
         s.pureBlack = Json.bool(o, "pureBlack", false);
         s.scheduleView = Json.str(o, "scheduleView", "grid");

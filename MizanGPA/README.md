@@ -1,121 +1,126 @@
-# ميزان — Mizan: GPA, Attendance & Forecasts
+# ميزان — Mizan: GPA, Attendance & Tasks
 
 <div dir="rtl">
 
-تطبيق Android أصلي (Java + XML) لإدارة **المعدل الجامعي والغياب والدرجات وتوقعات المعدل**. يعمل بالكامل دون إنترنت، بدون تسجيل دخول وبدون قاعدة بيانات: كل البيانات تُحفظ في ملف JSON داخل الجهاز.
+تطبيق Android أصلي (Java + XML) لإدارة **المعدل الجامعي والغياب والدرجات والمهام والتنبيهات**. يعمل بالكامل دون إنترنت، بدون تسجيل دخول وبدون قاعدة بيانات: كل البيانات تُحفظ في ملف JSON داخل الجهاز.
 
-**التثبيت السريع:** حمّل `dist/Mizan-1.0.0.apk` على هاتف Android 8.0 أو أحدث وثبّته.
+**التثبيت السريع:** حمّل `dist/Mizan-1.0.0.apk` على هاتف Android 8.0 أو أحدث وثبّته (يُثبَّت فوق النسخة السابقة دون فقد البيانات).
 
 ![الأيقونة](docs/icon.png)
 
 الأيقونة: عدّاد المعدل كما في التطبيق مع كلمة **GPA** (حروف Nunito Black، رخصة OFL، محوّلة إلى مسارات) وحواف squircle. تُولَّد من `tools/gen_icon.py`.
 
-| الرئيسية | الاختبارات | الجدول الأسبوعي | ألوان وخطوط |
+| الرئيسية | حساب المعدل | التنبيهات والمهام | الجدول الأسبوعي |
 |---|---|---|---|
-| ![](docs/ar-1-home.png) | ![](docs/ar-5b-exams.png) | ![](docs/ar-5-schedule-grid.png) | ![](docs/theme-violet-cairo-home.png) |
-
-![الودجت](docs/widgets.png)
+| ![](docs/ar-1-home.png) | ![](docs/ar-2-gpa.png) | ![](docs/ar-4-tasks.png) | ![](docs/ar-5-schedule-grid.png) |
 
 ## المزايا
 
-### 1. حساب المعدل
-- المعدل الفصلي والتراكمي، بنظام **5** (السعودية) أو **4** (السعودية، أو A–F مع +/−) أو نظام مخصص بالكامل (الرموز، النقاط، الحد الأدنى للنسبة).
-- إضافة وتعديل وحذف الفصول والمواد والساعات والتقديرات، وترتيب الفصول.
-- مواد لا تُحتسب في المعدل (ناجح/راسب أو مادة معادة).
-- «الدراسة السابقة»: إدخال معدل تراكمي وساعات سابقة دون إدخال كل الفصول القديمة.
-- سجل أكاديمي ورسم بياني لتطور المعدل الفصلي والتراكمي.
+### 1. وضعان للواجهة: قياسي ومبسّط
+- **القياسي:** الرئيسية، حساب المعدل، الحضور، الجدول، التنبيهات والمهام.
+- **المبسّط:** ثلاثة أقسام فقط — **حساب المعدل**، **التنبيهات والمهام**، **الإعدادات** — بلا لوحات ثقيلة. صفحة المادة تعرض الدرجات والمهام فقط.
+- التبديل من **الإعدادات ← وضع الواجهة** في أي وقت. البيانات واحدة ومشتركة، والتبديل لا يحذف شيئًا: الحضور والجدول يبقيان محفوظين ويعودان كما هما في الوضع القياسي.
 
-### 2. الغياب
-- تسجيل حاضر / غائب / متأخر / بعذر بضغطة واحدة، مع التراجع، أو من إشعار المحاضرة مباشرة.
-- نسبة الغياب تلقائيًا، وعدد الغيابات المتبقية قبل الحرمان، وسجل كامل قابل للتعديل.
-- إعدادات الحرمان: النسبة (افتراضيًا 25%)، الحرمان عند **بلوغ** الحد أو **تجاوزه**، احتساب الغياب بعذر، وكم تأخيرًا يساوي غيابًا. ويمكن تخصيص النسبة لكل مادة.
-- تنبيهات (داخل التطبيق وإشعارات) عند الاقتراب من الحرمان.
+![الوضع المبسّط](docs/lite-mode.png)
 
-### 3. التوقعات
-- المعدل المتوقع (الفصلي والتراكمي) من الدرجات المسجلة أو التقدير المتوقع.
-- أفضل وأسوأ معدل ممكن.
-- محاكي سيناريوهات: اختر تقديرًا لكل مادة وشاهد المعدل فورًا.
-- المعدل المستهدف: المعدل الفصلي المطلوب للوصول إليه، أو عدد الساعات اللازمة إن لم يكن ممكنًا هذا الفصل.
+### 2. شاشة ترحيب عند أول تشغيل
+خمس صفحات عربية بحركات MotionLayout (السحب أو الأزرار): المعدل، تنظيم المواد والحضور، التنبيهات، ثم **اختيار الوضع**. تُحفظ محليًا ولا تتكرر. تدعم زر الرجوع، تدوير الشاشة، قارئ الشاشة (تُعلَن كل صفحة)، وخيار «إزالة الحركات» في النظام (تنتقل الصفحات فورًا). المستخدمون الحاليون لا يرونها بعد التحديث.
 
-### 4. الدرجات
-- اختبارات قصيرة، فصلي، واجبات، مشاريع، عملي، مشاركة، نهائي، مع «الدرجة من» و«الوزن».
-- المجموع والنسبة والتقدير المتوقع لكل مادة.
-- **ما تحتاجه في النهائي** لكل تقدير (مثلًا: تحتاج 36 من 40 للحصول على C)، أو «مضمون» أو «غير ممكن».
+![الترحيب](docs/onboarding.png)
 
-### 5. لوحة التحكم
-المعدل التراكمي بعدّاد متحرك، والمعدل الفصلي والمتوقع، والساعات، وملخص المواد والغياب، والتنبيهات، والرسم البياني.
+### 3. حساب المعدل
+- المعدل الفصلي والتراكمي بنظام **5** أو **4** (السعودية، أو A–F مع +/−) أو نظام مخصص بالكامل؛ مواد لا تُحتسب (ناجح/راسب أو معادة)؛ سجل الفصول والرسم البياني.
+- **المعدل التراكمي السابق:** أدخل معدلك الحالي و**عدد الساعات المحتسبة** دون إعادة إدخال الفصول القديمة. يُحسب كفصل واحد موزون بساعاته. إن لم تُعرف الساعات يُحفظ المعدل للعرض فقط ولا يدخل في الحساب (لا رقم مختلق)، والمعدل الأعلى من حد النظام لا يُحتسب ويظهر تحذير.
+- **منع الاحتساب المزدوج:** إذا أدخلت لاحقًا فصلًا قديمًا داخلًا في معدلك السابق، علِّمه «مشمول في المعدل السابق» (عند إضافته أو من قائمته) فيبقى في السجل ولا يُحسب مرتين. تُشرح السياسة في الشاشة نفسها.
+- **حاسبة سريعة (غير محفوظة):** صفوف مؤقتة (مادة، ساعات، تقدير) تحسب معدلها، ومع خيار «دمجها مع سجلي» تحسب التراكمي معها. الصفوف الناقصة تُتجاهل ويُذكر عددها. يمكن حفظها كفصل جديد. حلّت محل شاشة «التوقعات».
 
-### 6. التصميم
-- Material 3 بهوية مستقلة، وضع ليلي ونهاري (أو حسب النظام)، و**أسود خالص** لشاشات OLED.
-- **ثيمات ألوان:** فيروزي، أزرق المحيط، بنفسجي، وردي، برتقالي الغروب، أخضر الغابة، ذهبي، رمادي، أو ألوان Material You من الخلفية. كل الثيمات مبنية بقاعدة Material 3 واحدة (نفس درجات الحاويات والأسطح، ولون ثالثي مجاور للأساسي)، والشعار والتقرير والإشعارات تتبع الثيم المختار.
+### 4. الغياب
+- حاضر / غائب / متأخر / بعذر بضغطة، مع التراجع، أو من إشعار المحاضرة أو الودجت.
+- **سجل واحد لكل مادة في كل يوم:** الضغط على «غائب» مرة ثانية في اليوم نفسه لا يضيف غيابًا آخر (رسالة «مسجّل مسبقًا»)، وتغيير الحالة يعدّل سجل اليوم. يُفرض ذلك في الواجهة وفي طبقة الحفظ، والملفات القديمة التي فيها غيابات مكررة لليوم نفسه تُدمج تلقائيًا.
+- **غيابات بدون تاريخ:** عدد صريح يُضاف إلى إجمالي الغياب دون اختراع تواريخ، قابل للتعديل والحذف، مع تفصيل «X بتاريخ + Y بدون تاريخ».
+- قواعد الحرمان كما هي: النسبة (25% افتراضيًا)، البلوغ أو التجاوز، الغياب بعذر، التأخيرات، ونسبة لكل مادة.
+
+### 5. التنبيهات والمهام
+- أربعة أنواع: **اختبار**، **واجب**، **عملي**، **تنبيه عام**؛ لكل منها عنوان، مادة اختيارية، تاريخ ووقت اختياريان، ملاحظات اختيارية (لا تظهر مساحة فارغة إن لم توجد)، وحالة الإنجاز.
+- تصفية حسب النوع، «الحالية» و«المنجزة والمنتهية»، وترتيب حسب التاريخ أو المادة أو النوع، مع أقسام **متأخرة** و**القادمة** و**بدون تاريخ**.
+- التذكير قبل الموعد بأيام (في وقت تختاره) وفي اليوم نفسه قبل الوقت بدقائق/ساعات، افتراضيًا أو مخصصًا لكل مهمة. **لا تذكير ولا أيقونة جرس** لمهمة بلا تاريخ أو منجزة، أو عند منع الإشعارات (مع زر لطلب الإذن).
+- إشعار الواجب فيه زر «تم». المنبه يُعاد ضبطه بعد إعادة التشغيل وتغيير الوقت أو المنطقة، والتذكير الفائت يظهر بصياغة صحيحة.
+- القسم نفسه في الوضعين، وفي صفحة كل مادة.
+
+### 6. إضافة المادة برقم CRN
+- حقل **CRN اختياري**. إن طابق مادة أدخلتها سابقًا في فصل آخر يقترح التطبيق استخدام بياناتها (الاسم، الرمز، الساعات)؛ لا يوجد بحث عبر الإنترنت ولا بيانات مخترعة.
+- التحقق حسب إعداد **صيغة CRN** (أي صيغة، أو عدد أرقام محدد مثل 5) لأن الصيغة تختلف بين الجامعات.
+- يمنع تكرار CRN في الفصل نفسه، ويسمح به في فصول مختلفة (إعادة المادة).
+
+### 7. الدرجات
+- اختبارات قصيرة، فصلي، واجبات، مشاريع، عملي، مشاركة، نهائي، مع «الدرجة من» و«الوزن»؛ المجموع والنسبة والتقدير المتوقع.
+- **ما تحتاجه في النهائي** لكل تقدير، أو «مضمون» أو «غير ممكن».
+
+### 8. التصميم
+- هوية **عنابية** (الافتراضي للتثبيت الجديد؛ من اختار لونًا سابقًا يبقى عليه)، وضع ليلي ونهاري، **أسود خالص** لشاشات OLED، وثيمات: عنابي، فيروزي، أزرق، بنفسجي، وردي، برتقالي، أخضر، ذهبي، رمادي، أو Material You.
 
 | الثيمات (فاتح) | الثيمات (داكن) |
 |---|---|
 | ![](docs/themes-light.png) | ![](docs/themes-dark.png) |
-- **الخطوط:** تجوّل (الافتراضي)، القاهرة، IBM Plex Sans Arabic، المراعي، Readex Pro، Noto Kufi Arabic، أو خط النظام، مع **إضافة أي خط من ملف** (TTF/OTF) وتحكم في **حجم النص**.
-- عربي (من اليمين لليسار) وإنجليزي مع تبديل اللغة من داخل التطبيق، حركات انتقالية، وتخطيط للأجهزة اللوحية بشريط تنقل جانبي.
 
-> **خط ثمانية:** رخصة خط ثمانية تسمح باستخدامه في التطبيقات لكنها تمنع إعادة توزيع ملفاته، لذلك لا يأتي مدمجًا في التطبيق. حمّله من الصفحة الرسمية لثمانية، ثم من **الإعدادات ← الخط ← إضافة خط من ملف** اختر ملفاته (يمكن اختيار كل الأوزان مرة واحدة وسيجمعها التطبيق كعائلة واحدة).
+- **الخطوط:** تجوّل (الافتراضي)، القاهرة، IBM Plex Sans Arabic، المراعي، Readex Pro، Noto Kufi Arabic، أو خط النظام، مع إضافة أي خط من ملف وتحكم في حجم النص.
+- عربي (RTL) وإنجليزي، أرقام غربية متسقة، تخطيطات للهواتف الصغيرة والوضع الأفقي والأجهزة اللوحية (شريط جانبي).
 
-### 7. تذكير الاختبارات
-- أضف اختبارات كل مادة (النوع، التاريخ، الوقت، القاعة، ملاحظة) من تبويب «الاختبارات» في المادة أو من تبويب الجدول.
-- **تذكير قبل الاختبار بأيام** (يوم، يومان، 3 أيام، أسبوع، أو قيمة مخصصة) يُرسل في وقت تحدده أنت (افتراضيًا 8:00 م).
-- **تذكير في يوم الاختبار** (قبله بـ3 ساعات، ساعتين، ساعة، نصف ساعة، ربع ساعة، وقت الاختبار نفسه، أو قيمة مخصصة بالدقائق).
-- إعدادات افتراضية لكل الاختبارات، مع إمكانية **تخصيص التذكيرات لكل اختبار** على حدة.
-- نص الإشعار يُحسب من الوقت المتبقي فعلًا («غدًا»، «بعد ساعة»، «الآن»)، والتذكير الذي يفوت والجهاز مطفأ يظهر عند التشغيل.
-- عدّ تنازلي لكل اختبار، وتنبيه في الرئيسية لاختبارات اليوم والغد، وبعد انتهاء الاختبار يمكن تسجيل درجته مباشرة.
+> **خط ثمانية:** رخصته تمنع إعادة توزيع ملفاته، لذلك لا يأتي مدمجًا. حمّله من الصفحة الرسمية ثم **الإعدادات ← الخط ← إضافة خط من ملف**.
 
-### 8. إضافات
-- **جدول المحاضرات** بطريقتين: جدول أسبوعي شبكي (الأيام أعمدة والساعات صفوف، مع خط الوقت الحالي) أو قائمة حسب اليوم.
-- **خمس ودجت:** متابعة الغياب (مع زري ✓ حاضر و✗ غائب)، جدول الأسبوع حسب الأيام، الاختبارات القادمة مع العد التنازلي، المعدل التراكمي، والمحاضرة القادمة (مع زري الحضور والغياب).
-- **اختصارات** عند الضغط المطوّل على أيقونة التطبيق: الحضور، الجدول، الاختبارات، توقع المعدل.
-- تذكير قبل المحاضرة (مع زري حاضر/غائب في الإشعار)، تقرير PDF، نسخ احتياطي واستعادة بملف JSON، وبيانات تجريبية.
+### 9. إضافات
+- **جدول المحاضرات** شبكي أسبوعي أو قائمة حسب اليوم، وتذكير قبل المحاضرة مع زري حاضر/غائب.
+- **خمس ودجت:** متابعة الغياب، جدول الأسبوع، **المهام القادمة**، المعدل التراكمي، المحاضرة القادمة.
+- اختصارات: الحضور، الجدول، المهام، حساب المعدل. تقرير PDF، نسخ احتياطي واستعادة بملف JSON، وبيانات تجريبية.
+
+![الودجت](docs/widgets.png)
 
 </div>
 
 ## Features (English)
 
-- **GPA**: semester and cumulative GPA on 5-point or 4-point scales (Saudi presets, A–F with +/−) or a fully custom scale; courses excluded from GPA; earlier studies entered as one prior GPA + credit hours; GPA trend chart.
-- **Attendance**: one-tap present/absent/late/excused (with undo, or straight from the lecture notification); absence rate, absences left before deprivation, full editable log; configurable limit (global or per course), "reach" vs "exceed" rule, excused absences, lates-per-absence; alerts and notifications near the limit.
-- **Forecast**: expected semester/cumulative GPA, best and worst case, a what-if simulator, and a target-GPA calculator.
-- **Marks**: quizzes, midterms, assignments, projects, labs and finals with score/out-of/weight; totals, percentage, predicted letter, and the score needed in the final for every grade.
-- **Dashboard**, **schedule** as a weekly grid or a day list, reminders, **PDF report**, **JSON backup/restore**, **sample data**.
-- **Exam reminders**: exams per course with reminders days before (at a time of day you choose) and on the exam day (hours or minutes before, or at the start), as defaults or customized per exam; reminders missed while the phone was off are delivered late with correct wording.
-- **Widgets**: absence tracker with one-tap present/absent buttons, weekly schedule by day, upcoming exams with countdowns, cumulative GPA gauge, and next lecture. Launcher shortcuts for attendance, schedule, exams and forecast.
-- **Appearance**: 8 color themes (or Material You), pure black dark mode, 6 bundled Arabic fonts (Tajawal by default) or the system font, importing any TTF/OTF font family, and a text-size setting. Arabic (RTL) and English, phone and tablet layouts.
+- **Two modes**: *Standard* (Home, GPA, Attendance, Schedule, Tasks) and *Lite* (exactly GPA Calculator, Reminders & Tasks, Settings). Switch any time in Settings; both read the same data and switching never deletes anything.
+- **First-launch onboarding**: five Arabic RTL pages built with MotionLayout, ending with the mode choice. Saved locally, never replayed; supports back, rotation, TalkBack announcements and the system "remove animations" setting. Existing users skip it after updating.
+- **GPA**: 5-point, 4-point or custom scales; courses excluded from GPA; trend chart. A **manual cumulative baseline** (current cumulative GPA + GPA hours) counts as one weighted block. Without hours it is kept for reference only; above the scale it is not counted. Older semesters already inside the baseline can be marked "included in previous GPA" so they are never counted twice.
+- **GPA Calculator** (replaces the forecast screen): temporary, unsaved rows (course, hours, grade) give their GPA and, optionally, the cumulative GPA combined with saved records; incomplete rows are ignored and reported; rows can be saved as a semester.
+- **Attendance**: one record per course per calendar day (enforced in the UI and when saving; old duplicate same-day absences are merged on load); **undated absences** as an explicit count included in totals; deprivation rules unchanged.
+- **Reminders & Tasks**: exams, assignments, practical work and general reminders with optional course, date, time and notes, done state, filters, sorting, and overdue / upcoming / undated sections. Notifications only for dated, open tasks when notifications are allowed; re-armed after reboot and time changes.
+- **CRN**: optional field; offers to reuse details of a matching course you entered before (no online lookup); format check follows the configured CRN rule; duplicates blocked within a semester, allowed across semesters.
+- **Marks**, **schedule**, **lecture reminders**, **PDF report**, **JSON backup/restore**, **widgets** (attendance, weekly schedule, upcoming tasks, GPA, next lecture), 9 color themes with burgundy as the new default, pure black, 6 bundled Arabic fonts, imported fonts, text size, Arabic and English.
 
 ## How the numbers are calculated
 
 | | Rule |
 |---|---|
 | GPA | Σ(grade points × credit hours) ÷ Σ(credit hours), over courses that count in the GPA and have a grade. The official GPA uses final grades only. |
-| Cumulative | Earlier studies (GPA × hours) + every semester. |
-| Expected | Final grade, else the expected grade you chose, else the grade predicted from your marks. |
+| Cumulative | Baseline (GPA × hours, only when both are valid) + every semester, except semesters marked "included in previous GPA" while a valid baseline exists. |
+| Calculator | Same GPA formula over the temporary rows; rows without hours > 0 or a grade from the active scale are ignored. Combined = cumulative points + row points over cumulative hours + row hours. |
+| Rounding | GPA values are shown with 2 decimals, rounded half up on the decimal value (3.125 → 3.13, 3.145 → 3.15). |
 | Course percentage | Marks earned ÷ marks graded. The course total is the larger of its total marks (100) and the sum of all weights; marks not assigned to any assessment count as still to come. |
-| Best / worst | Best: full marks in everything left. Worst: no further marks. Courses with no marks yet: top / bottom grade. |
 | Needed in the final | (grade minimum × course total − marks earned) ÷ remaining marks. With "round percentages" on, the minimum is lowered by 0.5. |
-| Target GPA | (target × (current hours + new hours) − current points) ÷ new hours. |
-| Absence % | counted absences ÷ planned lectures. Planned lectures are set per course, or weekly lectures × teaching weeks. |
-| Exam reminders | "N days before": the exam date minus N days, at the chosen time of day. "M minutes before": the exam start minus M minutes (0 = at the start). |
+| Absence % | counted absences (dated + undated) ÷ planned lectures. Planned lectures are set per course, or weekly lectures × teaching weeks. At most one record per course per date. |
+| Task reminders | "N days before": the date minus N days, at the chosen time of day. "M minutes before": the start time minus M minutes (0 = at the start); needs a time. No date, or done → no reminder. |
 | Allowed absences | Rule "reach": the largest *a* with *a* < limit × lectures. Rule "exceed": the largest *a* with *a* ≤ limit × lectures. Example: 40 lectures at 25% → 9 ("reach") or 10 ("exceed"). |
 
-All of these are covered by unit tests in `app/src/test/java/com/mizan/gpa/CalculatorsTest.java`.
+These rules are covered by unit tests in `CalculatorsTest`, `MizanV2Test` (baseline, calculator, rounding, attendance de-duplication, undated absences, CRN, task states, v1 → v2 migration) and `notify/ReminderTest`; `ModesTest` checks the Lite/Standard navigation, that switching keeps data, and onboarding persistence.
 
 ## Technical
 
 - Native Android, **Java + XML only**, minSdk **26**, targetSdk/compileSdk **36**.
-- Libraries: AndroidX AppCompat, Core and Material Components. Charts, the GPA ring, the weekly timetable and the PDF report are drawn in plain Java (Canvas, `PdfDocument`); there is no chart, database or network library.
+- Libraries: AndroidX AppCompat, Core, ConstraintLayout (MotionLayout) and Material Components. Charts, the GPA ring, the weekly timetable and the PDF report are drawn in plain Java (Canvas, `PdfDocument`); there is no chart, database or network library.
 - Fonts are in `app/src/main/assets/fonts/` with their SIL Open Font License files in `assets/fonts/licenses/`. Fonts the user imports are copied to private storage and grouped into families by file name (`Family-Bold.otf`). Color themes are generated with one Material 3 recipe from a seed color each: primary at a shared chroma, muted secondary in the same hue, tertiary in a neighbouring hue (+35°), and lightly tinted neutral surfaces, using the standard light/dark tones (`res/values*/colors_themes.xml`, `md_*` in `colors.xml` for the default teal).
 - **No INTERNET permission.** Data is one JSON document in the app's private storage (`mizan-data.json`), written atomically with `AtomicFile`; the first save of each run keeps the previous file as a safety copy. Cloud backup is disabled; backups are files the user saves through the system file picker.
-- Reminders use a single exact alarm that always points at the earliest upcoming lecture or exam reminder and re-arms itself after it fires, after reboot, and after time or time-zone changes.
+- Reminders use a single exact alarm that always points at the earliest upcoming lecture or task reminder and re-arms itself after it fires, after reboot, and after time or time-zone changes.
+- Data format version 2. Files from earlier versions are migrated on load: course exams become tasks, duplicate same-day absences are merged, existing users are marked as onboarded in Standard mode and keep their color theme. Nothing is dropped; the previous file is kept as a safety copy on the first save.
+- Onboarding uses ConstraintLayout's MotionLayout (`res/xml/onboarding_scene.xml`).
 
 ```
 app/src/main/java/com/mizan/gpa/
-├── data/      models (AppData, Semester, Course, Assessment, AttendanceRecord, LectureSlot, GradeScale, Settings), JSON, Repository
-├── calc/      GpaCalculator, MarksCalculator, GradeResolver, AttendanceCalculator  (pure Java, unit-tested)
-├── ui/        activities, fragments, dialogs, custom views (GpaRingView, TrendChartView, RangeBarView)
+├── data/      models (AppData, Semester, Course, Task, Assessment, AttendanceRecord, LectureSlot, GradeScale, Settings), JSON, migration, Repository
+├── calc/      GpaCalculator, MarksCalculator, GradeResolver, AttendanceCalculator, TaskReminders  (pure Java, unit-tested)
+├── ui/        activities (Main, Onboarding, Course, Semester, Settings), fragments, dialogs, custom views (GpaRingView, TrendChartView)
 ├── notify/    reminder scheduling, notifications, boot receiver, notification actions
-├── widget/    home-screen widgets (attendance, weekly schedule) and their list factories
+├── widget/    home-screen widgets (attendance, weekly schedule, upcoming tasks, GPA, next lecture)
 ├── util/      formatting, fonts (Fonts), color themes (Themes), UI helpers
 └── export/    PdfReport, backup/restore (DataTransfer), SampleData
 ```
@@ -131,6 +136,6 @@ Requires JDK 17+ and the Android SDK (platform 36). Create `local.properties` wi
 ./gradlew lintDebug
 ```
 
-The screenshot tests use Robolectric's native graphics to render every screen in English, Arabic, dark mode, other palettes and fonts, and on a tablet, plus both widgets and the PDF report pages.
+The screenshot tests use Robolectric's native graphics to render every screen in English, Arabic, dark mode, Lite mode, every onboarding page, a compact 320dp phone, landscape, other palettes and fonts, and a tablet, plus the widgets and the PDF report pages. They are smoke tests (they fail on crashes, not on pixel changes); the images were reviewed by eye.
 
 > The APK in `dist/` is signed with a local debug key. To install a build signed with a different key, uninstall the old app first. Use **Backup** to keep your data before you do.

@@ -118,17 +118,18 @@ public class AttendanceFragment extends BaseFragment {
     }
 
     private void quick(Course c, String status) {
-        AttendanceRecord r = Dialogs.quickRecord(requireContext(), c, status);
+        Course.Recorded r = Dialogs.quickRecord(requireContext(), c, status);
         root.performHapticFeedback(android.os.Build.VERSION.SDK_INT >= 30
                 ? android.view.HapticFeedbackConstants.CONFIRM : android.view.HapticFeedbackConstants.VIRTUAL_KEY);
-        String msg = getString(AttendanceRecord.PRESENT.equals(status) ? R.string.recorded_present : R.string.recorded_absent, c.displayName());
-        Snackbar.make(root, msg, Snackbar.LENGTH_LONG)
+        Snackbar sb = Snackbar.make(root, Dialogs.recordedMessage(requireContext(), c, r), Snackbar.LENGTH_LONG)
                 .setAnchorView(requireActivity().findViewById(R.id.nav) instanceof com.google.android.material.bottomnavigation.BottomNavigationView
-                        ? requireActivity().findViewById(R.id.nav) : null)
-                .setAction(R.string.undo, x -> {
-                    c.attendance.remove(r);
-                    repo().save();
-                })
-                .show();
+                        ? requireActivity().findViewById(R.id.nav) : null);
+        if (r.result != Course.RecordResult.DUPLICATE) {
+            sb.setAction(R.string.undo, x -> {
+                c.undo(r);
+                repo().save();
+            });
+        }
+        sb.show();
     }
 }

@@ -286,20 +286,21 @@ public final class PdfReport {
                         Ui.statusLabel(ctx, a.status)}, aw, body, ac, 0);
             }
         }
-        // Upcoming exams
+        // Upcoming reminders & tasks
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        java.util.List<com.mizan.gpa.ui.Exams.Entry> exams = com.mizan.gpa.ui.Exams.upcoming(data, now);
-        if (!exams.isEmpty()) {
+        java.util.List<com.mizan.gpa.data.Task> tasks = com.mizan.gpa.ui.TaskUi.upcoming(data, now);
+        if (!tasks.isEmpty()) {
             y += 18;
             ensure(80);
-            y += draw(ctx.getString(R.string.upcoming_exams), M, y, W - 2 * M, h2, Layout.Alignment.ALIGN_NORMAL) + 6;
-            float[] ew = {W - 2 * M - 110 - 150 - 80, 110, 150, 80};
-            boolean[] ec = {false, false, false, true};
-            tableRow(new String[]{ctx.getString(R.string.course), ctx.getString(R.string.pdf_exam), ctx.getString(R.string.pdf_exam_when),
-                    ctx.getString(R.string.room)}, ew, headerCell, ec, BRAND_LIGHT);
-            for (com.mizan.gpa.ui.Exams.Entry e : exams) {
-                tableRow(new String[]{e.course.displayName(), com.mizan.gpa.ui.Exams.title(ctx, e.exam),
-                        com.mizan.gpa.ui.Exams.when(ctx, e.exam), e.exam.room}, ew, body, ec, 0);
+            y += draw(ctx.getString(R.string.upcoming_tasks), M, y, W - 2 * M, h2, Layout.Alignment.ALIGN_NORMAL) + 6;
+            float[] ew = {W - 2 * M - 80 - 130 - 150, 80, 130, 150};
+            boolean[] ec = {false, false, false, false};
+            tableRow(new String[]{ctx.getString(R.string.task_title_short), ctx.getString(R.string.task_category),
+                    ctx.getString(R.string.course), ctx.getString(R.string.pdf_exam_when)}, ew, headerCell, ec, BRAND_LIGHT);
+            for (com.mizan.gpa.data.Task t : tasks) {
+                String course = com.mizan.gpa.ui.TaskUi.courseName(data, t);
+                tableRow(new String[]{com.mizan.gpa.ui.TaskUi.title(ctx, t), com.mizan.gpa.ui.TaskUi.categoryLabel(ctx, t.category),
+                        course == null ? Fmt.DASH : course, com.mizan.gpa.ui.TaskUi.when(ctx, t)}, ew, body, ec, 0);
             }
         }
         finishPage();

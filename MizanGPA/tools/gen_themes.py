@@ -12,6 +12,7 @@ res = sys.argv[1]
 # name: (seed, primary chroma, tertiary hue shift)
 THEMES = {
     "teal":     (0xFF0E8C86, 40, 35),
+    "burgundy": (0xFF8E1F45, 44, 30),
     "ocean":    (0xFF2563EB, 48, 35),
     "violet":   (0xFF7C3AED, 48, 35),
     "rose":     (0xFFE11D48, 48, 30),

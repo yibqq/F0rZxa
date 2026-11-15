@@ -6,7 +6,7 @@ import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Assessment;
 import com.mizan.gpa.data.AttendanceRecord;
 import com.mizan.gpa.data.Course;
-import com.mizan.gpa.data.Exam;
+import com.mizan.gpa.data.Task;
 import com.mizan.gpa.data.GradeScale;
 import com.mizan.gpa.data.Json;
 import com.mizan.gpa.data.LectureSlot;
@@ -81,14 +81,23 @@ public final class SampleData {
         attendance(db, 3, 1, 18);
         attendance(la, 0, 1, 12);
         attendance(net, 6, 2, 10);
+        stat.undatedAbsences = 1;
+        algo.crn = "30412";
+        db.crn = "30577";
         attendance(stat, 2, 0, 12);
 
         LocalDate today = LocalDate.now();
-        exam(net, ar ? "الفصلي الثاني" : "Midterm 2", Exam.MIDTERM, today.plusDays(1), 10 * 60, 11 * 60 + 30, "A-210");
-        exam(la, "", Exam.QUIZ, today.plusDays(3), 11 * 60, 0, "C-012");
-        exam(algo, "", Exam.FINAL, today.plusDays(12), 8 * 60, 10 * 60, ar ? "القاعة الكبرى" : "Main hall");
-        exam(db, "", Exam.FINAL, today.plusDays(15), 13 * 60, 15 * 60, "B-204");
-        exam(stat, ar ? "الفصلي الأول" : "Midterm 1", Exam.MIDTERM, today.minusDays(20), 9 * 60, 10 * 60, "D-105");
+        task(d, net, Task.EXAM, Task.KIND_MIDTERM, ar ? "الفصلي الثاني" : "Midterm 2", today.plusDays(1), 10 * 60, 11 * 60 + 30, "A-210", "");
+        task(d, la, Task.EXAM, Task.KIND_QUIZ, "", today.plusDays(3), 11 * 60, Task.NO_TIME, "C-012", "");
+        task(d, algo, Task.EXAM, Task.KIND_FINAL, "", today.plusDays(12), 8 * 60, 10 * 60, ar ? "القاعة الكبرى" : "Main hall", "");
+        task(d, db, Task.ASSIGNMENT, Task.KIND_OTHER, ar ? "تقرير مشروع قواعد البيانات" : "Database project report", today.plusDays(2), 23 * 60 + 59,
+                Task.NO_TIME, "", ar ? "التسليم عبر البلاك بورد" : "Submit on Blackboard");
+        task(d, db, Task.PRACTICAL, Task.KIND_OTHER, ar ? "اختبار المعمل" : "Lab test", today.plusDays(5), 13 * 60, 15 * 60, "Lab 3", "");
+        task(d, stat, Task.ASSIGNMENT, Task.KIND_OTHER, ar ? "واجب الفصل الرابع" : "Chapter 4 homework", today.minusDays(1), Task.NO_TIME,
+                Task.NO_TIME, "", "");
+        task(d, null, Task.GENERAL, Task.KIND_OTHER, ar ? "تجديد بطاقة المكتبة" : "Renew library card", null, Task.NO_TIME, Task.NO_TIME, "", "");
+        Task done = task(d, stat, Task.EXAM, Task.KIND_MIDTERM, ar ? "الفصلي الأول" : "Midterm 1", today.minusDays(20), 9 * 60, 10 * 60, "D-105", "");
+        done.done = true;
 
         d.semesters.add(s1);
         d.semesters.add(s2);
@@ -133,15 +142,20 @@ public final class SampleData {
         return x;
     }
 
-    private static void exam(Course c, String title, String type, LocalDate date, int start, int end, String room) {
-        Exam e = new Exam();
-        e.title = title;
-        e.type = type;
-        e.date = date.toString();
-        e.start = start;
-        e.end = end;
-        e.room = room;
-        c.exams.add(e);
+    private static Task task(AppData d, Course c, String category, String kind, String title, LocalDate date, int time, int end,
+                             String room, String notes) {
+        Task t = new Task();
+        t.category = category;
+        t.kind = kind;
+        t.title = title;
+        t.courseId = c == null ? null : c.id;
+        t.date = date == null ? null : date.toString();
+        t.time = time;
+        t.endTime = end;
+        t.room = room;
+        t.notes = notes;
+        d.tasks.add(t);
+        return t;
     }
 
     private static LectureSlot slot(Course c, int day, int start, int end, String room) {

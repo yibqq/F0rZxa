@@ -9,7 +9,9 @@ import androidx.core.content.ContextCompat;
 
 import com.mizan.gpa.R;
 import com.mizan.gpa.data.Repository;
-import com.mizan.gpa.ui.Exams;
+import com.mizan.gpa.data.AppData;
+import com.mizan.gpa.data.Task;
+import com.mizan.gpa.ui.TaskUi;
 import com.mizan.gpa.util.Fmt;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,7 @@ public class ExamsWidgetService extends RemoteViewsService {
 
     public static final class Factory implements RemoteViewsFactory {
         private final Context ctx;
-        private final List<Exams.Entry> exams = new ArrayList<>();
+        private final List<Task> exams = new ArrayList<>();
 
         public Factory(Context ctx) {
             this.ctx = ctx;
@@ -37,7 +39,7 @@ public class ExamsWidgetService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
             exams.clear();
-            exams.addAll(Exams.upcoming(Repository.get(ctx).data(), LocalDateTime.now()));
+            exams.addAll(TaskUi.upcoming(Repository.get(ctx).data(), LocalDateTime.now()));
         }
 
         @Override
@@ -54,22 +56,27 @@ public class ExamsWidgetService extends RemoteViewsService {
         public RemoteViews getViewAt(int position) {
             RemoteViews r = new RemoteViews(ctx.getPackageName(), R.layout.widget_exam_row);
             if (position >= exams.size()) return r;
-            Exams.Entry e = exams.get(position);
+            Task e = exams.get(position);
+            AppData d = Repository.get(ctx).data();
             LocalDateTime now = LocalDateTime.now();
-            r.setInt(R.id.e_bar, "setColorFilter", e.color());
-            r.setTextViewText(R.id.e_day, String.valueOf(e.start.getDayOfMonth()));
-            r.setTextViewText(R.id.e_month, e.start.getMonth().getDisplayName(TextStyle.SHORT, Fmt.locale(ctx)));
-            r.setTextViewText(R.id.e_course, e.course.displayName());
-            String detail = Exams.title(ctx, e.exam) + " · " + Fmt.time(ctx, e.exam.start);
-            if (e.exam.room != null && !e.exam.room.trim().isEmpty()) detail += " · " + e.exam.room.trim();
+            r.setInt(R.id.e_bar, "setColorFilter", TaskUi.color(ctx, d, e));
+            r.setTextViewText(R.id.e_day, String.valueOf(e.localDate().getDayOfMonth()));
+            r.setTextViewText(R.id.e_month, e.localDate().getMonth().getDisplayName(TextStyle.SHORT, Fmt.locale(ctx)));
+            String course = TaskUi.courseName(d, e);
+            r.setTextViewText(R.id.e_course, TaskUi.title(ctx, e));
+            StringBuilder detail = new StringBuilder(TaskUi.categoryLabel(ctx, e.category));
+            if (course != null) detail.append(" · ").append(course);
+            if (e.hasTime()) detail.append(" · ").append(Fmt.time(ctx, e.time));
             r.setTextViewText(R.id.e_detail, detail);
-            r.setTextViewText(R.id.e_badge, Exams.countdown(ctx, e.exam, now, true));
-            long days = java.time.temporal.ChronoUnit.DAYS.between(now.toLocalDate(), e.start.toLocalDate());
-            r.setTextColor(R.id.e_badge, days <= 1 ? ContextCompat.getColor(ctx, R.color.status_danger)
+            r.setTextViewText(R.id.e_badge, TaskUi.countdown(ctx, e, now, true));
+            TaskUi.State state = TaskUi.state(e, now);
+            long days = java.time.temporal.ChronoUnit.DAYS.between(now.toLocalDate(), e.localDate());
+            r.setTextColor(R.id.e_badge, state == TaskUi.State.OVERDUE || days <= 1 ? ContextCompat.getColor(ctx, R.color.status_danger)
                     : days <= 3 ? ContextCompat.getColor(ctx, R.color.status_warning) : ContextCompat.getColor(ctx, R.color.widget_text));
-            r.setOnClickFillInIntent(R.id.e_root, new Intent()
-                    .putExtra(WidgetActionActivity.EXTRA_ACTION, WidgetActionActivity.ACTION_OPEN_COURSE_EXAMS)
-                    .putExtra(WidgetActionActivity.EXTRA_COURSE, e.course.id));
+            Intent fill = new Intent().putExtra(WidgetActionActivity.EXTRA_ACTION,
+                    e.courseId != null ? WidgetActionActivity.ACTION_OPEN_COURSE_EXAMS : WidgetActionActivity.ACTION_OPEN_EXAMS);
+            if (e.courseId != null) fill.putExtra(WidgetActionActivity.EXTRA_COURSE, e.courseId);
+            r.setOnClickFillInIntent(R.id.e_root, fill);
             return r;
         }
 
@@ -85,7 +92,7 @@ public class ExamsWidgetService extends RemoteViewsService {
 
         @Override
         public long getItemId(int position) {
-            return position < exams.size() ? exams.get(position).exam.id.hashCode() : position;
+            return position < exams.size() ? exams.get(position).id.hashCode() : position;
         }
 
         @Override

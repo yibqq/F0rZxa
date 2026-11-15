@@ -279,7 +279,7 @@ public class CalculatorsTest {
     }
 
     @Test
-    public void examReminderTimes() {
+    public void taskReminderTimes() {
         Settings st = new Settings();
         st.examDaysBefore.clear();
         st.examDaysBefore.add(1);
@@ -288,32 +288,48 @@ public class CalculatorsTest {
         st.examMinutesBefore.add(60);
         st.examMinutesBefore.add(0);
         st.examDayTime = 20 * 60;
-        com.mizan.gpa.data.Exam e = new com.mizan.gpa.data.Exam();
+        com.mizan.gpa.data.Task e = new com.mizan.gpa.data.Task();
+        e.category = com.mizan.gpa.data.Task.EXAM;
         e.date = "2026-12-10";
-        e.start = 9 * 60 + 30;
-        List<com.mizan.gpa.calc.ExamReminders.Trigger> t = com.mizan.gpa.calc.ExamReminders.triggers(e, st);
+        e.time = 9 * 60 + 30;
+        List<com.mizan.gpa.calc.TaskReminders.Trigger> t = com.mizan.gpa.calc.TaskReminders.triggers(e, st);
         assertEquals(4, t.size());
         assertEquals("2026-12-08T20:00", t.get(0).at.toString());   // two days before, 8 PM
         assertEquals("2026-12-09T20:00", t.get(1).at.toString());   // the evening before
         assertEquals("2026-12-10T08:30", t.get(2).at.toString());   // one hour before
-        assertEquals("2026-12-10T09:30", t.get(3).at.toString());   // at the start
+        assertEquals("2026-12-10T09:30", t.get(3).at.toString());   // at the time
         assertTrue(t.get(0).dayKind);
         assertFalse(t.get(3).dayKind);
 
-        // An exam with its own reminders ignores the defaults.
+        // Custom reminders replace the defaults.
         e.customReminders = true;
         e.minutesBefore.add(30);
-        t = com.mizan.gpa.calc.ExamReminders.triggers(e, st);
+        t = com.mizan.gpa.calc.TaskReminders.triggers(e, st);
         assertEquals(1, t.size());
         assertEquals("2026-12-10T09:00", t.get(0).at.toString());
 
-        // Reminders crossing a month boundary.
+        // Across a month boundary.
         e.customReminders = false;
         e.date = "2027-01-01";
-        e.start = 30;
-        t = com.mizan.gpa.calc.ExamReminders.triggers(e, st);
+        e.time = 30;
+        t = com.mizan.gpa.calc.TaskReminders.triggers(e, st);
         assertEquals("2026-12-30T20:00", t.get(0).at.toString());
-        assertEquals("2026-12-31T23:30", t.get(2).at.toString());   // one hour before 00:30
+        assertEquals("2026-12-31T23:30", t.get(2).at.toString());
+    }
+
+    @Test
+    public void tasksWithoutDateOrDoneNeverRemind() {
+        Settings st = new Settings();
+        com.mizan.gpa.data.Task t = new com.mizan.gpa.data.Task();
+        t.category = com.mizan.gpa.data.Task.GENERAL;
+        assertTrue(com.mizan.gpa.calc.TaskReminders.triggers(t, st).isEmpty());   // no date
+        // A date without a time: only "days before" reminders, never "minutes before".
+        t.date = "2030-05-10";
+        List<com.mizan.gpa.calc.TaskReminders.Trigger> tr = com.mizan.gpa.calc.TaskReminders.triggers(t, st);
+        assertEquals(1, tr.size());
+        assertTrue(tr.get(0).dayKind);
+        t.done = true;
+        assertTrue(com.mizan.gpa.calc.TaskReminders.triggers(t, st).isEmpty());
     }
 
     private static AttendanceRecord rec(String status, int sessions) {

@@ -30,6 +30,7 @@ public final class Themes {
     }
 
     public static final Palette[] PALETTES = {
+            new Palette("burgundy", R.string.theme_burgundy, R.style.ThemeOverlay_Mizan_Burgundy, R.color.theme_burgundy_primary),
             new Palette("teal", R.string.theme_teal, 0, R.color.md_primary),
             new Palette("ocean", R.string.theme_ocean, R.style.ThemeOverlay_Mizan_Ocean, R.color.theme_ocean_primary),
             new Palette("violet", R.string.theme_violet, R.style.ThemeOverlay_Mizan_Violet, R.color.theme_violet_primary),
@@ -44,7 +45,7 @@ public final class Themes {
 
     public static Palette find(String id) {
         for (Palette p : PALETTES) if (p.id.equals(id)) return p;
-        return PALETTES[0];
+        return PALETTES[1];
     }
 
     public static boolean isNight(Context c) {
@@ -62,7 +63,7 @@ public final class Themes {
 
     /** Everything that requires recreating screens when it changes. */
     public static String styleKey(Settings st) {
-        return st.colorTheme + "|" + st.pureBlack + "|" + st.dynamicColor + "|" + st.fontId + "|" + st.fontScale;
+        return st.colorTheme + "|" + st.pureBlack + "|" + st.dynamicColor + "|" + st.fontId + "|" + st.fontScale + "|" + st.appMode;
     }
 
     /**
@@ -105,5 +106,24 @@ public final class Themes {
         // The adaptive-icon artwork sits in the middle two thirds; enlarge it to fill the tile.
         icon.setScaleX(1.3f);
         icon.setScaleY(1.3f);
+    }
+
+    /**
+     * Paints a hero card background (palette gradient: primary in light mode, the container tones in
+     * dark mode) and returns the matching text color.
+     */
+    public static int heroBackground(android.view.View bg, float radiusDp) {
+        Context c = bg.getContext();
+        boolean night = isNight(c);
+        int from = com.mizan.gpa.util.Ui.attr(c, night ? com.google.android.material.R.attr.colorPrimaryContainer : androidx.appcompat.R.attr.colorPrimary);
+        int to = com.mizan.gpa.util.Ui.blend(from, com.mizan.gpa.util.Ui.attr(c, night ? com.google.android.material.R.attr.colorTertiaryContainer
+                : com.google.android.material.R.attr.colorTertiary), 0.55f);
+        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(
+                com.mizan.gpa.util.Ui.isRtl(c) ? android.graphics.drawable.GradientDrawable.Orientation.TR_BL
+                        : android.graphics.drawable.GradientDrawable.Orientation.TL_BR, new int[]{from, to});
+        g.setCornerRadius(com.mizan.gpa.util.Ui.dp(c, radiusDp));
+        bg.setBackground(g);
+        return com.mizan.gpa.util.Ui.attr(c, night ? com.google.android.material.R.attr.colorOnPrimaryContainer
+                : com.google.android.material.R.attr.colorOnPrimary);
     }
 }

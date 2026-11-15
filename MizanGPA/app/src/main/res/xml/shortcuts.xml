@@ -30,30 +30,30 @@
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/shortcut_exams"
-        android:shortcutId="exams"
-        android:shortcutShortLabel="@string/shortcut_exams">
+        android:icon="@drawable/shortcut_tasks"
+        android:shortcutId="tasks"
+        android:shortcutShortLabel="@string/shortcut_tasks">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.mizan.gpa.ui.MainActivity"
             android:targetPackage="com.mizan.gpa">
             <extra
                 android:name="shortcut"
-                android:value="exams" />
+                android:value="tasks" />
         </intent>
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/shortcut_forecast"
-        android:shortcutId="forecast"
-        android:shortcutShortLabel="@string/shortcut_forecast">
+        android:icon="@drawable/shortcut_gpa"
+        android:shortcutId="gpa"
+        android:shortcutShortLabel="@string/shortcut_gpa">
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.mizan.gpa.ui.MainActivity"
             android:targetPackage="com.mizan.gpa">
             <extra
                 android:name="shortcut"
-                android:value="forecast" />
+                android:value="gpa" />
         </intent>
     </shortcut>
 </shortcuts>

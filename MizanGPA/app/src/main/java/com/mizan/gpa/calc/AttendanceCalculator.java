@@ -23,6 +23,8 @@ public final class AttendanceCalculator {
         public int absent;
         public int late;
         public int excused;
+        /** Absences counted without a date (part of {@link #absent}). */
+        public int undated;
         /** Absences that count toward deprivation. */
         public int counted;
         /** Planned class meetings in the semester (0 if unknown). */
@@ -43,6 +45,11 @@ public final class AttendanceCalculator {
 
         public int recorded() {
             return present + absent + late + excused;
+        }
+
+        /** Absences that have a date. */
+        public int datedAbsent() {
+            return absent - undated;
         }
     }
 
@@ -80,6 +87,8 @@ public final class AttendanceCalculator {
                 default: r.absent += n; break;
             }
         }
+        r.undated = Math.max(0, c.undatedAbsences);
+        r.absent += r.undated;
         r.counted = r.absent;
         if (st.countExcused) r.counted += r.excused;
         if (st.latesPerAbsence > 0) r.counted += r.late / st.latesPerAbsence;

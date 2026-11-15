@@ -12,6 +12,11 @@ public class Semester {
     public String name = "";
     /** Teaching weeks; used to estimate the number of lectures from the weekly schedule. */
     public int weeks = 15;
+    /**
+     * True when this semester is already part of the manually entered cumulative GPA baseline, so it
+     * must not be counted a second time in the cumulative GPA.
+     */
+    public boolean inBaseline = false;
     public final List<Course> courses = new ArrayList<>();
 
     public Course findCourse(String cid) {
@@ -36,6 +41,7 @@ public class Semester {
         o.put("id", id);
         o.put("name", name);
         o.put("weeks", weeks);
+        o.put("inBaseline", inBaseline);
         JSONArray a = new JSONArray();
         for (Course c : courses) a.put(c.toJson());
         o.put("courses", a);
@@ -47,6 +53,7 @@ public class Semester {
         s.id = Json.str(o, "id", Json.newId());
         s.name = Json.str(o, "name", "");
         s.weeks = Math.max(1, Json.integer(o, "weeks", 15));
+        s.inBaseline = Json.bool(o, "inBaseline", false);
         JSONArray a = Json.arr(o, "courses");
         for (int i = 0; i < a.length(); i++) if (a.optJSONObject(i) != null) s.courses.add(Course.fromJson(a.optJSONObject(i)));
         return s;

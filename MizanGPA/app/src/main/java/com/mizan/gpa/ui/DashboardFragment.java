@@ -48,7 +48,7 @@ public class DashboardFragment extends BaseFragment {
         Ui.dot(root.findViewById(R.id.legend_bar), TrendChartView.barColor(root));
         Ui.dot(root.findViewById(R.id.legend_line), TrendChartView.lineColor(root));
         com.mizan.gpa.util.Themes.brandTile(root.findViewById(R.id.welcome_logo), root.findViewById(R.id.welcome_logo_icon));
-        root.findViewById(R.id.hero).setOnClickListener(v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_semesters));
+        root.findViewById(R.id.hero).setOnClickListener(v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_gpa));
         return root;
     }
 
@@ -111,19 +111,16 @@ public class DashboardFragment extends BaseFragment {
                 getString(R.string.tile_attendance), risky != null ? risky.displayName() : getString(R.string.tile_attendance_ok),
                 v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_attendance));
 
-        String targetCaption;
-        if (st.targetGpa <= 0) {
-            targetCaption = getString(R.string.tile_target_tap);
-        } else {
-            double req = GpaCalculator.requiredGpa(cum, st.targetGpa, GpaCalculator.inProgressCredits(cur));
-            if (Double.isNaN(req)) targetCaption = cum.gpa() >= st.targetGpa ? getString(R.string.tile_target_reached) : Fmt.DASH;
-            else if (req > max + 1e-9) targetCaption = getString(R.string.tile_target_far);
-            else if (req <= st.scale.minPoints() + 1e-9) targetCaption = getString(R.string.tile_target_reached);
-            else targetCaption = getString(R.string.tile_target_needs, Fmt.gpa(req));
-        }
-        tile(R.id.tile_target, R.drawable.ic_flag, tertiary, st.targetGpa > 0 ? Fmt.gpa(st.targetGpa) : Fmt.DASH,
-                getString(R.string.tile_target), targetCaption,
-                v -> ((MainActivity) requireActivity()).selectTab(R.id.tab_forecast));
+        // Reminders & tasks: open entries with a date; overdue ones are called out.
+        java.time.LocalDateTime nowT = java.time.LocalDateTime.now();
+        List<com.mizan.gpa.data.Task> open = TaskUi.upcoming(d, nowT);
+        int overdue = TaskUi.countOverdue(d, nowT);
+        String tasksCaption = overdue > 0 ? getResources().getQuantityString(R.plurals.tile_tasks_overdue, overdue, overdue)
+                : open.isEmpty() ? getString(R.string.tile_tasks_none)
+                : getString(R.string.tile_tasks_next, TaskUi.countdown(requireContext(), open.get(0), nowT, false));
+        int tasksColor = overdue > 0 ? ContextCompat.getColor(requireContext(), R.color.status_danger) : tertiary;
+        tile(R.id.tile_target, R.drawable.ic_notifications, tasksColor, String.valueOf(open.size()),
+                getString(R.string.tab_tasks), tasksCaption, v -> ((MainActivity) requireActivity()).openTasks());
 
         // Alerts
         LinearLayout alerts = root.findViewById(R.id.alerts);
@@ -136,25 +133,26 @@ public class DashboardFragment extends BaseFragment {
             alerts.addView(Rows.alert(alerts, ok, null));
         }
 
-        // Upcoming exams (next three)
+        // Upcoming tasks (next three, overdue first)
         LinearLayout el = root.findViewById(R.id.exams_list);
         el.removeAllViews();
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        List<Exams.Entry> exams = Exams.upcoming(d, now);
-        root.findViewById(R.id.exams_title).setVisibility(exams.isEmpty() ? View.GONE : View.VISIBLE);
-        root.findViewById(R.id.exams_card).setVisibility(exams.isEmpty() ? View.GONE : View.VISIBLE);
-        for (int i = 0; i < Math.min(3, exams.size()); i++) {
-            Exams.Entry e = exams.get(i);
-            View row = Rows.simple(el, R.drawable.ic_exam, e.color(), e.course.displayName(),
-                    Exams.title(requireContext(), e.exam) + " · " + Exams.when(requireContext(), e.exam), null);
+        List<com.mizan.gpa.data.Task> upcoming = TaskUi.upcoming(d, now);
+        root.findViewById(R.id.exams_title).setVisibility(upcoming.isEmpty() ? View.GONE : View.VISIBLE);
+        root.findViewById(R.id.exams_card).setVisibility(upcoming.isEmpty() ? View.GONE : View.VISIBLE);
+        for (int i = 0; i < Math.min(3, upcoming.size()); i++) {
+            com.mizan.gpa.data.Task t = upcoming.get(i);
+            String course = TaskUi.courseName(d, t);
+            View row = Rows.simple(el, TaskUi.categoryIcon(t.category), TaskUi.color(requireContext(), d, t), TaskUi.title(requireContext(), t),
+                    (course != null ? course + " · " : "") + TaskUi.when(requireContext(), t), null);
             TextView badge = row.findViewById(R.id.s_value);
             badge.setVisibility(View.VISIBLE);
             int pad = Ui.dp(requireContext(), 10);
             badge.setPadding(pad, pad / 3, pad, pad / 3);
-            Ui.badge(badge, Exams.countdown(requireContext(), e.exam, now, false),
-                    Exams.urgencyColor(requireContext(), e.exam, now, Ui.attr(requireContext(), androidx.appcompat.R.attr.colorPrimary)));
+            Ui.badge(badge, TaskUi.countdown(requireContext(), t, now, false),
+                    TaskUi.urgencyColor(requireContext(), t, now, Ui.attr(requireContext(), androidx.appcompat.R.attr.colorPrimary)));
             ((android.view.ViewGroup.MarginLayoutParams) badge.getLayoutParams()).setMarginEnd(Ui.dp(requireContext(), 12));
-            row.setOnClickListener(v -> ((MainActivity) requireActivity()).openExams());
+            row.setOnClickListener(v -> ((MainActivity) requireActivity()).openTasks());
             el.addView(row);
         }
 
@@ -273,7 +271,7 @@ public class DashboardFragment extends BaseFragment {
         if (a.courseId != null) {
             startActivity(CourseActivity.intent(requireContext(), a.courseId, a.courseTab));
         } else if (a.openForecast) {
-            ((MainActivity) requireActivity()).selectTab(R.id.tab_forecast);
+            ((MainActivity) requireActivity()).openTasks();
         } else if (a.openSchedule) {
             ((MainActivity) requireActivity()).selectTab(R.id.tab_schedule);
         }

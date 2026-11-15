@@ -88,6 +88,7 @@ public final class Labels {
             b.append(course.code.trim()).append(" · ");
         }
         b.append(credits(c, course.credits));
+        if (course.crn != null && !course.crn.isEmpty()) b.append(" · ").append(c.getString(R.string.crn_short, course.crn));
         if (!course.countInGpa) b.append(" · ").append(c.getString(R.string.not_in_gpa));
         return b.toString();
     }

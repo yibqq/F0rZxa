@@ -32,23 +32,41 @@ public final class DataTransfer {
     private static final String TAG = "MizanTransfer";
     private static final ExecutorService IO = Executors.newSingleThreadExecutor();
 
-    private final AppCompatActivity a;
+    private final androidx.activity.result.ActivityResultCaller caller;
+    private final java.util.function.Supplier<AppCompatActivity> host;
+    private AppCompatActivity a;
     private final ActivityResultLauncher<String> pdf;
     private final ActivityResultLauncher<String> backup;
     private final ActivityResultLauncher<String[]> restore;
 
     /** Must be created during onCreate of the activity. */
     public DataTransfer(AppCompatActivity activity) {
-        this.a = activity;
-        pdf = a.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/pdf"), uri -> {
+        this(activity, () -> activity);
+    }
+
+    /** Must be created during onCreate of the fragment. */
+    public DataTransfer(androidx.fragment.app.Fragment fragment) {
+        this(fragment, () -> (AppCompatActivity) fragment.requireActivity());
+    }
+
+    private DataTransfer(androidx.activity.result.ActivityResultCaller caller, java.util.function.Supplier<AppCompatActivity> host) {
+        this.caller = caller;
+        this.host = host;
+        pdf = caller.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/pdf"), uri -> {
             if (uri != null) writePdf(uri);
         });
-        backup = a.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/json"), uri -> {
+        backup = caller.registerForActivityResult(new ActivityResultContracts.CreateDocument("application/json"), uri -> {
             if (uri != null) writeBackup(uri);
         });
-        restore = a.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+        restore = caller.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri != null) readBackup(uri);
         });
+    }
+
+    /** The hosting activity (resolved lazily so fragments can create this before attaching). */
+    private AppCompatActivity act() {
+        a = host.get();
+        return a;
     }
 
     private AppData snapshot() throws Exception {
@@ -57,6 +75,7 @@ public final class DataTransfer {
     }
 
     public void exportPdf() {
+        act();
         if (Repository.get(a).data().semesters.isEmpty()) {
             snack(a.getString(R.string.nothing_to_export), null, null);
             return;
@@ -65,10 +84,12 @@ public final class DataTransfer {
     }
 
     public void backup() {
+        act();
         launch(backup, "mizan-backup-" + Fmt.today() + ".json");
     }
 
     public void restore() {
+        act();
         try {
             restore.launch(new String[]{"application/json", "text/plain", "application/octet-stream"});
         } catch (ActivityNotFoundException e) {
@@ -85,6 +106,7 @@ public final class DataTransfer {
     }
 
     private void writePdf(Uri uri) {
+        act();
         final AppData copy;
         try {
             copy = snapshot();
@@ -104,6 +126,7 @@ public final class DataTransfer {
     }
 
     private void writeBackup(Uri uri) {
+        act();
         final String json;
         try {
             json = Repository.get(a).data().serialize(2);
@@ -123,6 +146,7 @@ public final class DataTransfer {
     }
 
     private void readBackup(Uri uri) {
+        act();
         IO.execute(() -> {
             try {
                 InputStream in = a.getContentResolver().openInputStream(uri);

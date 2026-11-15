@@ -35,7 +35,7 @@ public final class Insights {
         public String text;
         public String courseId;
         public int courseTab = -1;
-        /** Opens the forecast tab when tapped. */
+        /** Opens reminders & tasks when tapped. */
         public boolean openForecast;
         public boolean openSchedule;
 
@@ -108,32 +108,22 @@ public final class Insights {
         Collections.sort(attendance, (x, y) -> x.level.compareTo(y.level));
         out.addAll(0, attendance);
 
-        // Target GPA feasibility.
-        if (st.targetGpa > 0) {
-            GpaCalculator.Totals base = GpaCalculator.cumulative(d, GradeResolver.Mode.OFFICIAL);
-            double upcoming = GpaCalculator.inProgressCredits(cur);
-            double req = GpaCalculator.requiredGpa(base, st.targetGpa, upcoming);
-            if (!Double.isNaN(req) && req > st.scale.maxPoints() + 1e-9) {
-                Alert t = new Alert(Level.WARNING, R.drawable.ic_flag, c.getString(R.string.alert_target_far_title, Fmt.gpa(st.targetGpa)),
-                        c.getString(R.string.alert_target_far_text, Fmt.gpa(req)));
-                t.openForecast = true;
-                out.add(t);
-            }
-        }
-
-        // Exams today or tomorrow.
+        // Tasks: overdue ones, and anything due today or tomorrow.
         java.time.LocalDateTime nowTime = java.time.LocalDateTime.now();
-        for (Exams.Entry e : Exams.upcoming(d, nowTime)) {
-            long days = java.time.temporal.ChronoUnit.DAYS.between(nowTime.toLocalDate(), e.start.toLocalDate());
-            if (days > 1) break;
-            Alert x = new Alert(days == 0 ? Level.DANGER : Level.WARNING, R.drawable.ic_exam,
-                    c.getString(R.string.alert_exam_title, e.course.displayName(), Exams.countdown(c, e.exam, nowTime, true)),
-                    Exams.title(c, e.exam) + " · " + Exams.when(c, e.exam)
-                            + (e.exam.room == null || e.exam.room.trim().isEmpty() ? "" : " · " + e.exam.room.trim()));
-            x.courseId = e.course.id;
-            x.courseTab = CourseActivity.TAB_EXAMS;
-            out.add(0, x);
+        List<Alert> taskAlerts = new ArrayList<>();
+        for (com.mizan.gpa.data.Task t : TaskUi.upcoming(d, nowTime)) {
+            TaskUi.State state = TaskUi.state(t, nowTime);
+            long days = java.time.temporal.ChronoUnit.DAYS.between(nowTime.toLocalDate(), t.localDate());
+            if (state != TaskUi.State.OVERDUE && days > 1) break;
+            String course = TaskUi.courseName(d, t);
+            String label = TaskUi.categoryLabel(c, t.category) + (course != null ? " " + course : "");
+            Alert x = new Alert(state == TaskUi.State.OVERDUE || days == 0 ? Level.DANGER : Level.WARNING, TaskUi.categoryIcon(t.category),
+                    c.getString(R.string.task_notif_title, label, TaskUi.countdown(c, t, nowTime, true)),
+                    TaskUi.title(c, t) + " · " + TaskUi.when(c, t));
+            x.openForecast = true;
+            taskAlerts.add(x);
         }
+        out.addAll(0, taskAlerts);
 
         // Next lecture today.
         ReminderScheduler.Next next = ReminderScheduler.nextLecture(d, System.currentTimeMillis());

@@ -44,6 +44,13 @@
         <item name="cardCornerRadius">@dimen/card_radius</item>
     </style>
 
+    <!-- Temporary (unsaved) content: outlined rather than filled, so it reads as a draft. -->
+    <style name="Widget.Mizan.Card.Outlined.Dashed" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="strokeColor">?attr/colorOutline</item>
+        <item name="cardBackgroundColor">@android:color/transparent</item>
+    </style>
+
     <style name="Widget.Mizan.Card.Hero" parent="Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">?attr/colorPrimaryContainer</item>
         <item name="cardCornerRadius">28dp</item>

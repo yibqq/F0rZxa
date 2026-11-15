@@ -114,62 +114,87 @@ public final class Rows {
         return v;
     }
 
-    /** Exam card with a date block, countdown badge and an overflow menu. */
-    public static View examCard(ViewGroup parent, androidx.appcompat.app.AppCompatActivity a, Semester sem, Exams.Entry en, boolean showCourse) {
+    /**
+     * Task card: completion box, course color bar, title, category/course/when line, optional notes
+     * (no empty block when there are none), countdown or state badge, and a bell only when a reminder
+     * will actually be delivered.
+     */
+    public static View taskCard(ViewGroup parent, androidx.appcompat.app.AppCompatActivity a, com.mizan.gpa.data.Task t, boolean showCourse) {
         Context ctx = parent.getContext();
-        View v = LayoutInflater.from(ctx).inflate(R.layout.item_exam, parent, false);
+        com.mizan.gpa.data.AppData d = com.mizan.gpa.data.Repository.get(ctx).data();
+        View v = LayoutInflater.from(ctx).inflate(R.layout.item_task, parent, false);
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        boolean past = Exams.isPast(en.exam, now);
-        int color = en.color();
-        View box = v.findViewById(R.id.x_date_box);
-        Ui.roundedFill(box, Ui.withAlpha(color, past ? 0.10f : 0.18f), 14);
-        TextView day = v.findViewById(R.id.x_day);
-        TextView month = v.findViewById(R.id.x_month);
-        day.setText(String.valueOf(en.start.getDayOfMonth()));
-        month.setText(en.start.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, Fmt.locale(ctx)));
-        int ink = Ui.blend(color, Ui.attr(ctx, com.google.android.material.R.attr.colorOnSurface), 0.45f);
-        day.setTextColor(ink);
-        month.setTextColor(ink);
-        TextView course = v.findViewById(R.id.x_course);
-        TextView title = v.findViewById(R.id.x_title);
-        String name = Exams.title(ctx, en.exam);
-        String typed = name.equals(Exams.typeLabel(ctx, en.exam.type)) ? name : name + " · " + Exams.typeLabel(ctx, en.exam.type);
-        if (showCourse) {
-            course.setText(en.course.displayName());
-            title.setText(typed);
-        } else {
-            course.setText(name);
-            title.setText(Exams.typeLabel(ctx, en.exam.type));
-            title.setVisibility(name.equals(Exams.typeLabel(ctx, en.exam.type)) ? View.GONE : View.VISIBLE);
+        TaskUi.State state = TaskUi.state(t, now);
+        boolean closed = state == TaskUi.State.DONE || state == TaskUi.State.FINISHED;
+
+        com.google.android.material.checkbox.MaterialCheckBox box = v.findViewById(R.id.k_done);
+        box.setChecked(t.done);
+        box.setContentDescription(ctx.getString(t.done ? R.string.task_mark_open : R.string.task_mark_done) + ": " + TaskUi.title(ctx, t));
+        box.setOnClickListener(x -> {
+            t.done = box.isChecked();
+            com.mizan.gpa.data.Repository.get(ctx).save();
+        });
+        Ui.roundedFill(v.findViewById(R.id.k_bar), TaskUi.color(ctx, d, t), 2);
+
+        TextView title = v.findViewById(R.id.k_title);
+        title.setText(TaskUi.title(ctx, t));
+        title.setPaintFlags(t.done ? title.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+                : title.getPaintFlags() & ~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+
+        StringBuilder meta = new StringBuilder(TaskUi.categoryLabel(ctx, t.category));
+        if (com.mizan.gpa.data.Task.EXAM.equals(t.category) && t.title != null && !t.title.trim().isEmpty()) {
+            meta.append(" · ").append(TaskUi.kindLabel(ctx, t.kind));
         }
-        String when = Exams.when(ctx, en.exam);
-        if (en.exam.room != null && !en.exam.room.trim().isEmpty()) when += " · " + en.exam.room.trim();
-        ((TextView) v.findViewById(R.id.x_when)).setText(when);
-        Ui.badge(v.findViewById(R.id.x_badge), Exams.countdown(ctx, en.exam, now, false),
-                Exams.urgencyColor(ctx, en.exam, now, Ui.attr(ctx, androidx.appcompat.R.attr.colorPrimary)));
-        v.setAlpha(past ? 0.72f : 1f);
-        v.setOnClickListener(x -> Dialogs.editExam(a, sem, showCourse ? null : en.course, en.exam));
-        View menu = v.findViewById(R.id.x_menu);
+        String course = TaskUi.courseName(d, t);
+        if (showCourse && course != null) meta.append(" · ").append(course);
+        meta.append(" · ").append(TaskUi.when(ctx, t));
+        if (t.room != null && !t.room.trim().isEmpty()) meta.append(" · ").append(t.room.trim());
+        ((TextView) v.findViewById(R.id.k_meta)).setText(meta);
+
+        TextView notes = v.findViewById(R.id.k_notes);
+        boolean hasNotes = t.notes != null && !t.notes.trim().isEmpty();
+        notes.setVisibility(hasNotes ? View.VISIBLE : View.GONE);
+        if (hasNotes) notes.setText(t.notes.trim());
+
+        TextView badge = v.findViewById(R.id.k_badge);
+        String cd = TaskUi.countdown(ctx, t, now, false);
+        if (cd.isEmpty()) badge.setVisibility(View.GONE);
+        else Ui.badge(badge, cd, TaskUi.urgencyColor(ctx, t, now, Ui.attr(ctx, androidx.appcompat.R.attr.colorPrimary)));
+        boolean reminds = com.mizan.gpa.calc.TaskReminders.hasUpcoming(t, d.settings, now)
+                && com.mizan.gpa.notify.Notifier.canPost(ctx);
+        v.findViewById(R.id.k_bell).setVisibility(reminds ? View.VISIBLE : View.GONE);
+        v.setAlpha(closed ? 0.7f : 1f);
+
+        v.setOnClickListener(x -> Dialogs.editTask(a, t, null, null));
+        View menu = v.findViewById(R.id.k_menu);
         menu.setOnClickListener(x -> {
             androidx.appcompat.widget.PopupMenu p = new androidx.appcompat.widget.PopupMenu(ctx, menu);
-            if (past) p.getMenu().add(0, 1, 0, R.string.exam_record_mark);
-            if (showCourse) p.getMenu().add(0, 2, 0, R.string.open_course);
-            p.getMenu().add(0, 3, 0, R.string.edit);
-            p.getMenu().add(0, 4, 0, R.string.delete);
+            p.getMenu().add(0, 1, 0, t.done ? R.string.task_mark_open : R.string.task_mark_done);
+            boolean canRecordMark = t.isEvent() && course != null && (state == TaskUi.State.FINISHED || t.done);
+            if (canRecordMark) p.getMenu().add(0, 2, 0, R.string.exam_record_mark);
+            if (showCourse && course != null) p.getMenu().add(0, 3, 0, R.string.open_course);
+            p.getMenu().add(0, 4, 0, R.string.edit);
+            p.getMenu().add(0, 5, 0, R.string.delete);
             p.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case 1:
-                        Dialogs.editAssessment(a, en.course, null, name, assessmentType(en.exam.type));
+                        t.done = !t.done;
+                        com.mizan.gpa.data.Repository.get(ctx).save();
                         return true;
                     case 2:
-                        ctx.startActivity(CourseActivity.intent(ctx, en.course.id, CourseActivity.TAB_EXAMS));
+                        Dialogs.editAssessment(a, d.findCourse(t.courseId), null, TaskUi.title(ctx, t), assessmentType(t));
                         return true;
                     case 3:
-                        Dialogs.editExam(a, sem, showCourse ? null : en.course, en.exam);
+                        ctx.startActivity(CourseActivity.intent(ctx, t.courseId, CourseActivity.TAB_TASKS));
+                        return true;
+                    case 4:
+                        Dialogs.editTask(a, t, null, null);
                         return true;
                     default:
-                        en.course.exams.remove(en.exam);
-                        com.mizan.gpa.data.Repository.get(ctx).save();
+                        Dialogs.confirm(ctx, ctx.getString(R.string.task_delete_title, TaskUi.title(ctx, t)), null, R.string.delete, () -> {
+                            d.tasks.remove(t);
+                            com.mizan.gpa.data.Repository.get(ctx).save();
+                        });
                         return true;
                 }
             });
@@ -178,12 +203,12 @@ public final class Rows {
         return v;
     }
 
-    private static String assessmentType(String examType) {
-        switch (examType) {
-            case com.mizan.gpa.data.Exam.MIDTERM: return com.mizan.gpa.data.Assessment.MIDTERM;
-            case com.mizan.gpa.data.Exam.FINAL: return com.mizan.gpa.data.Assessment.FINAL;
-            case com.mizan.gpa.data.Exam.QUIZ: return com.mizan.gpa.data.Assessment.QUIZ;
-            case com.mizan.gpa.data.Exam.PRACTICAL: return com.mizan.gpa.data.Assessment.LAB;
+    private static String assessmentType(com.mizan.gpa.data.Task t) {
+        if (com.mizan.gpa.data.Task.PRACTICAL.equals(t.category)) return com.mizan.gpa.data.Assessment.LAB;
+        switch (t.kind) {
+            case com.mizan.gpa.data.Task.KIND_MIDTERM: return com.mizan.gpa.data.Assessment.MIDTERM;
+            case com.mizan.gpa.data.Task.KIND_FINAL: return com.mizan.gpa.data.Assessment.FINAL;
+            case com.mizan.gpa.data.Task.KIND_QUIZ: return com.mizan.gpa.data.Assessment.QUIZ;
             default: return com.mizan.gpa.data.Assessment.OTHER;
         }
     }

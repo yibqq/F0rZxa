@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="ThemeOverlay.Mizan.Burgundy" parent="">
+        <item name="colorPrimary">@color/theme_burgundy_primary</item>
+        <item name="colorOnPrimary">@color/theme_burgundy_on_primary</item>
+        <item name="colorPrimaryContainer">@color/theme_burgundy_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/theme_burgundy_on_primary_container</item>
+        <item name="colorSecondary">@color/theme_burgundy_secondary</item>
+        <item name="colorOnSecondary">@color/theme_burgundy_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/theme_burgundy_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/theme_burgundy_on_secondary_container</item>
+        <item name="colorTertiary">@color/theme_burgundy_tertiary</item>
+        <item name="colorOnTertiary">@color/theme_burgundy_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/theme_burgundy_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/theme_burgundy_on_tertiary_container</item>
+        <item name="android:colorBackground">@color/theme_burgundy_background</item>
+        <item name="colorOnBackground">@color/theme_burgundy_on_background</item>
+        <item name="colorSurface">@color/theme_burgundy_surface</item>
+        <item name="colorOnSurface">@color/theme_burgundy_on_surface</item>
+        <item name="colorSurfaceVariant">@color/theme_burgundy_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/theme_burgundy_on_surface_variant</item>
+        <item name="colorOutline">@color/theme_burgundy_outline</item>
+        <item name="colorOutlineVariant">@color/theme_burgundy_outline_variant</item>
+        <item name="colorSurfaceContainerLowest">@color/theme_burgundy_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/theme_burgundy_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/theme_burgundy_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/theme_burgundy_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/theme_burgundy_surface_container_highest</item>
+        <item name="colorSurfaceInverse">@color/theme_burgundy_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/theme_burgundy_inverse_on_surface</item>
+        <item name="colorPrimaryInverse">@color/theme_burgundy_inverse_primary</item>
+    </style>
     <style name="ThemeOverlay.Mizan.Ocean" parent="">
         <item name="colorPrimary">@color/theme_ocean_primary</item>
         <item name="colorOnPrimary">@color/theme_ocean_on_primary</item>

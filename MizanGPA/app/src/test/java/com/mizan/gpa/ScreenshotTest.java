@@ -50,8 +50,8 @@ import java.time.Duration;
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = "w411dp-h891dp-xxhdpi")
 public class ScreenshotTest {
-    private static final int[] TABS = {R.id.tab_home, R.id.tab_semesters, R.id.tab_attendance, R.id.tab_forecast, R.id.tab_schedule};
-    private static final String[] TAB_NAMES = {"1-home", "2-semesters", "3-attendance", "4-forecast", "5-schedule"};
+    private static final int[] TABS = {R.id.tab_home, R.id.tab_gpa, R.id.tab_attendance, R.id.tab_schedule, R.id.tab_tasks};
+    private static final String[] TAB_NAMES = {"1-home", "2-gpa", "3-attendance", "5-schedule", "4-tasks"};
 
     @Test
     public void english() throws Exception {
@@ -225,6 +225,87 @@ public class ScreenshotTest {
         }
     }
 
+    /** Lite mode: three tabs only. */
+    @Test
+    @Config(qualifiers = "ar-w411dp-h891dp-xxhdpi")
+    public void liteMode() {
+        load();
+        Context ctx = ApplicationProvider.getApplicationContext();
+        Repository.get(ctx).settings().appMode = Settings.MODE_LITE;
+        Repository.get(ctx).save();
+        try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
+            sc.onActivity(a -> {
+                for (int id : new int[]{R.id.tab_gpa, R.id.tab_tasks, R.id.tab_settings}) {
+                    a.selectTab(id);
+                    settle();
+                    save(a.getWindow().getDecorView(), "lite-" + a.getResources().getResourceEntryName(id));
+                }
+            });
+        }
+    }
+
+    /** Every onboarding page, in Arabic. */
+    @Test
+    @Config(qualifiers = "ar-w411dp-h891dp-xxhdpi")
+    public void onboarding() {
+        Context ctx = ApplicationProvider.getApplicationContext();
+        Repository.get(ctx).replace(new AppData());
+        setAnimatorScale(0);   // Robolectric draws no frames, so MotionLayout would stop mid-transition
+        try (ActivityScenario<com.mizan.gpa.ui.OnboardingActivity> sc = ActivityScenario.launch(com.mizan.gpa.ui.OnboardingActivity.class)) {
+            sc.onActivity(a -> {
+                settle();
+                for (int i = 1; i <= 5; i++) {
+                    save(a.getWindow().getDecorView(), "onboarding-" + i);
+                    if (i < 5) {
+                        a.findViewById(R.id.ob_next).performClick();
+                        settle();
+                    }
+                }
+            });
+        } finally {
+            setAnimatorScale(1);
+        }
+    }
+
+    private static void setAnimatorScale(float scale) {
+        try {
+            android.animation.ValueAnimator.class.getMethod("setDurationScale", float.class).invoke(null, scale);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /** Compact phone and landscape layouts. */
+    @Test
+    @Config(qualifiers = "ar-w320dp-h640dp-xhdpi")
+    public void compactPhone() {
+        load();
+        try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
+            sc.onActivity(a -> {
+                for (int i = 0; i < TABS.length; i++) {
+                    a.selectTab(TABS[i]);
+                    settle();
+                    save(a.getWindow().getDecorView(), "compact-" + TAB_NAMES[i]);
+                }
+            });
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "ar-w891dp-h411dp-land-xxhdpi")
+    public void landscape() {
+        load();
+        try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
+            sc.onActivity(a -> {
+                for (int i = 0; i < TABS.length; i++) {
+                    a.selectTab(TABS[i]);
+                    settle();
+                    save(a.getWindow().getDecorView(), "land-" + TAB_NAMES[i]);
+                }
+            });
+        }
+    }
+
     /** The adaptive launcher icon as a circle and as a rounded square. */
     @Test
     public void launcherIcon() {
@@ -256,7 +337,9 @@ public class ScreenshotTest {
     @Test
     public void emptyState() throws Exception {
         Context ctx = ApplicationProvider.getApplicationContext();
-        Repository.get(ctx).replace(new AppData());
+        AppData fresh = new AppData();
+        fresh.settings.onboarded = true;
+        Repository.get(ctx).replace(fresh);
         try (ActivityScenario<MainActivity> sc = ActivityScenario.launch(MainActivity.class)) {
             sc.onActivity(a -> {
                 settle();
@@ -308,7 +391,13 @@ public class ScreenshotTest {
         Settings st = new Settings();
         st.studentName = "Sara";
         st.university = "King Saud University";
-        Repository.get(ctx).replace(SampleData.create(ctx, st));
+        st.onboarded = true;
+        AppData d = SampleData.create(ctx, st);
+        // A baseline that already covers the oldest saved semester (shown with its badge).
+        d.settings.priorGpa = 4.35;
+        d.settings.priorCredits = 45;
+        d.semesters.get(d.semesters.size() - 1).inBaseline = true;
+        Repository.get(ctx).replace(d);
     }
 
     private void shootAll(String prefix) throws Exception {
@@ -323,9 +412,7 @@ public class ScreenshotTest {
                     save(a.getWindow().getDecorView(), prefix + "-" + TAB_NAMES[i]);
                     saveScrollContent(a, prefix + "-" + TAB_NAMES[i] + "-full");
                 }
-                a.openExams();
-                settle();
-                save(a.getWindow().getDecorView(), prefix + "-5b-exams");
+
             });
         }
         Semester cur = d.currentSemester();
@@ -339,7 +426,7 @@ public class ScreenshotTest {
                 Dialog dlg = ShadowDialog.getLatestDialog();
                 save(dlg.getWindow().getDecorView(), prefix + "-6b-course-dialog");
                 dlg.dismiss();
-                Dialogs.editExam(a, cur, null, cur.courses.get(3).exams.get(0));
+                Dialogs.editTask(a, Repository.get(ctx).data().tasks.get(0), null, null);
                 settle();
                 Dialog examDlg = ShadowDialog.getLatestDialog();
                 save(examDlg.getWindow().getDecorView(), prefix + "-6c-exam-dialog");

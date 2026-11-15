@@ -32,6 +32,9 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
+            android:name=".ui.OnboardingActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.SemesterActivity"
             android:parentActivityName=".ui.MainActivity" />
         <activity
@@ -49,6 +52,9 @@
             android:exported="false" />
         <receiver
             android:name=".notify.AttendanceActionReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".notify.TaskActionReceiver"
             android:exported="false" />
         <receiver
             android:name=".notify.BootReceiver"

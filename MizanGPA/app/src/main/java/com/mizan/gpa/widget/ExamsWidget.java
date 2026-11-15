@@ -11,11 +11,14 @@ import com.mizan.gpa.R;
 import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Repository;
 import com.mizan.gpa.data.Semester;
-import com.mizan.gpa.ui.Exams;
+import com.mizan.gpa.ui.TaskUi;
 
 import java.time.LocalDateTime;
 
-/** Home-screen widget: upcoming exams with a countdown for each. */
+/**
+ * Home-screen widget: upcoming reminders & tasks with a countdown for each. (The class keeps its
+ * original name so widgets users already placed keep working.)
+ */
 public class ExamsWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context ctx, AppWidgetManager m, int[] ids) {
@@ -29,9 +32,9 @@ public class ExamsWidget extends AppWidgetProvider {
         RemoteViews v = new RemoteViews(ctx.getPackageName(), R.layout.widget_exams);
         v.setInt(R.id.w_icon_bg, "setColorFilter", Widgets.accent(ctx));
         v.setTextViewText(R.id.w_subtitle, cur == null ? "" : cur.name);
-        int count = Exams.upcoming(d, LocalDateTime.now()).size();
+        int count = TaskUi.upcoming(d, LocalDateTime.now()).size();
         v.setViewVisibility(R.id.w_badge, count > 0 ? android.view.View.VISIBLE : android.view.View.GONE);
-        v.setTextViewText(R.id.w_badge, ctx.getResources().getQuantityString(R.plurals.exams_count, count, count));
+        v.setTextViewText(R.id.w_badge, ctx.getResources().getQuantityString(R.plurals.tasks_count, count, count));
 
         v.setRemoteAdapter(R.id.w_list, Widgets.serviceIntent(ctx, ExamsWidgetService.class, widgetId));
         v.setEmptyView(R.id.w_list, R.id.w_empty);

@@ -31,10 +31,8 @@ public class AttendanceActionReceiver extends BroadcastReceiver {
         if (c == null || status == null) return;
         Semester s = d.semesterOf(c.id);
         AttendanceCalculator.Status before = AttendanceCalculator.compute(c, s, d.settings).status;
-        AttendanceRecord r = new AttendanceRecord();
-        r.date = Fmt.today();
-        r.status = status;
-        c.attendance.add(r);
+        // Same rule as everywhere else: at most one record per course per day.
+        if (c.recordAttendance(Fmt.today(), status).result == Course.RecordResult.DUPLICATE) return;
         repo.save();
         Notifier.attendanceChanged(ctx, c, s, d.settings, before);
     }

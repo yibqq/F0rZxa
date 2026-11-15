@@ -5,4 +5,6 @@
     <dimen name="card_radius">20dp</dimen>
     <dimen name="ring_size">132dp</dimen>
     <dimen name="chart_height">200dp</dimen>
+    <dimen name="ob_tile">120dp</dimen>
+    <dimen name="ob_page_max">460dp</dimen>
 </resources>

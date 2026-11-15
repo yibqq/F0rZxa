@@ -1,6 +1,6 @@
 package com.mizan.gpa.calc;
 
-import com.mizan.gpa.data.Exam;
+import com.mizan.gpa.data.Task;
 import com.mizan.gpa.data.Settings;
 
 import java.time.LocalDate;
@@ -10,14 +10,15 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * When to remind about an exam.
+ * When to remind about a task.
  *
- * <p>"Days before" reminders are sent N days before the exam date at a fixed time of day (for example
- * 8 PM the evening before). "Minutes before" reminders are relative to the exam's start time; 0 means
- * at the start. An exam uses its own lists when it has custom reminders, otherwise the defaults.
+ * <p>"Days before" reminders are sent N days before the date at a fixed time of day (for example 8 PM
+ * the evening before). "Minutes before" reminders are relative to the task's time (0 = at the time)
+ * and need a time. A task without a date, or one that is done, has no reminders at all. A task uses
+ * its own lists when it has custom reminders, otherwise the defaults.
  */
-public final class ExamReminders {
-    private ExamReminders() {}
+public final class TaskReminders {
+    private TaskReminders() {}
 
     public static final class Trigger implements Comparable<Trigger> {
         public final LocalDateTime at;
@@ -37,19 +38,19 @@ public final class ExamReminders {
         }
     }
 
-    public static List<Integer> days(Exam e, Settings st) {
+    public static List<Integer> days(Task e, Settings st) {
         return e.customReminders ? e.daysBefore : st.examDaysBefore;
     }
 
-    public static List<Integer> minutes(Exam e, Settings st) {
+    public static List<Integer> minutes(Task e, Settings st) {
         return e.customReminders ? e.minutesBefore : st.examMinutesBefore;
     }
 
-    /** All reminder times of the exam in chronological order, without duplicates. */
-    public static List<Trigger> triggers(Exam e, Settings st) {
+    /** All reminder times of the task in chronological order, without duplicates. */
+    public static List<Trigger> triggers(Task e, Settings st) {
         List<Trigger> out = new ArrayList<>();
-        LocalDateTime start = e.startDateTime();
-        if (start == null) return out;
+        if (e.done || !e.hasDate()) return out;
+        LocalDateTime start = e.start();
         LocalDate date = start.toLocalDate();
         for (int d : days(e, st)) {
             if (d < 1) continue;
@@ -57,7 +58,7 @@ public final class ExamReminders {
             add(out, new Trigger(at, true, d));
         }
         for (int m : minutes(e, st)) {
-            if (m < 0) continue;
+            if (m < 0 || !e.hasTime()) continue;
             add(out, new Trigger(start.minusMinutes(m), false, m));
         }
         Collections.sort(out);
@@ -67,5 +68,12 @@ public final class ExamReminders {
     private static void add(List<Trigger> list, Trigger t) {
         for (Trigger x : list) if (x.at.equals(t.at)) return;
         list.add(t);
+    }
+
+    /** True when the task will produce at least one reminder after {@code now}. */
+    public static boolean hasUpcoming(Task e, Settings st, LocalDateTime now) {
+        if (!st.examReminders) return false;
+        for (Trigger t : triggers(e, st)) if (t.at.isAfter(now)) return true;
+        return false;
     }
 }

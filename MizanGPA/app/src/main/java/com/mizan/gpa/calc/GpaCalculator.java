@@ -52,14 +52,43 @@ public final class GpaCalculator {
         return t;
     }
 
-    /** Prior studies entered in the settings, as totals. */
+    /** State of the manually entered cumulative GPA baseline. */
+    public enum Baseline {
+        /** No baseline entered. */
+        NONE,
+        /** GPA and credit hours are valid; the baseline is weighted into the cumulative GPA. */
+        VALID,
+        /** A GPA without credit hours: shown for reference, never used in calculations. */
+        NO_CREDITS,
+        /** The GPA is outside the current grading scale (e.g. 4.5 on a 4-point scale). */
+        OUT_OF_SCALE
+    }
+
+    public static Baseline baseline(Settings st) {
+        boolean hasGpa = st.priorGpa > 0;
+        boolean hasCredits = st.priorCredits > 0;
+        if (!hasGpa && !hasCredits) return Baseline.NONE;
+        if (!hasCredits) return Baseline.NO_CREDITS;
+        if (st.priorGpa < 0 || st.priorGpa > st.scale.maxPoints() + 1e-9) return Baseline.OUT_OF_SCALE;
+        return Baseline.VALID;
+    }
+
+    /** The baseline as totals; empty unless it is {@link Baseline#VALID}. Never estimated or clamped. */
     public static Totals prior(Settings st) {
         Totals t = new Totals();
-        if (st.priorCredits > 0) {
+        if (baseline(st) == Baseline.VALID) {
             t.credits = st.priorCredits;
-            t.points = Math.min(st.priorGpa, st.scale.maxPoints()) * st.priorCredits;
+            t.points = st.priorGpa * st.priorCredits;
         }
         return t;
+    }
+
+    /**
+     * Whether a semester is counted in the cumulative GPA. Semesters marked as already included in a
+     * valid baseline are skipped so they are not counted twice; with no valid baseline they count.
+     */
+    public static boolean countsInCumulative(AppData d, Semester s) {
+        return !(s.inBaseline && baseline(d.settings) == Baseline.VALID);
     }
 
     public static Totals cumulative(AppData d, GradeResolver.Mode mode) {
@@ -68,7 +97,7 @@ public final class GpaCalculator {
 
     public static Totals cumulative(AppData d, GradeResolver.Mode mode, Map<String, String> overrides) {
         Totals t = prior(d.settings);
-        for (Semester s : d.semesters) t = t.plus(semester(s, d.settings, mode, overrides));
+        for (Semester s : d.semesters) if (countsInCumulative(d, s)) t = t.plus(semester(s, d.settings, mode, overrides));
         return t;
     }
 
@@ -76,7 +105,7 @@ public final class GpaCalculator {
     public static Totals cumulativeUpTo(AppData d, Semester upTo, GradeResolver.Mode mode) {
         Totals t = prior(d.settings);
         for (Semester s : d.semesters) {
-            t = t.plus(semester(s, d.settings, mode, null));
+            if (countsInCumulative(d, s)) t = t.plus(semester(s, d.settings, mode, null));
             if (s == upTo) break;
         }
         return t;
@@ -108,7 +137,8 @@ public final class GpaCalculator {
             boolean projected = expected.credits > official.credits + 1e-9;
             Totals use = projected ? expected : official;
             if (use.credits <= 1e-9) continue;
-            running = running.plus(use);
+            // A semester inside the baseline is already part of the starting cumulative GPA.
+            if (countsInCumulative(d, s)) running = running.plus(use);
             TrendPoint p = new TrendPoint();
             p.semester = s;
             p.semesterGpa = use.gpa();
@@ -117,6 +147,43 @@ public final class GpaCalculator {
             out.add(p);
         }
         return out;
+    }
+
+    /** One row of the GPA calculator: credit hours and a letter grade (either may be missing). */
+    public static final class Entry {
+        public final double credits;
+        public final String letter;
+
+        public Entry(double credits, String letter) {
+            this.credits = credits;
+            this.letter = letter;
+        }
+    }
+
+    /** Result of the calculator: totals of the usable rows and how many rows were skipped. */
+    public static final class Calculation {
+        public final Totals totals = new Totals();
+        /** Rows without a grade, without credit hours, or with a grade not in the scale. */
+        public int ignored;
+    }
+
+    /**
+     * Weighted GPA of calculator rows. Rows with missing or invalid data are skipped and counted,
+     * never guessed. Uses the same grade-to-points mapping as saved courses.
+     */
+    public static Calculation calculate(List<Entry> rows, com.mizan.gpa.data.GradeScale scale) {
+        Calculation c = new Calculation();
+        for (Entry e : rows) {
+            com.mizan.gpa.data.GradeDef g = scale.find(e.letter);
+            if (g == null || Double.isNaN(e.credits) || e.credits <= 0) {
+                c.ignored++;
+                continue;
+            }
+            c.totals.points += g.points * e.credits;
+            c.totals.credits += e.credits;
+            c.totals.courses++;
+        }
+        return c;
     }
 
     /**

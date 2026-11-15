@@ -26,11 +26,16 @@ public class Course {
     public double absenceLimit = -1;
     /** Total marks of the course (normally 100). */
     public double totalMarks = 100;
+    /** Course Reference Number from the university's registration system (optional, free format). */
+    public String crn = "";
+    /** Absences the student knows about but not their dates (e.g. before using the app). */
+    public int undatedAbsences = 0;
 
     public final List<Assessment> assessments = new ArrayList<>();
     public final List<AttendanceRecord> attendance = new ArrayList<>();
     public final List<LectureSlot> lectures = new ArrayList<>();
-    public final List<Exam> exams = new ArrayList<>();
+    /** Exams stored inside the course by schema version 1; moved to AppData.tasks when loading. */
+    final List<JSONObject> legacyExams = new ArrayList<>();
 
     public boolean isCompleted() {
         return finalGrade != null;
@@ -51,9 +56,81 @@ public class Course {
         return null;
     }
 
-    public Exam findExam(String eid) {
-        for (Exam x : exams) if (x.id.equals(eid)) return x;
+    public enum RecordResult { ADDED, UPDATED, DUPLICATE }
+
+    /** Outcome of {@link #recordAttendance}; enough to undo it. */
+    public static final class Recorded {
+        public AttendanceRecord record;
+        public RecordResult result;
+        /** Status before an update. */
+        public String previousStatus;
+    }
+
+    /**
+     * Records attendance for a calendar date. There is at most one record per course per date: an
+     * absence that is already recorded is not added again, and a different status replaces the
+     * day's existing record (a double lecture is one record with two sessions).
+     */
+    public Recorded recordAttendance(String date, String status) {
+        Recorded out = new Recorded();
+        AttendanceRecord sameDay = null;
+        for (AttendanceRecord r : attendance) {
+            if (!date.equals(r.date)) continue;
+            if (sameDay == null || AttendanceRecord.ABSENT.equals(r.status)) sameDay = r;
+        }
+        if (sameDay == null) {
+            AttendanceRecord r = new AttendanceRecord();
+            r.date = date;
+            r.status = status;
+            attendance.add(r);
+            out.record = r;
+            out.result = RecordResult.ADDED;
+        } else if (sameDay.status.equals(status)) {
+            out.record = sameDay;
+            out.result = RecordResult.DUPLICATE;
+        } else {
+            out.previousStatus = sameDay.status;
+            sameDay.status = status;
+            out.record = sameDay;
+            out.result = RecordResult.UPDATED;
+        }
+        return out;
+    }
+
+    /** Reverts a {@link #recordAttendance} call. */
+    public void undo(Recorded r) {
+        if (r.result == RecordResult.ADDED) attendance.remove(r.record);
+        else if (r.result == RecordResult.UPDATED) r.record.status = r.previousStatus;
+    }
+
+    /** Another record (not {@code except}) on the same date, if any. */
+    public AttendanceRecord recordOn(String date, AttendanceRecord except) {
+        for (AttendanceRecord r : attendance) if (r != except && date.equals(r.date)) return r;
         return null;
+    }
+
+    /**
+     * Enforces "one absence per course per date": duplicate absences on the same date are merged
+     * into one (keeping the larger session count and the first note). Returns how many were merged.
+     */
+    public int collapseDuplicateAbsences() {
+        int merged = 0;
+        java.util.Map<String, AttendanceRecord> firstByDate = new java.util.HashMap<>();
+        java.util.Iterator<AttendanceRecord> it = attendance.iterator();
+        while (it.hasNext()) {
+            AttendanceRecord r = it.next();
+            if (!AttendanceRecord.ABSENT.equals(r.status) || r.date == null) continue;
+            AttendanceRecord first = firstByDate.get(r.date);
+            if (first == null) {
+                firstByDate.put(r.date, r);
+                continue;
+            }
+            first.sessions = Math.max(first.sessions, r.sessions);
+            if ((first.note == null || first.note.isEmpty()) && r.note != null) first.note = r.note;
+            it.remove();
+            merged++;
+        }
+        return merged;
     }
 
     public LectureSlot findSlot(String sid) {
@@ -84,9 +161,8 @@ public class Course {
         JSONArray l = new JSONArray();
         for (LectureSlot x : lectures) l.put(x.toJson());
         o.put("lectures", l);
-        JSONArray e = new JSONArray();
-        for (Exam x : exams) e.put(x.toJson());
-        o.put("exams", e);
+        o.put("crn", crn);
+        o.put("undatedAbsences", undatedAbsences);
         return o;
     }
 
@@ -111,8 +187,11 @@ public class Course {
         for (int i = 0; i < r.length(); i++) if (r.optJSONObject(i) != null) c.attendance.add(AttendanceRecord.fromJson(r.optJSONObject(i)));
         JSONArray l = Json.arr(o, "lectures");
         for (int i = 0; i < l.length(); i++) if (l.optJSONObject(i) != null) c.lectures.add(LectureSlot.fromJson(l.optJSONObject(i)));
+        c.crn = Json.str(o, "crn", "").trim();
+        c.undatedAbsences = Math.max(0, Json.integer(o, "undatedAbsences", 0));
         JSONArray e = Json.arr(o, "exams");
-        for (int i = 0; i < e.length(); i++) if (e.optJSONObject(i) != null) c.exams.add(Exam.fromJson(e.optJSONObject(i)));
+        for (int i = 0; i < e.length(); i++) if (e.optJSONObject(i) != null) c.legacyExams.add(e.optJSONObject(i));
+        c.collapseDuplicateAbsences();
         return c;
     }
 }

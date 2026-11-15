@@ -14,7 +14,7 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Course;
-import com.mizan.gpa.data.Exam;
+import com.mizan.gpa.data.Task;
 import com.mizan.gpa.data.Repository;
 import com.mizan.gpa.data.Semester;
 
@@ -47,11 +47,13 @@ public class ReminderTest {
         Repository.get(ctx).replace(d);
     }
 
-    private Exam exam(LocalDateTime start) {
-        Exam e = new Exam();
+    private Task exam(LocalDateTime start) {
+        Task e = new Task();
+        e.category = Task.EXAM;
+        e.courseId = course.id;
         e.date = start.toLocalDate().toString();
-        e.start = start.getHour() * 60 + start.getMinute();
-        course.exams.add(e);
+        e.time = start.getHour() * 60 + start.getMinute();
+        Repository.get(ctx).data().tasks.add(e);
         return e;
     }
 
@@ -98,7 +100,7 @@ public class ReminderTest {
         AppData d = Repository.get(ctx).data();
         // Exam tomorrow; the "day before" reminder was due while the phone was off.
         LocalDateTime start = LocalDateTime.now().plusHours(10);
-        Exam e = exam(start);
+        Task e = exam(start);
         e.customReminders = true;
         e.minutesBefore.add(14 * 60);   // due four hours ago
         d.settings.lastReminderCheck = System.currentTimeMillis() - 8 * 60 * 60_000L;
@@ -118,9 +120,40 @@ public class ReminderTest {
     }
 
     @Test
+    public void undatedTaskNeverSchedulesAnAlarm() {
+        AppData d = Repository.get(ctx).data();
+        Task t = new Task();
+        t.title = "Someday";
+        d.tasks.add(t);
+        assertEquals(0, ReminderScheduler.nextTrigger(d, System.currentTimeMillis()));
+    }
+
+    @Test
+    public void doneTaskIsNotReminded() {
+        AppData d = Repository.get(ctx).data();
+        Task e = exam(LocalDateTime.now().plusMinutes(59));
+        e.done = true;
+        d.settings.lastReminderCheck = System.currentTimeMillis() - 5 * 60_000L;
+        ReminderScheduler.deliverDue(ctx);
+        assertEquals(0, shown().size());
+    }
+
+    @Test
+    public void assignmentReminderHasDoneAction() {
+        AppData d = Repository.get(ctx).data();
+        Task a = exam(LocalDateTime.now().plusMinutes(59));
+        a.category = Task.ASSIGNMENT;
+        a.title = "Lab report";
+        d.settings.lastReminderCheck = System.currentTimeMillis() - 5 * 60_000L;
+        ReminderScheduler.deliverDue(ctx);
+        assertEquals(1, shown().size());
+        assertEquals(1, shown().get(0).actions.length);
+    }
+
+    @Test
     public void finishedExamIsNotAnnounced() {
         AppData d = Repository.get(ctx).data();
-        Exam e = exam(LocalDateTime.now().minusHours(2));
+        Task e = exam(LocalDateTime.now().minusHours(2));
         e.customReminders = true;
         e.minutesBefore.add(0);
         d.settings.lastReminderCheck = System.currentTimeMillis() - 6 * 60 * 60_000L;

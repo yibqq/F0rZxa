@@ -150,26 +150,39 @@ public final class Notifier {
     }
 
     /**
-     * Exam reminder. The wording comes from the time actually left ("tomorrow", "in 1 hour", "now"),
-     * so a reminder delivered late is still correct. Later reminders replace earlier ones of the same exam.
+     * Task reminder. The wording comes from the time actually left ("Tomorrow", "In 1 hour", "Now"),
+     * so a reminder delivered late is still correct. Later reminders replace earlier ones of the same
+     * task. Assignments and reminders get a "Done" button.
      */
-    static void examReminder(Context ctx, Course c, com.mizan.gpa.data.Exam exam) {
+    static void taskReminder(Context ctx, Course c, com.mizan.gpa.data.Task task) {
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        String name = com.mizan.gpa.ui.Exams.title(ctx, exam);
-        String title = ctx.getString(R.string.exam_notif_title, c.displayName(), com.mizan.gpa.ui.Exams.countdown(ctx, exam, now, true));
-        String text = name + " · " + com.mizan.gpa.ui.Exams.when(ctx, exam);
-        if (exam.room != null && !exam.room.trim().isEmpty()) text += " · " + exam.room.trim();
-        String big = exam.note == null || exam.note.trim().isEmpty() ? text : text + "\n" + exam.note.trim();
+        String name = com.mizan.gpa.ui.TaskUi.title(ctx, task);
+        String countdown = com.mizan.gpa.ui.TaskUi.countdown(ctx, task, now, true);
+        String title = ctx.getString(R.string.task_notif_title,
+                com.mizan.gpa.ui.TaskUi.categoryLabel(ctx, task.category) + (c != null ? " " + c.displayName() : ""), countdown);
+        StringBuilder text = new StringBuilder(name).append(" · ").append(com.mizan.gpa.ui.TaskUi.when(ctx, task));
+        if (task.room != null && !task.room.trim().isEmpty()) text.append(" · ").append(task.room.trim());
+        String big = task.notes == null || task.notes.trim().isEmpty() ? text.toString() : text + "\n" + task.notes.trim();
+        int id = ("task" + task.id).hashCode();
+        Intent open = new Intent(ctx, MainActivity.class).putExtra(MainActivity.EXTRA_SHORTCUT, "tasks")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CHANNEL_EXAMS)
                 .setSmallIcon(R.drawable.ic_stat_mizan)
                 .setColor(com.mizan.gpa.util.Themes.lightColor(ctx, androidx.appcompat.R.attr.colorPrimary))
                 .setContentTitle(title)
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(big))
-                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                .setCategory(task.isEvent() ? NotificationCompat.CATEGORY_EVENT : NotificationCompat.CATEGORY_REMINDER)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
-                .setContentIntent(openCourse(ctx, c.id, CourseActivity.TAB_EXAMS));
-        post(ctx, ("exam" + exam.id).hashCode(), b);
+                .setContentIntent(PendingIntent.getActivity(ctx, id, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+        if (!task.isEvent()) {
+            Intent done = new Intent(ctx, TaskActionReceiver.class)
+                    .putExtra(TaskActionReceiver.EXTRA_TASK, task.id)
+                    .putExtra(TaskActionReceiver.EXTRA_NOTIFICATION, id);
+            b.addAction(R.drawable.ic_check, ctx.getString(R.string.task_mark_done),
+                    PendingIntent.getBroadcast(ctx, id, done, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
+        }
+        post(ctx, id, b);
     }
 }

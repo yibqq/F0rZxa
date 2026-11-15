@@ -79,6 +79,10 @@
                 layout="@layout/view_kv_row" />
 
             <include
+                android:id="@+id/a_row_undated"
+                layout="@layout/view_kv_row" />
+
+            <include
                 android:id="@+id/a_row_limit"
                 layout="@layout/view_kv_row" />
         </LinearLayout>
@@ -140,4 +144,12 @@
             android:text="@string/att_late"
             app:icon="@drawable/ic_clock" />
     </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/a_undated"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/undated_absences_add"
+        app:icon="@drawable/ic_event_busy" />
 </LinearLayout>

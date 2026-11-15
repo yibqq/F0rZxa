@@ -48,6 +48,7 @@ public class ThemeBackgroundTest {
         ctx = ApplicationProvider.getApplicationContext();
         Settings st = new Settings();
         st.colorTheme = "violet";
+        st.onboarded = true;
         Repository.get(ctx).replace(SampleData.create(ctx, st));
         sem = Repository.get(ctx).data().currentSemester();
     }

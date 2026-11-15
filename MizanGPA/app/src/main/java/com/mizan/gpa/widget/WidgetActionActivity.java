@@ -38,19 +38,17 @@ public class WidgetActionActivity extends Activity {
         if (ACTION_PRESENT.equals(action) || ACTION_ABSENT.equals(action)) {
             if (c != null) {
                 boolean present = ACTION_PRESENT.equals(action);
-                Dialogs.quickRecord(this, c, present ? AttendanceRecord.PRESENT : AttendanceRecord.ABSENT);
-                Toast.makeText(this, getString(present ? R.string.recorded_present : R.string.recorded_absent, c.displayName()),
-                        Toast.LENGTH_SHORT).show();
+                com.mizan.gpa.data.Course.Recorded r = Dialogs.quickRecord(this, c, present ? AttendanceRecord.PRESENT : AttendanceRecord.ABSENT);
+                Toast.makeText(this, Dialogs.recordedMessage(this, c, r), Toast.LENGTH_SHORT).show();
             }
         } else if ((ACTION_OPEN_COURSE.equals(action) || ACTION_OPEN_COURSE_EXAMS.equals(action)) && c != null) {
             startActivity(CourseActivity.intent(this, c.id,
-                    ACTION_OPEN_COURSE_EXAMS.equals(action) ? CourseActivity.TAB_EXAMS : CourseActivity.TAB_ATTENDANCE)
+                    ACTION_OPEN_COURSE_EXAMS.equals(action) ? CourseActivity.TAB_TASKS : CourseActivity.TAB_ATTENDANCE)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         } else {
-            boolean exams = ACTION_OPEN_EXAMS.equals(action);
-            int tab = ACTION_OPEN_SCHEDULE.equals(action) || exams ? R.id.tab_schedule : R.id.tab_attendance;
-            startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.EXTRA_TAB, tab)
-                    .putExtra(MainActivity.EXTRA_EXAMS, exams)
+            String shortcut = ACTION_OPEN_EXAMS.equals(action) ? "tasks"
+                    : ACTION_OPEN_SCHEDULE.equals(action) ? "schedule" : "attendance";
+            startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.EXTRA_SHORTCUT, shortcut)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
         finish();

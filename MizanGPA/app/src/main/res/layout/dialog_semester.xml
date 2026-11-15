@@ -50,5 +50,19 @@
         android:layout_marginTop="8dp"
         android:text="@string/set_as_current" />
 
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/d_in_baseline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/in_baseline_checkbox" />
+
+    <TextView
+        android:id="@+id/d_in_baseline_help"
+        style="@style/Mizan.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="32dp"
+        android:text="@string/in_baseline_checkbox_help" />
 </LinearLayout>
 </ScrollView>

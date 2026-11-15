@@ -94,6 +94,7 @@ public final class Repository {
     }
 
     private void write() {
+        data.normalize();
         writeSafetyCopyOnce();
         FileOutputStream out = null;
         try {

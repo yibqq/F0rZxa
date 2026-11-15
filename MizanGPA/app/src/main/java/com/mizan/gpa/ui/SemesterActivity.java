@@ -42,6 +42,9 @@ public class SemesterActivity extends BaseActivity {
             int id = item.getItemId();
             if (id == R.id.action_edit) {
                 Dialogs.editSemester(this, s, null);
+            } else if (id == R.id.action_in_baseline) {
+                s.inBaseline = !s.inBaseline;
+                repo().save();
             } else if (id == R.id.action_set_current) {
                 d.settings.currentSemesterId = s.id;
                 repo().save();
@@ -57,8 +60,7 @@ public class SemesterActivity extends BaseActivity {
                 Dialogs.confirm(this, getString(R.string.delete_semester_title, s.name),
                         getResources().getQuantityString(R.plurals.delete_semester_text, s.courses.size(), s.courses.size()),
                         R.string.delete, () -> {
-                            d.semesters.remove(s);
-                            if (s.id.equals(d.settings.currentSemesterId)) d.settings.currentSemesterId = null;
+                            d.removeSemester(s);
                             repo().save();
                             finish();
                         });
@@ -88,6 +90,11 @@ public class SemesterActivity extends BaseActivity {
         boolean current = d.currentSemester() == s;
         toolbar.setSubtitle(current ? getString(R.string.current_semester) : null);
         toolbar.getMenu().findItem(R.id.action_set_current).setVisible(!current);
+        // "Already in my previous cumulative GPA" (only meaningful with a valid baseline).
+        android.view.MenuItem base = toolbar.getMenu().findItem(R.id.action_in_baseline);
+        base.setVisible(GpaCalculator.baseline(st) == GpaCalculator.Baseline.VALID || s.inBaseline);
+        base.setChecked(s.inBaseline);
+        toolbar.setSubtitle(s.inBaseline ? getString(R.string.in_baseline_badge) : toolbar.getSubtitle());
         int idx = d.semesters.indexOf(s);
         toolbar.getMenu().findItem(R.id.action_move_up).setVisible(idx > 0);
         toolbar.getMenu().findItem(R.id.action_move_down).setVisible(idx < d.semesters.size() - 1);

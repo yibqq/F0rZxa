@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated: one Material 3 recipe for every theme (see tools/gen_themes.py). -->
 <resources>
+    <color name="theme_burgundy_primary">#FFB1C1</color>
+    <color name="theme_burgundy_on_primary">#5C152C</color>
+    <color name="theme_burgundy_primary_container">#782C42</color>
+    <color name="theme_burgundy_on_primary_container">#FFD9DF</color>
+    <color name="theme_burgundy_secondary">#E2BEC4</color>
+    <color name="theme_burgundy_on_secondary">#412A2F</color>
+    <color name="theme_burgundy_secondary_container">#5A4045</color>
+    <color name="theme_burgundy_on_secondary_container">#FFD9DF</color>
+    <color name="theme_burgundy_tertiary">#FDB5A0</color>
+    <color name="theme_burgundy_on_tertiary">#502416</color>
+    <color name="theme_burgundy_tertiary_container">#6B392A</color>
+    <color name="theme_burgundy_on_tertiary_container">#FFDBD0</color>
+    <color name="theme_burgundy_background">#171213</color>
+    <color name="theme_burgundy_on_background">#ECE0E0</color>
+    <color name="theme_burgundy_surface">#171213</color>
+    <color name="theme_burgundy_on_surface">#ECE0E0</color>
+    <color name="theme_burgundy_surface_variant">#524346</color>
+    <color name="theme_burgundy_on_surface_variant">#D6C2C4</color>
+    <color name="theme_burgundy_outline">#9E8C8F</color>
+    <color name="theme_burgundy_outline_variant">#524346</color>
+    <color name="theme_burgundy_surface_container_lowest">#120D0E</color>
+    <color name="theme_burgundy_surface_container_low">#201A1B</color>
+    <color name="theme_burgundy_surface_container">#241E1F</color>
+    <color name="theme_burgundy_surface_container_high">#2F2829</color>
+    <color name="theme_burgundy_surface_container_highest">#3A3334</color>
+    <color name="theme_burgundy_inverse_surface">#ECE0E0</color>
+    <color name="theme_burgundy_inverse_on_surface">#352F30</color>
+    <color name="theme_burgundy_inverse_primary">#964359</color>
     <color name="theme_ocean_primary">#B4C5FF</color>
     <color name="theme_ocean_on_primary">#002A78</color>
     <color name="theme_ocean_primary_container">#234290</color>

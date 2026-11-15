@@ -47,21 +47,18 @@ public class ScheduleFragment extends BaseFragment {
         root = inflater.inflate(R.layout.fragment_list, container, false);
         selectedDay = state != null ? state.getInt(STATE_DAY) : Fmt.toCalendarDay(LocalDate.now().getDayOfWeek());
         ExtendedFloatingActionButton fab = root.findViewById(R.id.fab);
-        fab.setText("exams".equals(data().settings.scheduleView) ? R.string.add_exam : R.string.add_lecture);
-        fab.setOnClickListener(v -> {
-            if ("exams".equals(data().settings.scheduleView)) addExam();
-            else addLecture();
-        });
+        fab.setText(R.string.add_lecture);
+        fab.setOnClickListener(v -> addLecture());
         FrameLayout h = root.findViewById(R.id.header);
         header = inflater.inflate(R.layout.header_schedule, h, false);
         h.addView(header);
         buildDayChips();
         com.google.android.material.button.MaterialButtonToggleGroup mode = header.findViewById(R.id.view_mode);
         String current = data().settings.scheduleView;
-        mode.check("list".equals(current) ? R.id.mode_list : "exams".equals(current) ? R.id.mode_exams : R.id.mode_grid);
+        mode.check("list".equals(current) ? R.id.mode_list : R.id.mode_grid);
         mode.addOnButtonCheckedListener((g, id, checked) -> {
             if (!checked) return;
-            String value = id == R.id.mode_list ? "list" : id == R.id.mode_exams ? "exams" : "grid";
+            String value = id == R.id.mode_list ? "list" : "grid";
             if (!value.equals(data().settings.scheduleView)) {
                 data().settings.scheduleView = value;
                 repo().save();
@@ -101,51 +98,6 @@ public class ScheduleFragment extends BaseFragment {
             }
         });
         group.addView(c);
-    }
-
-    /** Shows the exams list; used when the tab is opened from a shortcut, widget or the dashboard. */
-    public void showExams() {
-        if (header == null) return;
-        ((com.google.android.material.button.MaterialButtonToggleGroup) header.findViewById(R.id.view_mode)).check(R.id.mode_exams);
-    }
-
-    private void addExam() {
-        Semester cur = data().currentSemester();
-        if (cur == null || cur.courses.isEmpty()) {
-            Ui.snack(requireActivity(), getString(R.string.add_courses_first));
-            return;
-        }
-        Dialogs.editExam((AppCompatActivity) requireActivity(), cur, null, null);
-    }
-
-    private void renderExams(LinearLayout list, Semester cur) {
-        java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        List<Exams.Entry> all = Exams.of(cur, now);
-        if (all.isEmpty()) {
-            Rows.empty(root, R.drawable.ic_exam, R.string.empty_exams_title, R.string.empty_exams_text,
-                    R.string.add_exam, v -> addExam());
-            return;
-        }
-        Rows.hideEmpty(root);
-        boolean pastHeader = false, upcomingHeader = false;
-        for (Exams.Entry e : all) {
-            boolean past = Exams.isPast(e.exam, now);
-            if (!past && !upcomingHeader) {
-                list.addView(sectionHeader(list, getString(R.string.exams_upcoming)));
-                upcomingHeader = true;
-            }
-            if (past && !pastHeader) {
-                list.addView(sectionHeader(list, getString(R.string.exams_past)));
-                pastHeader = true;
-            }
-            list.addView(Rows.examCard(list, (AppCompatActivity) requireActivity(), cur, e, true));
-        }
-    }
-
-    private View sectionHeader(ViewGroup parent, String text) {
-        TextView t = (TextView) LayoutInflater.from(requireContext()).inflate(R.layout.view_day_header, parent, false);
-        t.setText(text);
-        return t;
     }
 
     private void addLecture() {
@@ -197,17 +149,9 @@ public class ScheduleFragment extends BaseFragment {
             banner.setVisibility(View.GONE);
         }
 
-        boolean exams = "exams".equals(d.settings.scheduleView);
-        boolean grid = !exams && !"list".equals(d.settings.scheduleView);
-        ExtendedFloatingActionButton fab = root.findViewById(R.id.fab);
-        fab.setText(exams ? R.string.add_exam : R.string.add_lecture);
-        fab.extend();
-        header.findViewById(R.id.days_scroll).setVisibility(grid || exams ? View.GONE : View.VISIBLE);
-        if (exams) {
-            Rows.hideEmpty(root);
-            renderExams(list, cur);
-            return;
-        }
+        // Exams moved to "Reminders & Tasks"; an old "exams" choice falls back to the week grid.
+        boolean grid = !"list".equals(d.settings.scheduleView);
+        header.findViewById(R.id.days_scroll).setVisibility(grid ? View.GONE : View.VISIBLE);
         if (grid) {
             renderGrid(list, cur);
             return;
@@ -290,8 +234,7 @@ public class ScheduleFragment extends BaseFragment {
                             startActivity(CourseActivity.intent(requireContext(), c.id, CourseActivity.TAB_ATTENDANCE));
                         } else if (which == 1 || which == 2) {
                             String st = which == 1 ? AttendanceRecord.PRESENT : AttendanceRecord.ABSENT;
-                            Dialogs.quickRecord(requireContext(), c, st);
-                            Ui.snack(requireActivity(), getString(which == 1 ? R.string.recorded_present : R.string.recorded_absent, c.displayName()));
+                            Ui.snack(requireActivity(), Dialogs.recordedMessage(requireContext(), c, Dialogs.quickRecord(requireContext(), c, st)));
                         } else {
                             Dialogs.editLecture((AppCompatActivity) requireActivity(), cur, null, s, s.day);
                         }
@@ -333,12 +276,12 @@ public class ScheduleFragment extends BaseFragment {
             p.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case 1:
-                        Dialogs.quickRecord(requireContext(), it.course, AttendanceRecord.PRESENT);
-                        Ui.snack(requireActivity(), getString(R.string.recorded_present, it.course.displayName()));
+                        Ui.snack(requireActivity(), Dialogs.recordedMessage(requireContext(), it.course,
+                                Dialogs.quickRecord(requireContext(), it.course, AttendanceRecord.PRESENT)));
                         return true;
                     case 2:
-                        Dialogs.quickRecord(requireContext(), it.course, AttendanceRecord.ABSENT);
-                        Ui.snack(requireActivity(), getString(R.string.recorded_absent, it.course.displayName()));
+                        Ui.snack(requireActivity(), Dialogs.recordedMessage(requireContext(), it.course,
+                                Dialogs.quickRecord(requireContext(), it.course, AttendanceRecord.ABSENT)));
                         return true;
                     case 3:
                         Dialogs.editLecture((AppCompatActivity) requireActivity(), cur, null, it.slot, it.slot.day);

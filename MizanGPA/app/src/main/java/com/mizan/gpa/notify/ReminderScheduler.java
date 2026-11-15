@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import com.mizan.gpa.calc.ExamReminders;
+import com.mizan.gpa.calc.TaskReminders;
 import com.mizan.gpa.data.AppData;
 import com.mizan.gpa.data.Course;
-import com.mizan.gpa.data.Exam;
+import com.mizan.gpa.data.Task;
 import com.mizan.gpa.data.LectureSlot;
 import com.mizan.gpa.data.Repository;
 import com.mizan.gpa.data.Semester;
@@ -25,9 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Lecture and exam reminders share a single alarm: it is always set for the earliest upcoming reminder,
- * and every time it fires (or the data changes, or the device reboots) the next one is set. Exam
- * reminders that came due while the phone was off are delivered late rather than lost.
+ * Lecture and task reminders share a single alarm: it is always set for the earliest upcoming reminder,
+ * and every time it fires (or the data changes, or the device reboots) the next one is set. Task
+ * reminders that came due while the phone was off are delivered late rather than lost. Only tasks with
+ * a date (and, for same-day reminders, a time) that are not done ever get a reminder.
  */
 public final class ReminderScheduler {
     private static final int REQUEST_CODE = 4100;
@@ -42,11 +43,11 @@ public final class ReminderScheduler {
         public long lectureAt;
     }
 
-    /** A reminder that is due at {@link #triggerAt} for a lecture or an exam starting at {@link #eventAt}. */
+    /** A reminder that is due at {@link #triggerAt} for a lecture or a task starting at {@link #eventAt}. */
     static final class Event {
         Course course;
         LectureSlot slot;
-        Exam exam;
+        Task task;
         long eventAt;
         long triggerAt;
     }
@@ -109,21 +110,16 @@ public final class ReminderScheduler {
             }
         }
         if (st.examReminders) {
-            for (Course c : d.allCourses()) {
-                for (Exam exam : c.exams) {
-                    LocalDateTime start = exam.startDateTime();
-                    if (start == null) continue;
-                    long at = start.atZone(zone).toInstant().toEpochMilli();
-                    for (ExamReminders.Trigger t : ExamReminders.triggers(exam, st)) {
-                        long trigger = t.at.atZone(zone).toInstant().toEpochMilli();
-                        if (trigger <= from || trigger > to) continue;
-                        Event e = new Event();
-                        e.course = c;
-                        e.exam = exam;
-                        e.eventAt = at;
-                        e.triggerAt = trigger;
-                        out.add(e);
-                    }
+            for (Task task : d.tasks) {
+                for (TaskReminders.Trigger t : TaskReminders.triggers(task, st)) {
+                    long trigger = t.at.atZone(zone).toInstant().toEpochMilli();
+                    if (trigger <= from || trigger > to) continue;
+                    Event e = new Event();
+                    e.course = task.courseId == null ? null : d.findCourse(task.courseId);
+                    e.task = task;
+                    e.eventAt = task.start().atZone(zone).toInstant().toEpochMilli();
+                    e.triggerAt = trigger;
+                    out.add(e);
                 }
             }
         }
@@ -139,12 +135,10 @@ public final class ReminderScheduler {
         }
         if (d.settings.examReminders) {
             ZoneId zone = ZoneId.systemDefault();
-            for (Course c : d.allCourses()) {
-                for (Exam exam : c.exams) {
-                    for (ExamReminders.Trigger t : ExamReminders.triggers(exam, d.settings)) {
-                        long trigger = t.at.atZone(zone).toInstant().toEpochMilli();
-                        if (trigger > now && (best == 0 || trigger < best)) best = trigger;
-                    }
+            for (Task task : d.tasks) {
+                for (TaskReminders.Trigger t : TaskReminders.triggers(task, d.settings)) {
+                    long trigger = t.at.atZone(zone).toInstant().toEpochMilli();
+                    if (trigger > now && (best == 0 || trigger < best)) best = trigger;
                 }
             }
         }
@@ -170,8 +164,8 @@ public final class ReminderScheduler {
 
     /**
      * Shows every reminder that became due since the last delivery, then remembers the time.
-     * Lecture reminders are dropped once the lecture is well under way; for an exam only its most
-     * recent due reminder is shown, and only while the exam has not started long ago.
+     * Lecture reminders are dropped once the lecture is well under way; for a task only its most
+     * recent due reminder is shown, and only until shortly after its time (or the end of its day).
      */
     public static void deliverDue(Context ctx) {
         Repository repo = Repository.get(ctx);
@@ -181,14 +175,20 @@ public final class ReminderScheduler {
         long from = last > 0 && last <= now ? Math.max(last, now - 3 * DAY) : now - 90_000L;
         Map<String, Event> latest = new HashMap<>();
         for (Event e : between(d, from, now + 5_000L)) {
-            boolean fresh = e.exam != null ? now < e.eventAt + 15 * 60_000L : now < e.eventAt + 30 * 60_000L;
+            boolean fresh;
+            if (e.task != null) {
+                long until = e.task.end().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                fresh = now < (e.task.hasTime() ? e.eventAt : until) + 15 * 60_000L;
+            } else {
+                fresh = now < e.eventAt + 30 * 60_000L;
+            }
             if (!fresh) continue;
-            String key = e.exam != null ? "x" + e.exam.id : "l" + e.course.id;
+            String key = e.task != null ? "t" + e.task.id : "l" + e.course.id;
             Event prev = latest.get(key);
             if (prev == null || e.triggerAt > prev.triggerAt) latest.put(key, e);
         }
         for (Event e : latest.values()) {
-            if (e.exam != null) Notifier.examReminder(ctx, e.course, e.exam);
+            if (e.task != null) Notifier.taskReminder(ctx, e.course, e.task);
             else Notifier.lectureReminder(ctx, e.course, e.slot, (int) Math.max(0, (e.eventAt - now + 30_000L) / 60_000L));
         }
         d.settings.lastReminderCheck = now;

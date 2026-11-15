@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onboarding pages: one ConstraintSet per page. The shown page is centred; earlier pages wait just past
+  the start edge and later ones just past the end edge (mirrored automatically in RTL), so going forward
+  slides the next page in from the reading direction. Swipe toward the start edge, or use the buttons.
+-->
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        android:id="@+id/ob_t12"
+        motion:constraintSetStart="@id/ob_state1"
+        motion:constraintSetEnd="@id/ob_state2"
+        motion:duration="450"
+        motion:motionInterpolator="easeInOut">
+
+        <OnSwipe
+            motion:dragDirection="dragStart"
+            motion:touchAnchorId="@id/ob_page1"
+            motion:touchAnchorSide="start" />
+
+        <KeyFrameSet>
+            <!-- The incoming icon rises slightly while its page slides in. -->
+            <KeyAttribute
+                android:translationY="24dp"
+                motion:framePosition="40"
+                motion:motionTarget="@id/ob_page2" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="30"
+                motion:motionTarget="@id/ob_page2" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="60"
+                motion:motionTarget="@id/ob_page1" />
+        </KeyFrameSet>
+    </Transition>
+
+    <Transition
+        android:id="@+id/ob_t23"
+        motion:constraintSetStart="@id/ob_state2"
+        motion:constraintSetEnd="@id/ob_state3"
+        motion:duration="450"
+        motion:motionInterpolator="easeInOut">
+
+        <OnSwipe
+            motion:dragDirection="dragStart"
+            motion:touchAnchorId="@id/ob_page2"
+            motion:touchAnchorSide="start" />
+
+        <KeyFrameSet>
+            <!-- The incoming icon rises slightly while its page slides in. -->
+            <KeyAttribute
+                android:translationY="24dp"
+                motion:framePosition="40"
+                motion:motionTarget="@id/ob_page3" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="30"
+                motion:motionTarget="@id/ob_page3" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="60"
+                motion:motionTarget="@id/ob_page2" />
+        </KeyFrameSet>
+    </Transition>
+
+    <Transition
+        android:id="@+id/ob_t34"
+        motion:constraintSetStart="@id/ob_state3"
+        motion:constraintSetEnd="@id/ob_state4"
+        motion:duration="450"
+        motion:motionInterpolator="easeInOut">
+
+        <OnSwipe
+            motion:dragDirection="dragStart"
+            motion:touchAnchorId="@id/ob_page3"
+            motion:touchAnchorSide="start" />
+
+        <KeyFrameSet>
+            <!-- The incoming icon rises slightly while its page slides in. -->
+            <KeyAttribute
+                android:translationY="24dp"
+                motion:framePosition="40"
+                motion:motionTarget="@id/ob_page4" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="30"
+                motion:motionTarget="@id/ob_page4" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="60"
+                motion:motionTarget="@id/ob_page3" />
+        </KeyFrameSet>
+    </Transition>
+
+    <Transition
+        android:id="@+id/ob_t45"
+        motion:constraintSetStart="@id/ob_state4"
+        motion:constraintSetEnd="@id/ob_state5"
+        motion:duration="450"
+        motion:motionInterpolator="easeInOut">
+
+        <OnSwipe
+            motion:dragDirection="dragStart"
+            motion:touchAnchorId="@id/ob_page4"
+            motion:touchAnchorSide="start" />
+
+        <KeyFrameSet>
+            <!-- The incoming icon rises slightly while its page slides in. -->
+            <KeyAttribute
+                android:translationY="24dp"
+                motion:framePosition="40"
+                motion:motionTarget="@id/ob_page5" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="30"
+                motion:motionTarget="@id/ob_page5" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="60"
+                motion:motionTarget="@id/ob_page4" />
+        </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/ob_state1">
+        <Constraint
+            android:id="@+id/ob_page1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:alpha="1"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@id/ob_next"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/ob_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="0"
+            android:visibility="invisible" />
+
+        <Constraint
+            android:id="@+id/ob_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/ob_state2">
+        <Constraint
+            android:id="@+id/ob_page1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:alpha="1"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@id/ob_next"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/ob_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/ob_state3">
+        <Constraint
+            android:id="@+id/ob_page1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:alpha="1"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@id/ob_next"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/ob_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/ob_state4">
+        <Constraint
+            android:id="@+id/ob_page1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:alpha="1"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@id/ob_next"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/ob_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/ob_state5">
+        <Constraint
+            android:id="@+id/ob_page1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="invisible" />
+        <Constraint
+            android:id="@+id/ob_page4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintEnd_toStartOf="parent"
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_page5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.86"
+            motion:layout_constraintWidth_max="@dimen/ob_page_max"
+            motion:layout_constraintTop_toBottomOf="@id/ob_skip"
+            motion:layout_constraintBottom_toTopOf="@id/ob_dots"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:alpha="1"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/ob_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:alpha="0"
+            android:visibility="invisible" />
+
+        <Constraint
+            android:id="@+id/ob_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            motion:layout_constraintBottom_toTopOf="@id/ob_next"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/ob_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="1"
+            android:visibility="visible" />
+
+        <Constraint
+            android:id="@+id/ob_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
+    </ConstraintSet>
+
+</MotionScene>

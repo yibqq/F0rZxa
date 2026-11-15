@@ -12,34 +12,23 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingTop="12dp"
+        android:paddingStart="4dp"
+        android:paddingTop="10dp"
         android:paddingEnd="4dp"
-        android:paddingBottom="12dp">
+        android:paddingBottom="10dp">
 
-        <LinearLayout
-            android:id="@+id/x_date_box"
-            android:layout_width="54dp"
-            android:layout_height="58dp"
-            android:gravity="center"
-            android:orientation="vertical">
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/k_done"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp" />
 
-            <TextView
-                android:id="@+id/x_day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:textAppearance="?attr/textAppearanceTitleLarge"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/x_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:textAppearance="?attr/textAppearanceLabelSmall" />
-        </LinearLayout>
+        <View
+            android:id="@+id/k_bar"
+            android:layout_width="4dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="2dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -49,40 +38,60 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/x_course"
+                android:id="@+id/k_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:textAppearance="?attr/textAppearanceTitleSmall" />
 
             <TextView
-                android:id="@+id/x_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <TextView
-                android:id="@+id/x_when"
+                android:id="@+id/k_meta"
                 style="@style/Mizan.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="2" />
+
+            <TextView
+                android:id="@+id/k_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/x_badge"
-            style="@style/Mizan.Badge"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-            android:textAppearance="?attr/textAppearanceLabelMedium" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/k_badge"
+                style="@style/Mizan.Badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceLabelMedium" />
+
+            <ImageView
+                android:id="@+id/k_bell"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginTop="6dp"
+                android:contentDescription="@string/task_reminder_set"
+                android:src="@drawable/ic_notifications"
+                app:tint="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/x_menu"
+            android:id="@+id/k_menu"
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

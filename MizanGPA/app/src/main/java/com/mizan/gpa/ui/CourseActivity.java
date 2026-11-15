@@ -28,7 +28,7 @@ public class CourseActivity extends BaseActivity {
     public static final int TAB_MARKS = 0;
     public static final int TAB_ATTENDANCE = 1;
     public static final int TAB_LECTURES = 2;
-    public static final int TAB_EXAMS = 3;
+    public static final int TAB_TASKS = 3;
     static final String EXTRA_ID = "course";
     private static final String EXTRA_TAB = "tab";
 
@@ -36,6 +36,7 @@ public class CourseActivity extends BaseActivity {
     private MaterialToolbar toolbar;
     private ExtendedFloatingActionButton fab;
     private ViewPager2 pager;
+    private int[] pages = {TAB_MARKS, TAB_ATTENDANCE, TAB_LECTURES, TAB_TASKS};
 
     public static Intent intent(Context c, String courseId, int tab) {
         return new Intent(c, CourseActivity.class).putExtra(EXTRA_ID, courseId).putExtra(EXTRA_TAB, Math.max(0, tab));
@@ -57,7 +58,7 @@ public class CourseActivity extends BaseActivity {
             } else if (item.getItemId() == R.id.action_delete) {
                 Dialogs.confirm(this, getString(R.string.delete_course_title, c.displayName()),
                         getString(R.string.delete_course_text), R.string.delete, () -> {
-                            s.courses.remove(c);
+                            data().removeCourse(s, c);
                             repo().save();
                             finish();
                         });
@@ -66,13 +67,17 @@ public class CourseActivity extends BaseActivity {
         });
         fab = findViewById(R.id.fab);
         pager = findViewById(R.id.pager);
+        // Lite mode shows only marks and tasks; attendance and lectures stay saved but out of the way.
+        pages = com.mizan.gpa.data.Settings.MODE_LITE.equals(data().settings.appMode)
+                ? new int[]{TAB_MARKS, TAB_TASKS} : new int[]{TAB_MARKS, TAB_ATTENDANCE, TAB_LECTURES, TAB_TASKS};
         pager.setAdapter(new FragmentStateAdapter(this) {
             @NonNull
             @Override
             public Fragment createFragment(int position) {
-                Fragment f = position == TAB_ATTENDANCE ? new CourseAttendanceFragment()
-                        : position == TAB_LECTURES ? new CourseLecturesFragment()
-                        : position == TAB_EXAMS ? new CourseExamsFragment() : new CourseMarksFragment();
+                int page = pages[position];
+                if (page == TAB_TASKS) return TasksFragment.forCourse(courseId);
+                Fragment f = page == TAB_ATTENDANCE ? new CourseAttendanceFragment()
+                        : page == TAB_LECTURES ? new CourseLecturesFragment() : new CourseMarksFragment();
                 Bundle b = new Bundle();
                 b.putString(EXTRA_ID, courseId);
                 f.setArguments(b);
@@ -81,15 +86,15 @@ public class CourseActivity extends BaseActivity {
 
             @Override
             public int getItemCount() {
-                return 4;
+                return pages.length;
             }
         });
         TabLayout tabs = findViewById(R.id.tabs);
-        int[] titles = {R.string.tab_marks, R.string.tab_attendance, R.string.tab_lectures, R.string.tab_exams};
-        int[] icons = {R.drawable.ic_assignment, R.drawable.ic_event_available, R.drawable.ic_calendar, R.drawable.ic_exam};
+        int[] titles = {R.string.tab_marks, R.string.tab_attendance, R.string.tab_lectures, R.string.tab_tasks};
+        int[] icons = {R.drawable.ic_assignment, R.drawable.ic_event_available, R.drawable.ic_calendar, R.drawable.ic_notifications};
         new TabLayoutMediator(tabs, pager, (tab, pos) -> {
-            tab.setText(titles[pos]);
-            tab.setIcon(icons[pos]);
+            tab.setText(titles[pages[pos]]);
+            tab.setIcon(icons[pages[pos]]);
         }).attach();
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -97,20 +102,20 @@ public class CourseActivity extends BaseActivity {
                 updateFab(position);
             }
         });
-        if (savedInstanceState == null) pager.setCurrentItem(getIntent().getIntExtra(EXTRA_TAB, 0), false);
+        if (savedInstanceState == null) pager.setCurrentItem(positionOf(getIntent().getIntExtra(EXTRA_TAB, 0)), false);
         fab.setOnClickListener(v -> {
             Course c = course();
             Semester s = semester();
             if (c == null || s == null) return;
-            switch (pager.getCurrentItem()) {
+            switch (pages[pager.getCurrentItem()]) {
                 case TAB_ATTENDANCE:
                     Dialogs.editRecord(this, c, null, AttendanceRecord.ABSENT);
                     break;
                 case TAB_LECTURES:
                     Dialogs.editLecture(this, s, c, null, Fmt.toCalendarDay(LocalDate.now().getDayOfWeek()));
                     break;
-                case TAB_EXAMS:
-                    Dialogs.editExam(this, s, c, null);
+                case TAB_TASKS:
+                    Dialogs.editTask(this, null, c, com.mizan.gpa.data.Task.EXAM);
                     break;
                 default:
                     Dialogs.editAssessment(this, c, null);
@@ -119,10 +124,17 @@ public class CourseActivity extends BaseActivity {
         });
     }
 
+    /** Pager position of a page, or the first page when this mode does not show it. */
+    private int positionOf(int page) {
+        for (int i = 0; i < pages.length; i++) if (pages[i] == page) return i;
+        return 0;
+    }
+
     private void updateFab(int position) {
+        position = pages[Math.min(position, pages.length - 1)];
         int text = position == TAB_ATTENDANCE ? R.string.record_attendance
                 : position == TAB_LECTURES ? R.string.add_lecture
-                : position == TAB_EXAMS ? R.string.add_exam : R.string.add_mark;
+                : position == TAB_TASKS ? R.string.add_task : R.string.add_mark;
         fab.setText(text);
         fab.extend();
     }

@@ -21,8 +21,14 @@ public final class Fmt {
 
     private Fmt() {}
 
+    /**
+     * GPA with two decimals, rounded half up from the shortest decimal form of the value
+     * (3.125 -> 3.13, 3.145 -> 3.15), as transcripts do. DecimalFormat's default would round
+     * half-even and also suffer from binary representation (3.145 -> 3.14).
+     */
     public static String gpa(double v) {
-        return Double.isNaN(v) || Double.isInfinite(v) ? DASH : GPA.format(v);
+        if (Double.isNaN(v) || Double.isInfinite(v)) return DASH;
+        return java.math.BigDecimal.valueOf(v).setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
     }
 
     public static String num(double v) {

@@ -58,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Reposito
     @Override
     protected void onResume() {
         super.onResume();
+        if (isFinishing()) return;
         // Font, palette or text size changed in Settings while this screen was in the back stack.
         if (!Themes.styleKey(repo().settings()).equals(styleKey)) recreate();
     }
@@ -86,6 +87,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Reposito
     @Override
     protected void onStart() {
         super.onStart();
+        // A screen that hands over in onCreate (first launch → onboarding) never built its views.
+        if (isFinishing()) return;
         repo().addListener(this);
         render();
     }
