@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <HorizontalScrollView
+        android:id="@+id/genres_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/genres"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <ProgressBar
+        android:id="@+id/body_loading"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_xl"
+        android:indeterminateTint="@color/text_secondary"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/synopsis_label"
+        style="@style/Kuro.SectionHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:accessibilityHeading="true"
+        android:text="@string/synopsis" />
+
+    <TextView
+        android:id="@+id/synopsis"
+        style="@style/Kuro.Text.Body.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:ellipsize="end"
+        android:maxLines="5"
+        android:textAlignment="viewStart"
+        android:textIsSelectable="false" />
+
+    <TextView
+        android:id="@+id/synopsis_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/touch_target"
+        android:background="@drawable/bg_row_ripple"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="8dp"
+        android:text="@string/read_more"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-medium" />
+
+    <TextView
+        android:id="@+id/info_label"
+        style="@style/Kuro.SectionHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:accessibilityHeading="true"
+        android:text="@string/info" />
+
+    <LinearLayout
+        android:id="@+id/info_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:background="@drawable/bg_surface_round"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_m"
+        android:paddingEnd="@dimen/space_m" />
+</LinearLayout>

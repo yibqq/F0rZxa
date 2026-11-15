@@ -1,0 +1,19 @@
+pluginManagement {
+    repositories {
+        google()
+        // Google-hosted mirror of Maven Central (more reliable from CI/proxied networks)
+        maven { url = 'https://maven-central.storage-download.googleapis.com/maven2/' }
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        // Google-hosted mirror of Maven Central (more reliable from CI/proxied networks)
+        maven { url = 'https://maven-central.storage-download.googleapis.com/maven2/' }
+        mavenCentral()
+    }
+}
+rootProject.name = "Kuro"
+include ':app'

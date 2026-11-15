@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="horizontal">
+
+    <include
+        android:id="@+id/main"
+        layout="@layout/view_my_list_main"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.46" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/stroke" />
+
+    <include
+        android:id="@+id/pane"
+        layout="@layout/view_detail_pane"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.54" />
+</LinearLayout>

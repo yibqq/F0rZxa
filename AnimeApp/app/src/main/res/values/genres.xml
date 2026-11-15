@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AniList genre keys (API values, never translated) and their display labels. Adult genres are intentionally excluded. -->
+    <string-array name="genre_keys" translatable="false">
+        <item>Action</item><item>Adventure</item><item>Comedy</item><item>Drama</item><item>Fantasy</item>
+        <item>Horror</item><item>Mahou Shoujo</item><item>Mecha</item><item>Music</item><item>Mystery</item>
+        <item>Psychological</item><item>Romance</item><item>Sci-Fi</item><item>Slice of Life</item>
+        <item>Sports</item><item>Supernatural</item><item>Thriller</item>
+    </string-array>
+    <string-array name="genre_labels">
+        <item>Action</item><item>Adventure</item><item>Comedy</item><item>Drama</item><item>Fantasy</item>
+        <item>Horror</item><item>Magical Girl</item><item>Mecha</item><item>Music</item><item>Mystery</item>
+        <item>Psychological</item><item>Romance</item><item>Sci-Fi</item><item>Slice of Life</item>
+        <item>Sports</item><item>Supernatural</item><item>Thriller</item>
+    </string-array>
+</resources>

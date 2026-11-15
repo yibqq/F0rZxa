@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_l">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/touch_target"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/space_s">
+
+        <TextView
+            android:id="@+id/section_title"
+            style="@style/Kuro.SectionHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:accessibilityHeading="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="viewStart" />
+
+        <TextView
+            android:id="@+id/section_more"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/touch_target"
+            android:background="@drawable/bg_row_ripple"
+            android:clickable="true"
+            android:drawablePadding="2dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="6dp"
+            android:text="@string/see_all"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:drawableEndCompat="@drawable/ic_chevron_end"
+            app:drawableTint="@color/text_secondary" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/section_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="false"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/gutter"
+        android:scrollbars="none" />
+</LinearLayout>

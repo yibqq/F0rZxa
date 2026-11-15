@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tag_focus_scale" type="id"/>
+    <item name="tag_pulse" type="id"/>
+    <item name="tag_row_key" type="id"/>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AspectRatioImageView">
+        <!-- height = width * ratio -->
+        <attr name="heightRatio" format="float"/>
+    </declare-styleable>
+    <declare-styleable name="NavigationBar">
+        <attr name="rail" format="boolean"/>
+    </declare-styleable>
+</resources>

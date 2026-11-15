@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="72dp">
+
+    <ProgressBar
+        android:id="@+id/footer_progress"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/text_secondary" />
+
+    <TextView
+        android:id="@+id/footer_retry"
+        style="@style/Kuro.Text.Body.Secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_button_secondary"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="center"
+        android:minHeight="@dimen/touch_target"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/load_more_failed"
+        android:visibility="gone" />
+</FrameLayout>

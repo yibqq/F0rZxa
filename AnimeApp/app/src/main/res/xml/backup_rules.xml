@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Back up the user's lists and settings; never the re-downloadable catalog cache. -->
+<full-backup-content>
+    <include domain="database" path="kuro.db" />
+    <include domain="sharedpref" path="kuro_settings.xml" />
+    <exclude domain="database" path="kuro.db-wal" />
+    <exclude domain="database" path="kuro.db-shm" />
+</full-backup-content>

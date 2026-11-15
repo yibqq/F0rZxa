@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/tv_hero"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.30"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="48dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/tv_hero_title"
+            style="@style/Kuro.Text.Display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxWidth="760dp"
+            android:maxLines="2"
+            android:textAlignment="viewStart" />
+
+        <TextView
+            android:id="@+id/tv_hero_meta"
+            style="@style/Kuro.Text.Body.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxWidth="760dp"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tv_rows"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.70"
+        android:clipToPadding="false"
+        android:paddingBottom="48dp"
+        android:scrollbars="none" />
+
+    <app.kuro.anime.ui.common.StateView
+        android:id="@+id/tv_state"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0"
+        android:visibility="gone" />
+</LinearLayout>

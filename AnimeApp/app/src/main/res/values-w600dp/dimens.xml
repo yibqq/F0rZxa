@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="gutter">24dp</dimen>
+    <dimen name="row_card_width">140dp</dimen>
+    <dimen name="grid_card_min_width">136dp</dimen>
+    <dimen name="featured_height">420dp</dimen>
+    <dimen name="details_banner_height">320dp</dimen>
+    <dimen name="details_poster_width">150dp</dimen>
+    <dimen name="text_display">34sp</dimen>
+    <dimen name="episode_thumb_width">152dp</dimen>
+</resources>

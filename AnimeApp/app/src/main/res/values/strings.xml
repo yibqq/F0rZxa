@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Kuro</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_my_list">My List</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Home sections -->
+    <string name="section_trending">Trending now</string>
+    <string name="section_top_rated">Top rated</string>
+    <string name="section_airing">Currently airing</string>
+    <string name="section_upcoming">Upcoming</string>
+    <string name="section_seasonal">This season</string>
+    <string name="section_popular">All-time popular</string>
+    <string name="section_continue">Continue watching</string>
+    <string name="see_all">See all</string>
+    <string name="featured">Featured</string>
+    <string name="details">Details</string>
+
+    <!-- States -->
+    <string name="state_loading">Loading…</string>
+    <string name="state_error_title">Something went wrong</string>
+    <string name="state_offline_title">You\'re offline</string>
+    <string name="state_offline_body">Connect to the internet to load this content. Anything you\'ve opened before is still available.</string>
+    <string name="state_rate_limited">The data service is busy. Please try again in a moment.</string>
+    <string name="state_server">The data service isn\'t responding right now.</string>
+    <string name="state_timeout">The request took too long. Check your connection and try again.</string>
+    <string name="state_not_found">This title couldn\'t be found.</string>
+    <string name="state_parse">We received data we couldn\'t read.</string>
+    <string name="state_unknown">An unexpected error occurred.</string>
+    <string name="state_stale_banner">Offline — showing saved data</string>
+    <string name="state_fallback_banner">Showing results from a backup source</string>
+    <string name="retry">Try again</string>
+    <string name="empty_generic">Nothing here yet</string>
+    <string name="load_more_failed">Couldn\'t load more. Tap to retry.</string>
+
+    <!-- Explore -->
+    <string name="explore_title">Explore</string>
+    <string name="filter_sort">Sort</string>
+    <string name="filter_genre">Genre</string>
+    <string name="filter_year">Year</string>
+    <string name="filter_season">Season</string>
+    <string name="filter_format">Format</string>
+    <string name="filter_status">Status</string>
+    <string name="filter_any">Any</string>
+    <string name="filter_all_genres">All</string>
+    <string name="filter_reset">Reset</string>
+    <string name="filter_results_empty">No titles match these filters.</string>
+    <string name="sort_popularity">Most popular</string>
+    <string name="sort_trending">Trending</string>
+    <string name="sort_score">Highest rated</string>
+    <string name="sort_newest">Newest</string>
+    <string name="sort_title">Title A–Z</string>
+    <string name="sort_relevance">Best match</string>
+
+    <!-- Seasons -->
+    <string name="season_winter">Winter</string>
+    <string name="season_spring">Spring</string>
+    <string name="season_summer">Summer</string>
+    <string name="season_fall">Fall</string>
+
+    <!-- Formats -->
+    <string name="format_tv">TV</string>
+    <string name="format_tv_short">TV Short</string>
+    <string name="format_movie">Movie</string>
+    <string name="format_special">Special</string>
+    <string name="format_ova">OVA</string>
+    <string name="format_ona">ONA</string>
+    <string name="format_music">Music</string>
+
+    <!-- Airing status -->
+    <string name="status_finished">Finished</string>
+    <string name="status_releasing">Airing</string>
+    <string name="status_not_yet_released">Not yet aired</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_hiatus">On hiatus</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search anime</string>
+    <string name="search_recent">Recent searches</string>
+    <string name="search_clear_history">Clear</string>
+    <string name="search_no_results">No results for “%1$s”</string>
+    <string name="search_no_results_hint">Try a different spelling, the Japanese title, or fewer filters.</string>
+    <string name="search_prompt_title">Find your next series</string>
+    <string name="search_prompt_body">Search by English, romaji or Japanese title.</string>
+    <string name="search_remove_item">Remove %1$s from history</string>
+    <string name="clear_search">Clear search</string>
+
+    <!-- Details -->
+    <string name="add_to_list">Add to list</string>
+    <string name="in_list">In list</string>
+    <string name="watch">Watch</string>
+    <string name="watch_episode">Watch E%1$d</string>
+    <string name="favorite">Favorite</string>
+    <string name="unfavorite">Remove from favorites</string>
+    <string name="synopsis">Synopsis</string>
+    <string name="read_more">Read more</string>
+    <string name="read_less">Show less</string>
+    <string name="info">Information</string>
+    <string name="info_format">Format</string>
+    <string name="info_episodes">Episodes</string>
+    <string name="info_duration">Episode length</string>
+    <string name="info_status">Status</string>
+    <string name="info_aired">Aired</string>
+    <string name="info_season">Season</string>
+    <string name="info_studios">Studios</string>
+    <string name="info_source">Source</string>
+    <string name="info_score">Average score</string>
+    <string name="info_popularity">Popularity</string>
+    <string name="info_alt_titles">Also known as</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="episodes_title">Episodes</string>
+    <string name="episode_number">Episode %1$d</string>
+    <string name="episode_short">E%1$d</string>
+    <string name="episode_filler">Filler</string>
+    <string name="episode_recap">Recap</string>
+    <string name="episodes_unavailable">Episode information isn\'t available for this title yet.</string>
+    <string name="episodes_not_aired">Episodes will appear here once the series starts airing.</string>
+    <string name="episodes_error">Couldn\'t load episode details.</string>
+    <string name="episodes_source">Episode data: %1$s</string>
+    <string name="next_episode">Episode %1$d airs %2$s</string>
+    <string name="next_episode_in">Episode %1$d · in %2$s</string>
+    <string name="time_days_hours">%1$dd %2$dh</string>
+    <string name="time_hours_minutes">%1$dh %2$dm</string>
+    <string name="time_minutes">%1$dm</string>
+    <string name="mark_watched">Mark as watched</string>
+    <string name="mark_unwatched">Mark as unwatched</string>
+    <string name="mark_up_to">Mark episodes 1–%1$d as watched</string>
+    <string name="episode_watched_state">Watched</string>
+    <string name="characters">Characters</string>
+    <string name="staff">Staff</string>
+    <string name="relations">Related</string>
+    <string name="recommendations">You might also like</string>
+    <string name="role_main">Main</string>
+    <string name="role_supporting">Supporting</string>
+    <string name="role_background">Background</string>
+    <string name="series_completed_toast">Marked as completed</string>
+    <string name="playback_unavailable_title">Playback isn\'t connected</string>
+    <string name="playback_unavailable_body">Kuro shows anime information only. Streaming will be available once a playback source is connected to the app.</string>
+    <string name="playback_resolving">Preparing playback…</string>
+    <string name="playback_error">Playback couldn\'t start: %1$s</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
+    <string name="change_status">Change status</string>
+    <string name="remove_from_list">Remove from list</string>
+    <string name="relation_sequel">Sequel</string>
+    <string name="relation_prequel">Prequel</string>
+    <string name="relation_side_story">Side story</string>
+    <string name="relation_parent">Parent</string>
+    <string name="relation_alternative">Alternative</string>
+    <string name="relation_spin_off">Spin-off</string>
+    <string name="relation_summary">Summary</string>
+    <string name="relation_other">Related</string>
+    <string name="score_value">%1$d%%</string>
+    <string name="back">Back</string>
+    <string name="more_options">More options</string>
+
+    <!-- Library / watch status -->
+    <string name="status_watching">Watching</string>
+    <string name="status_planning">Plan to watch</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_paused">On hold</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="my_list_title">My List</string>
+    <string name="my_list_empty_title">Your list is empty</string>
+    <string name="my_list_empty_body">Add anime from any title page to keep track of what you\'re watching.</string>
+    <string name="go_explore">Explore anime</string>
+    <string name="select_title">Select a title to see its details</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_display">Display</string>
+    <string name="settings_section_data">Data &amp; storage</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_title_language">Anime titles</string>
+    <string name="title_lang_romaji">Romaji</string>
+    <string name="title_lang_english">English when available</string>
+    <string name="title_lang_native">Japanese</string>
+    <string name="settings_image_quality">Image quality</string>
+    <string name="image_quality_high">High</string>
+    <string name="image_quality_saver">Data saver</string>
+    <string name="settings_grid_density">Grid density</string>
+    <string name="density_comfortable">Comfortable</string>
+    <string name="density_compact">Compact</string>
+    <string name="settings_hide_spoilers">Hide spoilers</string>
+    <string name="settings_hide_spoilers_desc">Blur thumbnails and titles of unwatched episodes</string>
+    <string name="settings_clear_cache">Clear cached data</string>
+    <string name="settings_clear_cache_desc">%1$s of saved catalog data and images</string>
+    <string name="settings_clear_history">Clear search history</string>
+    <string name="settings_reset_library">Reset my list</string>
+    <string name="settings_reset_library_desc">Remove all saved titles, favorites and progress</string>
+    <string name="settings_reset_confirm">This removes every title, favorite and episode progress from this device. This can\'t be undone.</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_data_sources">Data sources</string>
+    <string name="settings_data_sources_desc">AniList · Kitsu · Jikan (MyAnimeList)</string>
+    <string name="settings_data_sources_body">Catalog, artwork, characters and schedules come from AniList. Episode titles, dates and thumbnails come from Kitsu, matched by verified ID mapping, with Jikan (an unofficial MyAnimeList API) as a fallback. Kuro is not affiliated with any of these services. All your lists and progress stay on this device.</string>
+    <string name="settings_playback">Playback source</string>
+    <string name="settings_playback_none">Not connected</string>
+    <string name="done">Done</string>
+    <string name="cleared">Cleared</string>
+
+    <!-- TV -->
+    <string name="tv_browse_genres">Browse by genre</string>
+
+    <!-- Accessibility -->
+    <string name="cd_poster">Poster for %1$s</string>
+    <string name="cd_episode_thumb">Thumbnail for episode %1$d</string>
+    <string name="cd_rating">Rated %1$d percent</string>
+
+    <plurals name="episodes_count">
+        <item quantity="one">%1$d episode</item>
+        <item quantity="other">%1$d episodes</item>
+    </plurals>
+    <plurals name="my_list_count">
+        <item quantity="one">%1$d title</item>
+        <item quantity="other">%1$d titles</item>
+    </plurals>
+
+    <plurals name="progress_format">
+        <item quantity="one">%1$d / %2$d episode</item>
+        <item quantity="other">%1$d / %2$d episodes</item>
+    </plurals>
+    <plurals name="progress_format_unknown">
+        <item quantity="one">%1$d episode watched</item>
+        <item quantity="other">%1$d episodes watched</item>
+    </plurals>
+</resources>

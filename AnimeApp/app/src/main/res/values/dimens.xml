@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="gutter">16dp</dimen>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">12dp</dimen>
+    <dimen name="space_l">20dp</dimen>
+    <dimen name="space_xl">28dp</dimen>
+    <dimen name="radius_s">10dp</dimen>
+    <dimen name="radius_m">14dp</dimen>
+    <dimen name="radius_l">20dp</dimen>
+    <dimen name="row_card_width">116dp</dimen>
+    <dimen name="grid_card_min_width">108dp</dimen>
+    <dimen name="featured_height">440dp</dimen>
+    <dimen name="details_banner_height">260dp</dimen>
+    <dimen name="details_poster_width">112dp</dimen>
+    <dimen name="nav_bar_height">64dp</dimen>
+    <dimen name="touch_target">48dp</dimen>
+    <dimen name="chip_height">36dp</dimen>
+    <dimen name="text_display">30sp</dimen>
+    <dimen name="text_title">22sp</dimen>
+    <dimen name="text_headline">18sp</dimen>
+    <dimen name="text_body">15sp</dimen>
+    <dimen name="text_caption">12sp</dimen>
+    <dimen name="text_card">13sp</dimen>
+    <dimen name="episode_thumb_width">128dp</dimen>
+    <dimen name="max_content_width">1200dp</dimen>
+</resources>

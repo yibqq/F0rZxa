@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="genre_labels">
+        <item>أكشن</item><item>مغامرة</item><item>كوميديا</item><item>دراما</item><item>فانتازيا</item>
+        <item>رعب</item><item>فتاة ساحرة</item><item>ميكا</item><item>موسيقى</item><item>غموض</item>
+        <item>نفسي</item><item>رومانسي</item><item>خيال علمي</item><item>شريحة من الحياة</item>
+        <item>رياضة</item><item>خارق للطبيعة</item><item>إثارة</item>
+    </string-array>
+</resources>

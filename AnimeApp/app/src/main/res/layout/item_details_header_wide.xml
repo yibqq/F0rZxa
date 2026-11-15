@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Expanded windows: two columns — identity & actions on the start side, story & facts on the end side. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/hero_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/details_banner_height"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/scrim_top" />
+
+    <View
+        android:id="@+id/hero_tint"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/details_banner_height"
+        android:background="@drawable/scrim_bottom" />
+
+    <LinearLayout
+        android:id="@+id/hero_content"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/gutter"
+        android:paddingTop="200dp"
+        android:paddingEnd="@dimen/gutter">
+
+        <include
+            android:id="@+id/core"
+            layout="@layout/view_details_core"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.42" />
+
+        <Space
+            android:layout_width="@dimen/space_xl"
+            android:layout_height="1dp" />
+
+        <include
+            android:id="@+id/body"
+            layout="@layout/view_details_body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:layout_weight="0.58" />
+    </LinearLayout>
+</FrameLayout>
