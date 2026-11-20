@@ -21,6 +21,15 @@ namespace MajestyMonitor.UI
         private readonly CheckBox _startMin = NewCheck();
         private readonly CheckBox _closeTray = NewCheck();
         private readonly CheckBox _send = NewCheck();
+        private readonly TextBox _brand = new TextBox
+        {
+            BackColor = Theme.Card,
+            ForeColor = Theme.Text,
+            BorderStyle = BorderStyle.FixedSingle,
+            MaxLength = 32,
+        };
+        private readonly PictureBox _logoPreview = new PictureBox { SizeMode = PictureBoxSizeMode.Zoom, BackColor = Theme.Background };
+        private string _logoPath;
         private readonly Dictionary<MetricKind, ComboBox> _sensorCombos = new Dictionary<MetricKind, ComboBox>();
 
         private static readonly int[] RefreshValues = { 500, 1000, 2000 };
@@ -139,6 +148,54 @@ namespace MajestyMonitor.UI
                 p.Controls.Add(cb);
                 y += 36;
             }
+
+            // Branding: the user's own name / logo in place of "MAJESTY".
+            y += 6;
+            FieldLabel(p, Strings.Get("Branding"), y, 298);
+            _brand.Bounds = new Rectangle(16, y + 24, 298, 28);
+            p.Controls.Add(_brand);
+            y += 64;
+
+            FieldLabel(p, Strings.Get("Logo"), y, 298);
+            _logoPreview.Bounds = new Rectangle(16, y + 24, 32, 32);
+            p.Controls.Add(_logoPreview);
+            var choose = FlatButton(Strings.Get("ChooseLogo"), false);
+            choose.Bounds = new Rectangle(58, y + 24, 140, 32);
+            choose.Click += (s, e) => ChooseLogo();
+            p.Controls.Add(choose);
+            var reset = FlatButton(Strings.Get("DefaultLogo"), false);
+            reset.Bounds = new Rectangle(206, y + 24, 108, 32);
+            reset.Click += (s, e) => SetLogoPreview("");
+            p.Controls.Add(reset);
+        }
+
+        private void ChooseLogo()
+        {
+            using (var dlg = new OpenFileDialog
+            {
+                Title = Strings.Get("Logo"),
+                Filter = Strings.Get("Images") + "|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.ico",
+            })
+            {
+                if (dlg.ShowDialog(this) != DialogResult.OK)
+                    return;
+                var imported = Program.ImportBrandLogo(dlg.FileName);
+                if (imported == null)
+                {
+                    MessageBox.Show(this, Strings.Get("BadImage"), Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                SetLogoPreview(imported);
+            }
+        }
+
+        private void SetLogoPreview(string path)
+        {
+            _logoPath = path ?? "";
+            var old = _logoPreview.Image;
+            _logoPreview.Image = Program.LoadBrandLogo(new AppSettings { BrandLogo = _logoPath });
+            if (old != null && old != Program.Logo)
+                old.Dispose();
         }
 
         private void BuildSensors()
@@ -215,6 +272,8 @@ namespace MajestyMonitor.UI
             _autoStart.Checked = _settings.AutoStart;
             _startMin.Checked = _settings.StartMinimized;
             _closeTray.Checked = _settings.CloseToTray;
+            _brand.Text = _settings.BrandName ?? "";
+            SetLogoPreview(_settings.BrandLogo);
 
             foreach (var kv in _sensorCombos)
             {
@@ -261,6 +320,8 @@ namespace MajestyMonitor.UI
             _settings.AutoStart = _autoStart.Checked;
             _settings.StartMinimized = _startMin.Checked;
             _settings.CloseToTray = _closeTray.Checked;
+            _settings.BrandName = _brand.Text.Trim();
+            _settings.BrandLogo = _logoPath ?? "";
             foreach (var kv in _sensorCombos)
             {
                 var item = kv.Value.SelectedItem as Item;

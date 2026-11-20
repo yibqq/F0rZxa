@@ -17,6 +17,16 @@ namespace MajestyMonitor.Core
         public bool CloseToTray { get; set; } = true;
         public bool SendToDevice { get; set; } = true;
         public int RefreshMs { get; set; } = 1000;
+
+        /// <summary>Name shown in place of "MAJESTY" (empty = default).</summary>
+        public string BrandName { get; set; } = "";
+
+        /// <summary>Full path of a custom logo image copied into <see cref="Folder"/> (empty = default).</summary>
+        public string BrandLogo { get; set; } = "";
+
+        public const string DefaultBrand = "MAJESTY";
+
+        public string DisplayBrand => string.IsNullOrWhiteSpace(BrandName) ? DefaultBrand : BrandName.Trim();
         public Dictionary<MetricKind, string> Bindings { get; } = new Dictionary<MetricKind, string>();
 
         public static string Folder =>
@@ -55,6 +65,8 @@ namespace MajestyMonitor.Core
                         case "StartMinimized": s.StartMinimized = val == "1"; break;
                         case "CloseToTray": s.CloseToTray = val == "1"; break;
                         case "SendToDevice": s.SendToDevice = val == "1"; break;
+                        case "BrandName": s.BrandName = val; break;
+                        case "BrandLogo": s.BrandLogo = val; break;
                         case "RefreshMs":
                             if (int.TryParse(val, NumberStyles.Integer, CultureInfo.InvariantCulture, out int ms))
                                 s.RefreshMs = Math.Max(250, Math.Min(5000, ms));
@@ -89,6 +101,8 @@ namespace MajestyMonitor.Core
                 sb.AppendLine("CloseToTray=" + (CloseToTray ? "1" : "0"));
                 sb.AppendLine("SendToDevice=" + (SendToDevice ? "1" : "0"));
                 sb.AppendLine("RefreshMs=" + RefreshMs.ToString(CultureInfo.InvariantCulture));
+                sb.AppendLine("BrandName=" + (BrandName ?? "").Replace("\r", "").Replace("\n", " ").Trim());
+                sb.AppendLine("BrandLogo=" + (BrandLogo ?? ""));
                 sb.AppendLine("[Sensors]");
                 foreach (var kv in Bindings.Where(b => !string.IsNullOrEmpty(b.Value)))
                     sb.AppendLine("Sensor." + kv.Key + "=" + kv.Value);
@@ -107,6 +121,7 @@ namespace MajestyMonitor.Core
             {
                 Language = Language, Fahrenheit = Fahrenheit, AutoStart = AutoStart, StartMinimized = StartMinimized,
                 CloseToTray = CloseToTray, SendToDevice = SendToDevice, RefreshMs = RefreshMs,
+                BrandName = BrandName, BrandLogo = BrandLogo,
             };
             foreach (var kv in Bindings)
                 copy.Bindings[kv.Key] = kv.Value;

@@ -60,6 +60,60 @@ namespace MajestyMonitor
             }
         }
 
+        /// <summary>The user's custom logo if one is set and readable, otherwise the default logo.</summary>
+        public static Image LoadBrandLogo(AppSettings settings)
+        {
+            var path = settings?.BrandLogo;
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
+            {
+                try
+                {
+                    // Load from a memory copy so the file is not kept locked.
+                    using (var ms = new MemoryStream(File.ReadAllBytes(path)))
+                    using (var img = Image.FromStream(ms))
+                        return new Bitmap(img);
+                }
+                catch (Exception ex)
+                {
+                    Log("Custom logo unreadable: " + ex.Message);
+                }
+            }
+            return Logo;
+        }
+
+        /// <summary>Copies a chosen image into the settings folder and returns the new path, or null if it isn't an image.</summary>
+        public static string ImportBrandLogo(string source)
+        {
+            try
+            {
+                using (var ms = new MemoryStream(File.ReadAllBytes(source)))
+                using (var img = Image.FromStream(ms))
+                {
+                    // Keep at most 512 px on the long side; save as PNG to preserve transparency.
+                    float k = Math.Min(1f, 512f / Math.Max(img.Width, img.Height));
+                    using (var bmp = new Bitmap(Math.Max(1, (int)(img.Width * k)), Math.Max(1, (int)(img.Height * k))))
+                    {
+                        using (var g = Graphics.FromImage(bmp))
+                        {
+                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                            g.DrawImage(img, 0, 0, bmp.Width, bmp.Height);
+                        }
+                        Directory.CreateDirectory(AppSettings.Folder);
+                        foreach (var old in Directory.GetFiles(AppSettings.Folder, "logo_*.png"))
+                            try { File.Delete(old); } catch { }
+                        var dest = Path.Combine(AppSettings.Folder, "logo_" + DateTime.Now.Ticks + ".png");
+                        bmp.Save(dest, ImageFormat.Png);
+                        return dest;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("Logo import failed: " + ex.Message);
+                return null;
+            }
+        }
+
         [STAThread]
         private static int Main(string[] args)
         {
@@ -94,6 +148,10 @@ namespace MajestyMonitor
             // --lang is a preview/demo helper; it never changes the saved settings.
             bool preview = Has("--demo") || Arg("--screenshot") != null;
             settings.ReadOnly = preview;
+            if (preview && Arg("--brand") is string brandArg)
+                settings.BrandName = brandArg;
+            if (preview && Arg("--logo") is string logoArg)
+                settings.BrandLogo = logoArg;
             if (preview && Arg("--lang") is string lang)
                 settings.Language = lang == "en" ? "en" : "ar";
             Strings.Lang = settings.Language;

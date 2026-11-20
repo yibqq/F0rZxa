@@ -33,6 +33,7 @@ namespace MajestyMonitor.UI
         public string HoverKey;
         public float Fan1Angle, Fan2Angle;
         public Image Logo;
+        public string Brand = "MAJESTY";
         public string Version = "2.0";
 
         /// <summary>Clickable regions from the last paint, in logical coordinates.</summary>
@@ -195,14 +196,25 @@ namespace MajestyMonitor.UI
 
         private void PaintHeader(Graphics g)
         {
-            var logoRect = M(22, 15, 36, 36);
-            if (Logo != null)
-                g.DrawImage(Logo, logoRect);
+            DrawLogo(g, M(22, 15, 36, 36));
 
-            using (var fBrand = LatinFont(21, FontStyle.Bold))
+            // Brand name (customisable). Shrinks to fit long names; Arabic names get an Arabic font.
+            string brand = string.IsNullOrWhiteSpace(Brand) ? "MAJESTY" : Brand.Trim();
+            bool arabicName = brand.Any(IsArabic);
+            string family = arabicName ? Theme.ArabicFamily : Theme.UiFamily;
+            const float maxBrandWidth = 330f;
+            float size = 21f;
+            Font fBrand = new Font(family, size, FontStyle.Bold, GraphicsUnit.Pixel);
+            while (size > 13f && Measure(g, brand, fBrand).Width > maxBrandWidth)
+            {
+                fBrand.Dispose();
+                size -= 1f;
+                fBrand = new Font(family, size, FontStyle.Bold, GraphicsUnit.Pixel);
+            }
+            using (fBrand)
             using (var fSub = UiFont(12.5f))
             {
-                Text(g, "MAJESTY", fBrand, Theme.Text, M(68, 12, 200, 24), Align.Start, Align.Center, rtlText: false);
+                Text(g, brand, fBrand, Theme.Text, M(68, 8, maxBrandWidth + 10, 30), Align.Start, Align.Center, rtlText: arabicName);
                 Text(g, Strings.Get("AppSub"), fSub, Theme.Muted, M(69, 35, 260, 18));
             }
 
@@ -276,6 +288,27 @@ namespace MajestyMonitor.UI
                 Text(g, now.ToString("HH:mm:ss", CultureInfo.InvariantCulture), fT, Theme.Text, M(cx - 60, 12, 210, 24), Align.Center, Align.Center, false);
                 Text(g, Strings.Date(now), fD, Theme.Muted, M(cx - 60, 36, 210, 16), Align.Center);
             }
+        }
+
+        private static bool IsArabic(char ch) =>
+            (ch >= '\u0600' && ch <= '\u06FF') || (ch >= '\u0750' && ch <= '\u077F') ||
+            (ch >= '\u08A0' && ch <= '\u08FF') || (ch >= '\uFB50' && ch <= '\uFEFF');
+
+        /// <summary>Draws the logo centred in <paramref name="box"/>, keeping its aspect ratio, with rounded corners.</summary>
+        private void DrawLogo(Graphics g, RectangleF box)
+        {
+            if (Logo == null || Logo.Width <= 0 || Logo.Height <= 0)
+                return;
+            float ratio = Math.Min(box.Width / Logo.Width, box.Height / Logo.Height);
+            float w = Logo.Width * ratio, h = Logo.Height * ratio;
+            var dest = new RectangleF(box.X + (box.Width - w) / 2, box.Y + (box.Height - h) / 2, w, h);
+            var state = g.Save();
+            using (var clip = Theme.Rounded(dest, Math.Min(w, h) * 0.22f))
+            {
+                g.SetClip(clip, CombineMode.Intersect);
+                g.DrawImage(Logo, dest);
+            }
+            g.Restore(state);
         }
 
         private void HeaderButton(Graphics g, string key, RectangleF r, Action<Graphics, RectangleF, Color> glyph, Color hover)

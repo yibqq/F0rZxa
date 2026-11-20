@@ -17,8 +17,8 @@
     <Product>MAJESTY Air Cooler Monitor</Product>
     <AssemblyTitle>MAJESTY Air Cooler Monitor</AssemblyTitle>
     <Description>Hardware monitor for the MAJESTY air cooler display</Description>
-    <Version>2.0.0</Version>
-    <FileVersion>2.0.0.0</FileVersion>
+    <Version>2.1.0</Version>
+    <FileVersion>2.1.0.0</FileVersion>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>

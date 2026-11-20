@@ -64,6 +64,12 @@ namespace MajestyMonitor.Core
             ["M_Fan1"] = new[] { "Fan 1 speed", "سرعة المروحة 1" },
             ["M_Fan2"] = new[] { "Fan 2 speed", "سرعة المروحة 2" },
             ["Error"] = new[] { "Error", "خطأ" },
+            ["Branding"] = new[] { "Name on screen", "الاسم الظاهر في البرنامج" },
+            ["Logo"] = new[] { "Logo", "الشعار" },
+            ["ChooseLogo"] = new[] { "Choose image…", "اختيار صورة…" },
+            ["DefaultLogo"] = new[] { "Default", "الافتراضي" },
+            ["Images"] = new[] { "Images", "الصور" },
+            ["BadImage"] = new[] { "This image could not be opened.", "تعذّر فتح هذه الصورة." },
         };
 
         public static string Get(string key)

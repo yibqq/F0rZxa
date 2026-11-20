@@ -58,7 +58,6 @@ namespace MajestyMonitor.UI
                 _scale = fit;
             ClientSize = new Size((int)Math.Round(DashboardView.W * _scale), (int)Math.Round(DashboardView.H * _scale));
 
-            _view.Logo = Program.Logo;
             _view.Demo = demo;
             _view.Version = Application.ProductVersion.Split('.').Length >= 2
                 ? string.Join(".", Application.ProductVersion.Split('.'), 0, 2)
@@ -121,9 +120,21 @@ namespace MajestyMonitor.UI
             _uiTimer.Start();
         }
 
+        private string _loadedLogo;
+
         private void ApplySettingsToView()
         {
             Strings.Lang = _settings.Language;
+            _view.Brand = _settings.DisplayBrand;
+            Text = _settings.DisplayBrand + " · Air Cooler Monitor";
+            if (_loadedLogo != (_settings.BrandLogo ?? ""))
+            {
+                _loadedLogo = _settings.BrandLogo ?? "";
+                var old = _view.Logo;
+                _view.Logo = Program.LoadBrandLogo(_settings);
+                if (old != null && old != Program.Logo && old != _view.Logo)
+                    old.Dispose();
+            }
             _view.Fahrenheit = _settings.Fahrenheit;
             _view.SendToDevice = _settings.SendToDevice;
             if (_tray.ContextMenuStrip != null)
@@ -309,7 +320,7 @@ namespace MajestyMonitor.UI
             if (!_trayHintShown)
             {
                 _trayHintShown = true;
-                _tray.ShowBalloonTip(3000, "MAJESTY", Strings.Get("TrayHint"), ToolTipIcon.Info);
+                _tray.ShowBalloonTip(3000, _settings.DisplayBrand, Strings.Get("TrayHint"), ToolTipIcon.Info);
             }
         }
 
@@ -376,7 +387,7 @@ namespace MajestyMonitor.UI
         private void BuildTray()
         {
             _tray.Icon = Program.AppIcon;
-            _tray.Text = "MAJESTY Air Cooler Monitor";
+            _tray.Text = Trim63(_settings.DisplayBrand + " · Air Cooler Monitor");
             _tray.Visible = !_demo;
             _tray.DoubleClick += (s, e) => ShowFromTray();
             BuildTrayMenu();
@@ -405,9 +416,10 @@ namespace MajestyMonitor.UI
             string fmt(MetricKind k) => _latest[k].HasValue
                 ? Math.Round(CoolerProtocol.ToUnit(_latest[k].Value, _settings.Fahrenheit)) + unit
                 : "--";
-            string text = $"MAJESTY  ·  CPU {fmt(MetricKind.CpuTemp)}  ·  GPU {fmt(MetricKind.GpuTemp)}";
-            _tray.Text = text.Length > 63 ? text.Substring(0, 63) : text;
+            _tray.Text = Trim63($"{_settings.DisplayBrand}  ·  CPU {fmt(MetricKind.CpuTemp)}  ·  GPU {fmt(MetricKind.GpuTemp)}");
         }
+
+        private static string Trim63(string text) => text.Length > 63 ? text.Substring(0, 63) : text; // NotifyIcon limit
 
         // ---- Shutdown -------------------------------------------------------------------
 
@@ -448,7 +460,8 @@ namespace MajestyMonitor.UI
             Strings.Lang = settings.Language;
             var view = new DashboardView
             {
-                Logo = Program.Logo,
+                Logo = Program.LoadBrandLogo(settings),
+                Brand = settings.DisplayBrand,
                 Fahrenheit = settings.Fahrenheit,
                 SendToDevice = true,
                 ConnectedCount = 1,

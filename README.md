@@ -1,4 +1,4 @@
-# MAJESTY Air Cooler Monitor 2.0
+# MAJESTY Air Cooler Monitor 2.1
 
 <div dir="rtl">
 
@@ -8,9 +8,20 @@
 
 ## التثبيت
 
-1. حمّل الملف `dist/MAJESTY_Air_Cooler_Monitor_2.0.0.msi` وشغّله.
+1. حمّل الملف `dist/MAJESTY_Air_Cooler_Monitor_2.1.0.msi` وشغّله.
 2. افتح **MAJESTY Air Cooler Monitor** من سطح المكتب (يطلب صلاحية المسؤول لقراءة حساسات المعالج).
 3. وصّل المبرد، وسيظهر «المبرد متصل» باللون الأخضر.
+
+## تخصيص الاسم والشعار
+
+من **الإعدادات ⚙** ← «الاسم الظاهر في البرنامج» اكتب اسمك (عربي أو إنجليزي) بدل MAJESTY،
+ومن «الشعار» اختر أي صورة (PNG / JPG) بدل شعار المروحة، أو اضغط «الافتراضي» للرجوع.
+يظهر الاسم في أعلى البرنامج وعنوان النافذة وشريط المهام.
+
+![تخصيص الاسم](docs/preview_brand_ar.png)
+
+> ملاحظة: الشعار المرسوم على شاشة المبرد نفسها مخزّن داخل قطعة المبرد (Firmware)،
+> وبروتوكول المبرد لا يستقبل نصوصاً أو صوراً — فقط أرقام الحساسات والوقت — لذلك التخصيص يكون داخل البرنامج.
 
 > لو ظهر تنبيه «حرارة المعالج تحتاج تعريف PawnIO»: اضغط **تثبيت** (أو ثبّته من pawnio.eu) ثم أعد تشغيل البرنامج.
 > هذا التعريف مجاني وموقّع، وتستخدمه برامج المراقبة الحديثة بدلاً من WinRing0 القديم الذي يحظره ويندوز ديفندر.
@@ -42,6 +53,9 @@ cooler over USB HID.
 ### Features
 - Animated dashboard: temperature gauges, 2-minute history chart, per-metric sparklines, spinning fans, RAM ring.
 - Automatic sensor selection (CPU Package / Tctl, GPU Core, ...) with per-metric overrides in Settings.
+- Custom name and logo (Settings → "Name on screen" / "Logo") shown in place of MAJESTY in the header, window title
+  and tray. The logo on the cooler's own screen lives in its firmware; the HID protocol carries only sensor values
+  and the clock, so it can't be changed from the PC.
 - °C / °F toggle, which is also sent to the cooler display.
 - Tray icon with live temps; the close button keeps it running in the tray (configurable).
 - Starts with Windows via an elevated scheduled task, so there's no UAC prompt at logon.
@@ -63,7 +77,7 @@ byte-for-byte by `tests/ProtocolTests`.
 ./build.sh   # runs the protocol tests, builds the exe, and builds dist/*.msi (needs .NET SDK 8+, python3, msitools)
 ```
 
-Command-line options: `--minimized`, `--demo` (simulated data), `--screenshot out.png [--lang ar|en] [--scale 2]`.
+Command-line options: `--minimized`, `--demo` (simulated data), `--screenshot out.png [--lang ar|en] [--scale 2] [--brand NAME] [--logo image.png]`.
 
 ### Layout
 ```
