@@ -51,7 +51,7 @@ public final class IosSwitch extends View {
     public IosSwitch(Context context, AttributeSet attrs) {
         super(context, attrs);
         offColor = context.getColor(R.color.switch_off);
-        onColor = context.getColor(R.color.success);
+        onColor = context.getColor(R.color.tint);
         thumbPaint.setColor(context.getColor(R.color.switch_thumb));
         shadowPaint.setColor(context.getColor(R.color.shadow));
         trackWidth = Dimens.dpF(context, 51);
@@ -117,7 +117,7 @@ public final class IosSwitch extends View {
 
         rect.set(left, top, left + trackWidth, top + trackHeight);
         trackPaint.setColor((int) argb.evaluate(p, offColor, onColor));
-        canvas.drawRoundRect(rect, trackHeight / 2f, trackHeight / 2f, trackPaint);
+        canvas.drawRect(rect, trackPaint);
 
         float d = trackHeight - 2 * pad;
         float thumbW = d + press * stretch;
@@ -129,9 +129,8 @@ public final class IosSwitch extends View {
         rect.set(thumbLeft, top + pad, thumbLeft + thumbW, top + pad + d);
 
         rect.offset(0, shadowOffset);
-        canvas.drawRoundRect(rect, d / 2f, d / 2f, shadowPaint);
         rect.offset(0, -shadowOffset);
-        canvas.drawRoundRect(rect, d / 2f, d / 2f, thumbPaint);
+        canvas.drawRect(rect, thumbPaint);
     }
 
     @Override

@@ -28,6 +28,7 @@ public final class SegmentedControl extends View {
     private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint selectedTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF rect = new RectF();
     private final float radius;
     private final float thumbRadius;
@@ -51,14 +52,17 @@ public final class SegmentedControl extends View {
 
     public SegmentedControl(Context context, AttributeSet attrs) {
         super(context, attrs);
-        radius = Dimens.dpF(context, 9);
-        thumbRadius = Dimens.dpF(context, 7);
-        inset = Dimens.dpF(context, 2);
+        radius = 0f;
+        thumbRadius = 0f;
+        inset = 0f;
         shadowOffset = Dimens.dpF(context, 1);
 
         trackPaint.setColor(context.getColor(R.color.segment_track));
         thumbPaint.setColor(context.getColor(R.color.segment_thumb));
         shadowPaint.setColor(context.getColor(R.color.shadow));
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(Dimens.dpF(context, 1.5f));
+        borderPaint.setColor(context.getColor(R.color.outline));
 
         float textSize = Dimens.sp(context, 13);
         int label = context.getColor(R.color.label);
@@ -67,7 +71,7 @@ public final class SegmentedControl extends View {
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
         selectedTextPaint.setTextSize(textSize);
-        selectedTextPaint.setColor(label);
+        selectedTextPaint.setColor(context.getColor(R.color.on_tint));
         selectedTextPaint.setTextAlign(Paint.Align.CENTER);
         selectedTextPaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 
@@ -158,6 +162,9 @@ public final class SegmentedControl extends View {
         canvas.drawRoundRect(rect, thumbRadius, thumbRadius, shadowPaint);
         rect.offset(0, -shadowOffset);
         canvas.drawRoundRect(rect, thumbRadius, thumbRadius, thumbPaint);
+        float half = borderPaint.getStrokeWidth() / 2f;
+        rect.set(half, half, w - half, h - half);
+        canvas.drawRect(rect, borderPaint);
 
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float baseline = h / 2f - (fm.ascent + fm.descent) / 2f;

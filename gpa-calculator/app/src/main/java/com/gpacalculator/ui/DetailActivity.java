@@ -135,7 +135,7 @@ public final class DetailActivity extends Activity {
             ((TextView) row.findViewById(R.id.course_detail)).setText(detail);
             TextView grade = row.findViewById(R.id.course_grade);
             grade.setText(c.grade.code());
-            grade.setTextColor(getColor(c.grade == Grade.F ? R.color.destructive : R.color.tint));
+            grade.setTextColor(getColor(R.color.tint));
             inner.setContentDescription(getString(R.string.cd_course_row, title, detail, c.grade.code()));
             courses.addView(row);
         }

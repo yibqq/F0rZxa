@@ -261,7 +261,7 @@ final class CalculatorScreen {
         name.setText(title);
         detail.setText(credits);
         grade.setText(course.grade.code());
-        grade.setTextColor(activity.getColor(course.grade == Grade.F ? R.color.destructive : R.color.tint));
+        grade.setTextColor(activity.getColor(R.color.tint));
         row.findViewById(R.id.row_separator).setVisibility(index == 0 ? View.GONE : View.VISIBLE);
         row.findViewById(R.id.course_row).setContentDescription(
                 activity.getString(R.string.cd_course_row, title, credits, course.grade.code()));

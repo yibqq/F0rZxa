@@ -8,9 +8,9 @@
     </style>
 
     <style name="Text.LargeTitle">
+        <item name="android:fontFamily">sans-serif-black</item>
         <item name="android:textSize">34sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">-0.005</item>
+        <item name="android:letterSpacing">-0.02</item>
     </style>
 
     <style name="Text.NavTitle">
@@ -45,7 +45,8 @@
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/label_secondary</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.02</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.12</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
         <item name="android:layout_marginTop">@dimen/section_gap</item>
@@ -63,9 +64,10 @@
     </style>
 
     <style name="Text.Hero">
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textSize">76sp</item>
-        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">80sp</item>
+        <item name="android:letterSpacing">-0.04</item>
         <item name="android:fontFeatureSettings">tnum</item>
     </style>
 
