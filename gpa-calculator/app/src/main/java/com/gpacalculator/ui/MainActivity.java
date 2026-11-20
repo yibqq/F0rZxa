@@ -1,5 +1,6 @@
 package com.gpacalculator.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.os.Build;
@@ -47,10 +48,12 @@ public final class MainActivity extends Activity {
 
         HistoryRepository repository = HistoryRepository.get(this);
         banner = new Banner(findViewById(R.id.banner));
-        calculator = new CalculatorScreen(this, findViewById(R.id.screen_calculator), repository, banner);
-        history = new HistoryScreen(this, findViewById(R.id.screen_history), repository, banner);
+        View calculatorView = findViewById(R.id.screen_calculator);
+        View historyView = findViewById(R.id.screen_history);
+        calculator = new CalculatorScreen(this, calculatorView, repository, banner);
+        history = new HistoryScreen(this, historyView, repository, banner);
 
-        screens = new View[]{findViewById(R.id.screen_calculator), findViewById(R.id.screen_history)};
+        screens = new View[]{calculatorView, historyView};
         tabs = new View[]{findViewById(R.id.tab_calculator), findViewById(R.id.tab_history)};
         tabIcons = new ImageView[]{findViewById(R.id.tab_calculator_icon), findViewById(R.id.tab_history_icon)};
         tabLabels = new TextView[]{findViewById(R.id.tab_calculator_label), findViewById(R.id.tab_history_label)};
@@ -137,6 +140,8 @@ public final class MainActivity extends Activity {
         }
     }
 
+    /** Pre-Android 13 path; on 13+ {@link #updateBackHandling()} registers an OnBackInvokedCallback. */
+    @SuppressLint("GestureBackNavigation")
     @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {

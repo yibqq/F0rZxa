@@ -168,9 +168,9 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             scale.setText(context.getString(R.string.history_scale,
                     context.getString(r.scale == GradeScale.FIVE ? R.string.scale_5 : R.string.scale_4)));
             date.setText(Formatters.relativeDate(context, r.createdAt));
-            String sep = context.getString(R.string.separator_dot);
-            summary.setText(Formatters.courses(context, r.courses.size()) + sep
-                    + Formatters.creditHours(context, r.semesterCredits));
+            summary.setText(context.getString(R.string.pair_dot,
+                    Formatters.courses(context, r.courses.size()),
+                    Formatters.creditHours(context, r.semesterCredits)));
             if (r.hasCumulative()) {
                 cumulative.setText(context.getString(R.string.history_cumulative,
                         GpaCalculator.format(r.cumulativeGpa)));

@@ -266,6 +266,7 @@
                                 android:hint="@string/hint_gpa"
                                 android:imeOptions="actionNext"
                                 android:inputType="numberDecimal"
+                                android:importantForAutofill="no"
                                 android:nextFocusDown="@+id/prev_credits" />
                         </LinearLayout>
 
@@ -288,7 +289,8 @@
                                 style="@style/InlineField"
                                 android:hint="@string/hint_credits"
                                 android:imeOptions="actionDone"
-                                android:inputType="number" />
+                                android:inputType="number"
+                                android:importantForAutofill="no" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.gpacalculator.ui.widget.GroupCard>

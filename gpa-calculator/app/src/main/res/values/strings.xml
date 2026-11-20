@@ -9,6 +9,7 @@
     <string name="scale_5" translatable="false">5.0</string>
     <string name="placeholder" translatable="false">—</string>
     <string name="separator_dot" translatable="false">" · "</string>
+    <string name="pair_dot" translatable="false">%1$s · %2$s</string>
     <string name="stepper_minus" translatable="false">−</string>
     <string name="stepper_plus" translatable="false">+</string>
     <string name="cd_scale">Grading scale %1$s</string>
@@ -67,7 +68,7 @@
     <string name="history_empty_message">Calculations you save from the calculator will appear here.</string>
     <string name="today_at">Today, %1$s</string>
     <string name="yesterday_at">Yesterday, %1$s</string>
-    <string name="history_scale">/ %1$s</string>
+    <string name="history_scale" translatable="false">/ %1$s</string>
     <string name="history_cumulative">Cumulative %1$s</string>
     <string name="delete">Delete</string>
     <string name="record_deleted">Calculation deleted</string>

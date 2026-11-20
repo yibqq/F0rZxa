@@ -20,7 +20,6 @@
     <color name="on_tint_secondary">#CCFFFFFF</color>
 
     <color name="fill_tertiary">#1F767680</color>
-    <color name="fill_quaternary">#14747480</color>
     <color name="row_pressed">#D1D1D6</color>
     <color name="tab_inactive">#999999</color>
 

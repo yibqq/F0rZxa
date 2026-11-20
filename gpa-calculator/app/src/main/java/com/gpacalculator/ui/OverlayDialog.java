@@ -1,12 +1,16 @@
 package com.gpacalculator.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import com.gpacalculator.R;
 import com.gpacalculator.ui.util.EdgeToEdge;
@@ -22,6 +26,8 @@ abstract class OverlayDialog extends Dialog {
     protected View root;
     protected View scrim;
     private boolean closing;
+    /** {@code OnBackInvokedCallback} on API 33+, held as Object so older runtimes never resolve the type. */
+    private Object backCallback;
 
     OverlayDialog(Activity activity) {
         super(activity, R.style.Theme_GPA_Overlay);
@@ -81,6 +87,28 @@ abstract class OverlayDialog extends Dialog {
         return closing;
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (backCallback == null) {
+                backCallback = (OnBackInvokedCallback) this::dismissAnimated;
+            }
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    OnBackInvokedDispatcher.PRIORITY_OVERLAY, (OnBackInvokedCallback) backCallback);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        if (Build.VERSION.SDK_INT >= 33 && backCallback != null) {
+            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback((OnBackInvokedCallback) backCallback);
+        }
+        super.onStop();
+    }
+
+    /** Pre-Android 13 path; on 13+ the callback registered in {@link #onStart()} handles Back. */
+    @SuppressLint("GestureBackNavigation")
     @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {
