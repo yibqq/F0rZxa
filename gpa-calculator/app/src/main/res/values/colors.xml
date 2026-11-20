@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Monochrome palette, light appearance. Red is kept only for destructive actions. -->
+<resources>
+    <color name="bg_grouped">#FAFAFA</color>
+    <color name="bg_card">#FAFAFA</color>
+    <color name="sheet_bg">#FAFAFA</color>
+    <color name="sheet_card">#FAFAFA</color>
+    <color name="alert_bg">#FAFAFA</color>
+    <color name="bar_bg">#F5FAFAFA</color>
+
+    <color name="label">#0A0A0A</color>
+    <color name="label_secondary">#8C0A0A0A</color>
+    <color name="label_tertiary">#4D0A0A0A</color>
+    <color name="separator">#260A0A0A</color>
+    <color name="outline">#0A0A0A</color>
+
+    <color name="tint">#0A0A0A</color>
+    <color name="destructive">#D70015</color>
+    <color name="success">#0A0A0A</color>
+    <color name="on_tint">#FAFAFA</color>
+    <color name="on_tint_secondary">#B3FAFAFA</color>
+
+    <color name="fill_tertiary">#140A0A0A</color>
+    <color name="row_pressed">#140A0A0A</color>
+    <color name="tab_inactive">#990A0A0A</color>
+
+    <color name="segment_track">#FAFAFA</color>
+    <color name="segment_thumb">#0A0A0A</color>
+    <color name="switch_off">#1F0A0A0A</color>
+    <color name="switch_thumb">#FAFAFA</color>
+    <color name="shadow">#00000000</color>
+
+    <color name="scrim">#660A0A0A</color>
+    <color name="banner_bg">#0A0A0A</color>
+    <color name="banner_text">#FAFAFA</color>
+    <color name="banner_action">#FAFAFA</color>
+    <color name="handle">#0A0A0A</color>
+    <color name="nav_bar_legacy">#33000000</color>
+</resources>

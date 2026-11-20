@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_grouped">
+
+    <include
+        android:id="@+id/screen_calculator"
+        layout="@layout/screen_calculator" />
+
+    <include
+        android:id="@+id/screen_history"
+        layout="@layout/screen_history" />
+
+    <!-- iOS-style tab bar -->
+    <LinearLayout
+        android:id="@+id/tab_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/bar_bg"
+        android:clickable="true"
+        android:focusable="false"
+        android:orientation="vertical">
+
+        <View style="@style/Hairline" />
+
+        <com.gpacalculator.ui.widget.MaxWidthLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:contentMaxWidth="420dp">
+
+            <LinearLayout
+                android:id="@+id/tab_calculator"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="2dp">
+
+                <ImageView
+                    android:id="@+id/tab_calculator_icon"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_tab_calculator" />
+
+                <TextView
+                    android:id="@+id/tab_calculator_label"
+                    style="@style/Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/tab_calculator"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tab_history"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="2dp">
+
+                <ImageView
+                    android:id="@+id/tab_history_icon"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_tab_history" />
+
+                <TextView
+                    android:id="@+id/tab_history_label"
+                    style="@style/Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/tab_history"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </com.gpacalculator.ui.widget.MaxWidthLinearLayout>
+    </LinearLayout>
+
+    <!-- Transient confirmation banner, shared by both tabs -->
+    <LinearLayout
+        android:id="@+id/banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_banner"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/banner_text"
+            style="@style/Text.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:accessibilityLiveRegion="polite"
+            android:textColor="@color/banner_text" />
+
+        <TextView
+            android:id="@+id/banner_action"
+            style="@style/Button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@null"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/undo"
+            android:textColor="@color/banner_action"
+            android:textSize="15sp" />
+    </LinearLayout>
+</FrameLayout>

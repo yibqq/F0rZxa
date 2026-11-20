@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/overlay_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/overlay_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@color/scrim"
+        android:importantForAccessibility="no" />
+
+    <com.gpacalculator.ui.widget.MaxWidthLinearLayout
+        android:id="@+id/sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/bg_sheet"
+        android:clickable="true"
+        android:focusable="false"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:contentMaxWidth="560dp">
+
+        <!-- Drag area: handle + header -->
+        <LinearLayout
+            android:id="@+id/sheet_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="36dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_handle" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:id="@+id/sheet_cancel"
+                    style="@style/Button.Bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:text="@string/cancel" />
+
+                <TextView
+                    android:id="@+id/sheet_title"
+                    style="@style/Text.NavTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:accessibilityHeading="true" />
+
+                <TextView
+                    android:id="@+id/sheet_done"
+                    style="@style/Button.Bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:fontFamily="sans-serif-medium" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/sheet_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/page_margin"
+                android:paddingTop="8dp"
+                android:paddingEnd="@dimen/page_margin"
+                android:paddingBottom="12dp">
+
+                <com.gpacalculator.ui.widget.GroupCard
+                    style="@style/Card"
+                    android:background="@drawable/bg_sheet_card">
+
+                    <EditText
+                        android:id="@+id/sheet_name"
+                        style="@style/Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/row_height"
+                        android:background="@null"
+                        android:hint="@string/course_name_hint"
+                        android:imeOptions="actionDone"
+                        android:importantForAutofill="no"
+                        android:inputType="textCapSentences|textNoSuggestions"
+                        android:maxLength="40"
+                        android:paddingStart="@dimen/row_padding"
+                        android:paddingEnd="@dimen/row_padding"
+                        android:singleLine="true"
+                        android:textColorHint="@color/label_tertiary" />
+                </com.gpacalculator.ui.widget.GroupCard>
+
+                <TextView
+                    style="@style/Text.SectionHeader"
+                    android:layout_marginTop="22dp"
+                    android:text="@string/section_credit_hours" />
+
+                <com.gpacalculator.ui.widget.GroupCard
+                    style="@style/Card"
+                    android:background="@drawable/bg_sheet_card">
+
+                    <LinearLayout
+                        style="@style/Row"
+                        android:minHeight="52dp"
+                        android:paddingEnd="10dp">
+
+                        <TextView
+                            android:id="@+id/sheet_credits"
+                            style="@style/Text.Body"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:accessibilityLiveRegion="polite"
+                            android:fontFeatureSettings="tnum" />
+
+                        <LinearLayout
+                            android:layout_width="96dp"
+                            android:layout_height="34dp"
+                            android:background="@drawable/bg_stepper"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/stepper_minus"
+                                style="@style/Button"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:contentDescription="@string/cd_decrease"
+                                android:fontFamily="sans-serif"
+                                android:text="@string/stepper_minus"
+                                android:textColor="@color/stepper_text"
+                                android:textSize="22sp" />
+
+                            <View
+                                android:layout_width="@dimen/hairline"
+                                android:layout_height="18dp"
+                                android:background="@color/separator" />
+
+                            <TextView
+                                android:id="@+id/stepper_plus"
+                                style="@style/Button"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:contentDescription="@string/cd_increase"
+                                android:fontFamily="sans-serif"
+                                android:text="@string/stepper_plus"
+                                android:textColor="@color/stepper_text"
+                                android:textSize="22sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.gpacalculator.ui.widget.GroupCard>
+
+                <TextView
+                    android:id="@+id/sheet_grade_header"
+                    style="@style/Text.SectionHeader"
+                    android:layout_marginTop="22dp" />
+
+                <GridLayout
+                    android:id="@+id/sheet_grades"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-4dp"
+                    android:layout_marginEnd="-4dp"
+                    android:columnCount="3"
+                    android:useDefaultMargins="false" />
+
+                <com.gpacalculator.ui.widget.GroupCard
+                    android:id="@+id/sheet_delete_card"
+                    style="@style/Card"
+                    android:layout_marginTop="22dp"
+                    android:background="@drawable/bg_sheet_card"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/sheet_delete"
+                        style="@style/Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/row_height"
+                        android:background="@drawable/bg_row"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="@string/delete_course"
+                        android:textColor="@color/destructive" />
+                </com.gpacalculator.ui.widget.GroupCard>
+            </LinearLayout>
+        </ScrollView>
+    </com.gpacalculator.ui.widget.MaxWidthLinearLayout>
+</FrameLayout>

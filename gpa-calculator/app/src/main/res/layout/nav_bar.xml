@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Overlay navigation bar. Its height (status bar + 44dp) is set at runtime from window insets. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_bar_height">
+
+    <View
+        android:id="@+id/nav_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@color/bar_bg" />
+
+    <View
+        android:id="@+id/nav_line"
+        style="@style/Hairline"
+        android:layout_gravity="bottom"
+        android:alpha="0" />
+
+    <FrameLayout
+        android:id="@+id/nav_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/nav_bar_height"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/nav_title"
+            style="@style/Text.NavTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="96dp"
+            android:layout_marginEnd="96dp"
+            android:alpha="0"
+            android:ellipsize="end"
+            android:importantForAccessibility="no"
+            android:singleLine="true" />
+
+        <LinearLayout
+            android:id="@+id/nav_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="12dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="21dp"
+                android:duplicateParentState="true"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_back"
+                android:tint="@color/bar_button_text" />
+
+            <TextView
+                style="@style/Text.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:duplicateParentState="true"
+                android:text="@string/back"
+                android:textColor="@color/bar_button_text" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/nav_action"
+            style="@style/Button.Bar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:visibility="gone" />
+    </FrameLayout>
+</FrameLayout>

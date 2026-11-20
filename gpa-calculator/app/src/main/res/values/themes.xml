@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.GPA" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.GPA" parent="Base.Theme.GPA">
+        <item name="android:windowBackground">@color/bg_grouped</item>
+        <item name="android:colorBackground">@color/bg_grouped</item>
+        <item name="android:colorAccent">@color/tint</item>
+        <item name="android:colorPrimary">@color/tint</item>
+        <item name="android:colorControlActivated">@color/tint</item>
+        <item name="android:colorControlHighlight">@color/row_pressed</item>
+        <item name="android:textColorPrimary">@color/label</item>
+        <item name="android:textColorSecondary">@color/label_secondary</item>
+        <item name="android:textColorHint">@color/label_tertiary</item>
+        <item name="android:textColorHighlight">#4D007AFF</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/nav_bar_legacy</item>
+        <item name="android:windowLightStatusBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/light_bars</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+        <item name="android:enforceNavigationBarContrast" tools:targetApi="29">false</item>
+        <item name="android:enforceStatusBarContrast" tools:targetApi="29">false</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateHidden</item>
+        <item name="android:overScrollMode">ifContentScrolls</item>
+    </style>
+
+    <!-- Full-screen transparent window used for sheets and alerts; they draw their own scrim. -->
+    <style name="Theme.GPA.Overlay">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+</resources>
