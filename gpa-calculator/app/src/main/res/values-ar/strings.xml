@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">حاسبة المعدل</string>
+
+    <string name="tab_calculator">الحاسبة</string>
+    <string name="tab_history">السجل</string>
+    <string name="cd_scale">سلّم الدرجات %1$s</string>
+
+    <string name="action_clear">مسح</string>
+    <string name="hero_caption">المعدل الفصلي</string>
+    <string name="hero_out_of">من %1$s</string>
+    <string name="stat_credits">الساعات</string>
+    <string name="stat_courses">المواد</string>
+    <string name="stat_cumulative">التراكمي</string>
+    <string name="section_courses">المواد</string>
+    <string name="add_course">إضافة مادة</string>
+    <string name="courses_footer_empty">أضف كل مادة مع ساعاتها المعتمدة وتقديرها، ويتحدّث معدلك فوراً.</string>
+    <string name="courses_footer">اضغط على أي مادة لتعديلها أو حذفها.</string>
+    <string name="courses_limit">يمكنك إضافة %1$s مادة كحد أقصى.</string>
+    <string name="section_cumulative">المعدل التراكمي</string>
+    <string name="include_previous">تضمين السجل السابق</string>
+    <string name="previous_gpa">المعدل السابق</string>
+    <string name="completed_credits">الساعات المجتازة</string>
+    <string name="cumulative_footer_off">فعّلها لدمج هذا الفصل مع معدلك وساعاتك السابقة.</string>
+    <string name="cumulative_footer_incomplete">أدخل معدلك السابق وعدد الساعات التي أنهيتها.</string>
+    <string name="cumulative_footer_gpa_invalid">يجب أن يكون المعدل السابق بين 0.00 و%1$s.</string>
+    <string name="cumulative_footer_credits_invalid">يجب أن تكون الساعات المجتازة عدداً صحيحاً من 0 إلى %1$s.</string>
+    <string name="cumulative_footer_valid">المعدل التراكمي %1$s على %2$s ساعة إجمالاً.</string>
+    <string name="cumulative_footer_no_courses">أضف مادة واحدة على الأقل لحساب المعدل التراكمي.</string>
+    <string name="save_to_history">حفظ في السجل</string>
+    <string name="saved">تم الحفظ</string>
+    <string name="saved_banner">تم الحفظ في السجل</string>
+    <string name="save_failed">تعذّر الحفظ. حاول مرة أخرى.</string>
+    <string name="clear_title">مسح الحاسبة؟</string>
+    <string name="clear_message">ستُحذف جميع المواد وقيم السجل السابق. لن يتأثر سجلك المحفوظ.</string>
+    <string name="cancel">إلغاء</string>
+    <string name="clear">مسح</string>
+    <string name="course_fallback">المادة %1$s</string>
+    <string name="cd_course_row">%1$s، %2$s، التقدير %3$s</string>
+
+    <string name="sheet_add_title">إضافة مادة</string>
+    <string name="sheet_edit_title">تعديل المادة</string>
+    <string name="sheet_add">إضافة</string>
+    <string name="sheet_done">تم</string>
+    <string name="course_name_hint">اسم المادة (اختياري)</string>
+    <string name="section_credit_hours">الساعات المعتمدة</string>
+    <string name="section_grade">التقدير · سلّم %1$s</string>
+    <string name="delete_course">حذف المادة</string>
+    <string name="cd_decrease">إنقاص الساعات</string>
+    <string name="cd_increase">زيادة الساعات</string>
+    <string name="cd_grade_key">التقدير %1$s، %2$s نقاط</string>
+    <string name="choose_grade">اختر التقدير</string>
+
+    <string name="history_empty_title">لا توجد حسابات محفوظة</string>
+    <string name="history_empty_message">الحسابات التي تحفظها من الحاسبة ستظهر هنا.</string>
+    <string name="today_at">اليوم، %1$s</string>
+    <string name="yesterday_at">أمس، %1$s</string>
+    <string name="history_cumulative">التراكمي %1$s</string>
+    <string name="delete">حذف</string>
+    <string name="record_deleted">تم حذف الحساب</string>
+    <string name="undo">تراجع</string>
+
+    <string name="back">السجل</string>
+    <string name="stat_quality_points">النقاط</string>
+    <string name="total_credits">مجموع الساعات</string>
+    <string name="cumulative_gpa">المعدل التراكمي</string>
+    <string name="course_detail_points">%1$s · %2$s نقاط</string>
+    <string name="detail_footer">حُفظ %1$s · سلّم %2$s</string>
+    <string name="delete_record">حذف الحساب</string>
+    <string name="delete_record_title">حذف الحساب؟</string>
+    <string name="delete_record_message">سيُحذف هذا الحساب نهائياً من السجل.</string>
+
+    <plurals name="credit_hours">
+        <item quantity="zero">%s ساعة معتمدة</item>
+        <item quantity="one">ساعة معتمدة واحدة</item>
+        <item quantity="two">ساعتان معتمدتان</item>
+        <item quantity="few">%s ساعات معتمدة</item>
+        <item quantity="many">%s ساعة معتمدة</item>
+        <item quantity="other">%s ساعة معتمدة</item>
+    </plurals>
+    <plurals name="courses">
+        <item quantity="zero">%s مادة</item>
+        <item quantity="one">مادة واحدة</item>
+        <item quantity="two">مادتان</item>
+        <item quantity="few">%s مواد</item>
+        <item quantity="many">%s مادة</item>
+        <item quantity="other">%s مادة</item>
+    </plurals>
+</resources>

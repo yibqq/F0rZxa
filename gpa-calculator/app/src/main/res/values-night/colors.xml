@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS system colors, dark appearance. -->
+<resources>
+    <color name="bg_grouped">#000000</color>
+    <color name="bg_card">#1C1C1E</color>
+    <color name="sheet_bg">#1C1C1E</color>
+    <color name="sheet_card">#2C2C2E</color>
+    <color name="alert_bg">#F2252527</color>
+    <color name="bar_bg">#F0121214</color>
+
+    <color name="label">#FFFFFF</color>
+    <color name="label_secondary">#99EBEBF5</color>
+    <color name="label_tertiary">#4DEBEBF5</color>
+    <color name="separator">#A6545458</color>
+
+    <color name="tint">#0A84FF</color>
+    <color name="destructive">#FF453A</color>
+    <color name="success">#30D158</color>
+
+    <color name="fill_tertiary">#3D767680</color>
+    <color name="fill_quaternary">#2E767680</color>
+    <color name="row_pressed">#3A3A3C</color>
+    <color name="tab_inactive">#8E8E93</color>
+
+    <color name="segment_track">#3D767680</color>
+    <color name="segment_thumb">#636366</color>
+    <color name="switch_off">#39393D</color>
+    <color name="shadow">#33000000</color>
+
+    <color name="scrim">#80000000</color>
+    <color name="banner_bg">#F23A3A3C</color>
+    <color name="handle">#4DEBEBF5</color>
+    <color name="nav_bar_legacy">#00000000</color>
+</resources>

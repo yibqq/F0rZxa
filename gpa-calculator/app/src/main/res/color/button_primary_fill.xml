@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/success" android:state_activated="true" />
+    <item android:color="@color/fill_tertiary" android:state_enabled="false" />
+    <item android:color="@color/tint" />
+</selector>

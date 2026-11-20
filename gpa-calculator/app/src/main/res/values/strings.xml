@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GPA Calculator</string>
+
+    <string name="tab_calculator">Calculator</string>
+    <string name="tab_history">History</string>
+
+    <string name="scale_4" translatable="false">4.0</string>
+    <string name="scale_5" translatable="false">5.0</string>
+    <string name="placeholder" translatable="false">—</string>
+    <string name="separator_dot" translatable="false">" · "</string>
+    <string name="stepper_minus" translatable="false">−</string>
+    <string name="stepper_plus" translatable="false">+</string>
+    <string name="cd_scale">Grading scale %1$s</string>
+
+    <!-- Calculator -->
+    <string name="action_clear">Clear</string>
+    <string name="hero_caption">Semester GPA</string>
+    <string name="hero_out_of">out of %1$s</string>
+    <string name="stat_credits">Credits</string>
+    <string name="stat_courses">Courses</string>
+    <string name="stat_cumulative">Cumulative</string>
+    <string name="section_courses">Courses</string>
+    <string name="add_course">Add Course</string>
+    <string name="courses_footer_empty">Add each course with its credit hours and grade. Your GPA updates as you go.</string>
+    <string name="courses_footer">Tap a course to edit or delete it.</string>
+    <string name="courses_limit">You can add up to %1$s courses.</string>
+    <string name="section_cumulative">Cumulative GPA</string>
+    <string name="include_previous">Include Previous Record</string>
+    <string name="previous_gpa">Previous GPA</string>
+    <string name="completed_credits">Completed Credits</string>
+    <string name="hint_gpa" translatable="false">0.00</string>
+    <string name="hint_credits" translatable="false">0</string>
+    <string name="cumulative_footer_off">Turn on to combine this semester with the GPA and credit hours you have already completed.</string>
+    <string name="cumulative_footer_incomplete">Enter your previous GPA and the credit hours you have completed.</string>
+    <string name="cumulative_footer_gpa_invalid">Previous GPA must be between 0.00 and %1$s.</string>
+    <string name="cumulative_footer_credits_invalid">Completed credits must be a whole number from 0 to %1$s.</string>
+    <string name="cumulative_footer_valid">Cumulative GPA %1$s over %2$s total credit hours.</string>
+    <string name="cumulative_footer_no_courses">Add at least one course to calculate your cumulative GPA.</string>
+    <string name="save_to_history">Save to History</string>
+    <string name="saved">Saved</string>
+    <string name="saved_banner">Saved to History</string>
+    <string name="save_failed">Couldn\'t save. Please try again.</string>
+    <string name="clear_title">Clear Calculator?</string>
+    <string name="clear_message">All courses and previous record values will be removed. Your saved history won\'t be affected.</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="course_fallback">Course %1$s</string>
+    <string name="cd_course_row">%1$s, %2$s, grade %3$s</string>
+
+    <!-- Course sheet -->
+    <string name="sheet_add_title">Add Course</string>
+    <string name="sheet_edit_title">Edit Course</string>
+    <string name="sheet_add">Add</string>
+    <string name="sheet_done">Done</string>
+    <string name="course_name_hint">Course Name (Optional)</string>
+    <string name="section_credit_hours">Credit Hours</string>
+    <string name="section_grade">Grade · %1$s Scale</string>
+    <string name="delete_course">Delete Course</string>
+    <string name="cd_decrease">Decrease credit hours</string>
+    <string name="cd_increase">Increase credit hours</string>
+    <string name="cd_grade_key">Grade %1$s, %2$s points</string>
+    <string name="choose_grade">Choose a grade</string>
+
+    <!-- History -->
+    <string name="history_empty_title">No Saved Calculations</string>
+    <string name="history_empty_message">Calculations you save from the calculator will appear here.</string>
+    <string name="today_at">Today, %1$s</string>
+    <string name="yesterday_at">Yesterday, %1$s</string>
+    <string name="history_scale">/ %1$s</string>
+    <string name="history_cumulative">Cumulative %1$s</string>
+    <string name="delete">Delete</string>
+    <string name="record_deleted">Calculation deleted</string>
+    <string name="undo">Undo</string>
+
+    <!-- Detail -->
+    <string name="back">History</string>
+    <string name="stat_quality_points">Points</string>
+    <string name="total_credits">Total Credits</string>
+    <string name="cumulative_gpa">Cumulative GPA</string>
+    <string name="course_detail_points">%1$s · %2$s points</string>
+    <string name="detail_footer">Saved %1$s · %2$s scale</string>
+    <string name="delete_record">Delete Calculation</string>
+    <string name="delete_record_title">Delete Calculation?</string>
+    <string name="delete_record_message">This calculation will be permanently removed from your history.</string>
+
+    <plurals name="credit_hours">
+        <item quantity="one">%s credit hour</item>
+        <item quantity="other">%s credit hours</item>
+    </plurals>
+    <plurals name="courses">
+        <item quantity="one">%s course</item>
+        <item quantity="other">%s courses</item>
+    </plurals>
+</resources>
